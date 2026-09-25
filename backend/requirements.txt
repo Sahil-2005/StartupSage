@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+motor
+pymongo
+python-dotenv
+pydantic-settings
+sentence-transformers
+qdrant-client
+pypdf
+beautifulsoup4
+langchain-text-splitters
+google-generativeai
+openai
+ragas
+datasets
+rank-bm25
+langgraph

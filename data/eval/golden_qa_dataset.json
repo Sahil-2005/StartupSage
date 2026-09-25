@@ -1,0 +1,16 @@
+[
+  {
+    "question": "What is the turnover limit for Startup India recognition?",
+    "reference_answer": "The annual turnover should not exceed INR 100 crore in any preceding financial year.",
+    "gold_chunk_ids": [],
+    "category": "registration_and_incorporation",
+    "difficulty": "simple_factual"
+  },
+  {
+    "question": "Who needs to register for GST?",
+    "reference_answer": "Businesses whose turnover exceeds Rs. 40 lakhs (Rs. 20 lakhs for special category states).",
+    "gold_chunk_ids": [],
+    "category": "taxation_and_gst",
+    "difficulty": "simple_factual"
+  }
+]

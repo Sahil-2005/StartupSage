@@ -1,0 +1,179 @@
+import uuid
+import time
+import logging
+from typing import List, Optional
+from datetime import datetime
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from app.core.config import settings
+from app.db.mongo import db
+from app.rag.retrieval import dense, sparse, fusion, reranker
+from app.rag.llm import generate
+
+logger = logging.getLogger(__name__)
+router = APIRouter()
+
+class ChatRequest(BaseModel):
+    message: str
+    conversation_id: Optional[str] = None
+    profile_id: Optional[str] = None
+
+class ChatResponse(BaseModel):
+    answer: str
+    citations: List[dict]
+    rag_mode: str
+    conversation_id: str
+
+class ConversationCreate(BaseModel):
+    title: str = "New Conversation"
+
+@router.post("/", response_model=ChatResponse)
+async def chat(request: ChatRequest):
+    start_time = time.time()
+    user_message = request.message
+    conv_id = request.conversation_id or str(uuid.uuid4())
+    
+    # Check for profile context globally first
+    profile_context = ""
+    if request.profile_id and db.db is not None:
+        profile = await db.db.startup_profiles.find_one({"_id": request.profile_id})
+        if profile:
+            profile_context = f"""
+STARTUP PROFILE (Context for your advice):
+- Name: {profile.get('name')}
+- Industry: {profile.get('industry')}
+- Stage: {profile.get('stage')}
+- Location: {profile.get('location')}
+- Additional Notes: {profile.get('notes')}
+
+Please tailor your advice specifically to this startup's context.
+"""
+    
+    if settings.RAG_MODE in ["basic", "hybrid"]:
+        if settings.RAG_MODE == "basic":
+            retrieved_chunks = dense.search(query=user_message, top_k=5)
+        elif settings.RAG_MODE == "hybrid":
+            dense_results = dense.search(query=user_message, top_k=20)
+            sparse_results = sparse.search(query=user_message, top_k=20)
+            fused_results = fusion.reciprocal_rank_fusion(dense_results, sparse_results)
+            retrieved_chunks = reranker.rerank(query=user_message, chunks=fused_results, top_k=5)
+            
+        context_blocks = []
+        citations_metadata = []
+        for i, chunk in enumerate(retrieved_chunks):
+            ref_id = i + 1
+            context_blocks.append(f"[{ref_id}] {chunk['text']} (Source: {chunk['source_url']})")
+            citations_metadata.append({
+                "ref_id": ref_id,
+                "text_snippet": chunk["text"][:100] + "...",
+                "source_url": chunk["source_url"],
+                "category": chunk["category"]
+            })
+                
+        context_str = "\n\n".join(context_blocks) if context_blocks else "No relevant context found."
+        
+        system_prompt = f"""You are StartupSage, an AI assistant for Indian startups.
+Answer based ONLY on the provided context. Cite sources using [1], [2], etc.
+If you cannot answer from the context, explicitly say "I do not have enough information to answer this based on the available sources."
+{profile_context}
+Context:
+{context_str}
+"""
+        
+        try:
+            answer = await generate(system_prompt, user_message)
+        except Exception as e:
+            logger.error(f"Generation failed: {e}")
+            raise HTTPException(status_code=500, detail=str(e))
+            
+    elif settings.RAG_MODE == "agentic":
+        from app.rag.agent.graph import agent_graph
+        state = {
+            "query": user_message,
+            "original_query": user_message,
+            "profile_id": request.profile_id,
+            "profile_context": profile_context,
+            "retry_count": 0,
+            "retrieved_chunks": [],
+            "citations": []
+        }
+        
+        try:
+            result = await agent_graph.ainvoke(state)
+            answer = result.get("final_output", "An error occurred.")
+            citations_metadata = result.get("citations", [])
+            retrieved_chunks = result.get("retrieved_chunks", [])
+        except Exception as e:
+            logger.error(f"Agentic generation failed: {e}")
+            raise HTTPException(status_code=500, detail=str(e))
+    else:
+        raise HTTPException(status_code=501, detail=f"RAG Mode '{settings.RAG_MODE}' not implemented yet.")
+        
+    # 4. Save to DB
+    latency_ms = int((time.time() - start_time) * 1000)
+    
+    if db.db is not None:
+        # Ensure conversation exists
+        await db.db.conversations.update_one(
+            {"_id": conv_id},
+            {"$setOnInsert": {"created_at": datetime.utcnow(), "title": user_message[:30] + "..."}},
+            upsert=True
+        )
+        
+        # Save user message
+        await db.db.messages.insert_one({
+            "conversation_id": conv_id,
+            "role": "user",
+            "content": user_message,
+            "created_at": datetime.utcnow()
+        })
+        
+        # Save assistant message
+        await db.db.messages.insert_one({
+            "conversation_id": conv_id,
+            "role": "assistant",
+            "content": answer,
+            "rag_mode": settings.RAG_MODE,
+            "retrieved_chunk_ids": [c.get("id") for c in retrieved_chunks],
+            "citations": citations_metadata,
+            "latency_ms": latency_ms,
+            "created_at": datetime.utcnow()
+        })
+        
+    return ChatResponse(
+        answer=answer,
+        citations=citations_metadata,
+        rag_mode=settings.RAG_MODE,
+        conversation_id=conv_id
+    )
+
+@router.get("/conversations")
+async def list_conversations():
+    if db.db is None:
+        return []
+    cursor = db.db.conversations.find().sort("created_at", -1).limit(50)
+    convs = await cursor.to_list(length=50)
+    for c in convs:
+        c["_id"] = str(c["_id"])
+    return convs
+
+@router.post("/conversations")
+async def create_conversation(req: ConversationCreate):
+    conv_id = str(uuid.uuid4())
+    if db.db is not None:
+        await db.db.conversations.insert_one({
+            "_id": conv_id,
+            "title": req.title,
+            "created_at": datetime.utcnow()
+        })
+    return {"conversation_id": conv_id}
+
+@router.get("/conversations/{conv_id}/messages")
+async def get_messages(conv_id: str):
+    if db.db is None:
+        return []
+    cursor = db.db.messages.find({"conversation_id": conv_id}).sort("created_at", 1)
+    msgs = await cursor.to_list(length=100)
+    for m in msgs:
+        m["_id"] = str(m["_id"])
+    return msgs
