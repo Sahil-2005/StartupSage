@@ -1,188 +1,249 @@
 import { useState, useRef, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useSearchParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
-export default function Chat() {
+function MessageBubble({ msg }) {
+  if (msg.role === 'user') {
+    return (
+      <div className="flex justify-end">
+        <div className="max-w-[75%] bg-indigo-600 text-white rounded-2xl rounded-br-sm px-5 py-4 shadow-lg shadow-indigo-500/10">
+          <p className="leading-relaxed">{msg.content}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex justify-start space-x-3">
+      <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md shadow-indigo-500/20 mt-1">
+        <span className="text-white text-xs font-bold">AI</span>
+      </div>
+      <div className="max-w-[75%]">
+        <div className="bg-[#0f0f1a] border border-white/8 text-gray-200 rounded-2xl rounded-bl-sm px-5 py-4 shadow-sm">
+          <div className="leading-relaxed whitespace-pre-wrap">{msg.content}</div>
+
+          {msg.citations?.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-white/8">
+              <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2.5">Sources</p>
+              <div className="flex flex-wrap gap-2">
+                {msg.citations.map((cit, j) => (
+                  <a
+                    key={j} href={cit.source_url} target="_blank" rel="noreferrer"
+                    className="group relative inline-flex items-center space-x-1 text-xs bg-white/5 hover:bg-indigo-500/15 border border-white/10 hover:border-indigo-500/30 text-gray-400 hover:text-indigo-300 px-2.5 py-1.5 rounded-lg transition-all duration-200"
+                    title={cit.text_snippet}
+                  >
+                    <span className="font-semibold text-indigo-400">[{cit.ref_id}]</span>
+                    <span className="max-w-[120px] truncate">{cit.category || 'Source'}</span>
+                  </a>
+                ))}
+              </div>
+              {msg.ragMode && (
+                <div className="mt-3 flex items-center space-x-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
+                  <span className="text-[10px] text-gray-600 uppercase tracking-wider font-medium">{msg.ragMode}</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TypingIndicator() {
+  return (
+    <div className="flex justify-start space-x-3">
+      <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md shadow-indigo-500/20 opacity-60">
+        <span className="text-white text-xs font-bold">AI</span>
+      </div>
+      <div className="bg-[#0f0f1a] border border-white/8 rounded-2xl rounded-bl-sm px-5 py-4 flex items-center space-x-2">
+        {[0, 150, 300].map(delay => (
+          <div
+            key={delay}
+            className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
+            style={{ animationDelay: `${delay}ms` }}
+          ></div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function ChatPage() {
+  const { authFetch } = useAuth();
+  const [searchParams] = useSearchParams();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [conversationId, setConversationId] = useState(null);
-  const endOfMessagesRef = useRef(null);
-
-  const scrollToBottom = () => {
-    endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const endRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, loading]);
+
+  // Handle pre-filled query from Dashboard quick actions
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q) {
+      setInput(q);
+      inputRef.current?.focus();
+    }
+  }, [searchParams]);
+
+  const profileId = localStorage.getItem('startup_profile_id');
+  const isProfileActive = !!profileId;
 
   const sendMessage = async (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
+    e?.preventDefault();
+    if (!input.trim() || loading) return;
 
-    const profileId = localStorage.getItem('startup_profile_id');
-    const userMessage = { role: 'user', content: input };
-    setMessages(prev => [...prev, userMessage]);
+    const userMessage = input.trim();
     setInput('');
-    setIsLoading(true);
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setLoading(true);
 
     try {
-      const response = await fetch('/api/v1/chat', {
+      const res = await authFetch('/api/v1/chat/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          message: userMessage.content,
+        body: JSON.stringify({
+          message: userMessage,
           conversation_id: conversationId,
-          profile_id: profileId
-        })
+          profile_id: profileId,
+        }),
       });
 
-      if (!response.ok) throw new Error('API failed');
-      const data = await response.json();
-      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || 'API error');
+      }
+
+      const data = await res.json();
       if (!conversationId) setConversationId(data.conversation_id);
 
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: data.answer,
         citations: data.citations,
-        ragMode: data.rag_mode
+        ragMode: data.rag_mode,
       }]);
-    } catch (error) {
+    } catch (err) {
+      toast.error(err.message || 'Failed to get response');
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Error: Could not reach the server. Make sure the FastAPI backend is running.'
+        content: '⚠️ Something went wrong. Please check your backend server is running.',
       }]);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const isProfileActive = !!localStorage.getItem('startup_profile_id');
+  const SUGGESTION_CHIPS = [
+    'How to get DPIIT recognition?',
+    'GST registration for startups',
+    'Seed fund eligibility criteria',
+    'LLP vs Private Limited Company',
+  ];
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] max-w-5xl mx-auto w-full p-4 relative">
-      {/* Background decoration */}
-      <div className="absolute top-10 left-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 pointer-events-none"></div>
-      <div className="absolute top-10 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 pointer-events-none"></div>
-
-      {isProfileActive && (
-        <div className="z-10 bg-white/80 backdrop-blur-md border border-indigo-100/50 text-indigo-700 px-4 py-2.5 rounded-xl mb-4 text-sm font-medium flex items-center shadow-[0_4px_20px_-4px_rgba(79,70,229,0.1)] self-center">
-          <span className="flex h-2 w-2 relative mr-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-          </span>
-          Chatting in the context of your Startup Profile
+    <div className="flex flex-col h-[calc(100vh-0px)] lg:h-screen">
+      {/* Chat Header */}
+      <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#0f0f1a]/50 backdrop-blur-sm">
+        <div>
+          <h1 className="text-white font-semibold">AI Advisor</h1>
+          <p className="text-gray-500 text-xs mt-0.5">Grounded in 35+ official government documents</p>
         </div>
-      )}
-      
-      <div className="z-10 flex-grow bg-white/60 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 p-6 mb-4 overflow-y-auto">
+        <div className="flex items-center space-x-3">
+          {isProfileActive && (
+            <div className="flex items-center space-x-2 bg-green-500/10 border border-green-500/20 rounded-full px-3 py-1.5">
+              <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-green-400 text-xs font-medium">Context Active</span>
+            </div>
+          )}
+          {messages.length > 0 && (
+            <button
+              onClick={() => { setMessages([]); setConversationId(null); }}
+              className="text-gray-500 hover:text-gray-300 text-xs border border-white/10 rounded-lg px-3 py-1.5 hover:bg-white/5 transition-all"
+            >
+              New Chat
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto px-4 lg:px-8 py-6 space-y-6">
         {messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center transform transition-all hover:scale-105 duration-500">
-              <div className="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl mx-auto mb-6 shadow-xl shadow-blue-500/30 flex items-center justify-center transform rotate-3">
-                <span className="text-white font-bold text-4xl transform -rotate-3">S</span>
-              </div>
-              <h2 className="text-3xl font-extrabold mb-3 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">StartupSage AI</h2>
-              <p className="text-gray-500 font-medium">Your expert advisor for registering and scaling in India.</p>
-              {!isProfileActive && (
-                <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-800 p-4 rounded-xl border border-amber-100/50 inline-block shadow-sm">
-                  <span className="font-semibold">✨ Pro Tip:</span> Go to the <strong>Profile</strong> tab to set your startup context!
-                </div>
-              )}
+          <div className="flex flex-col items-center justify-center h-full text-center max-w-lg mx-auto">
+            <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-500/25 mb-6 transform rotate-3">
+              <span className="text-white font-bold text-3xl transform -rotate-3">S</span>
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-2">StartupSage AI</h2>
+            <p className="text-gray-400 mb-8">
+              Ask me anything about registering, funding, taxation, or compliance for your Indian startup. I'll cite my sources.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
+              {SUGGESTION_CHIPS.map(chip => (
+                <button
+                  key={chip}
+                  onClick={() => { setInput(chip); inputRef.current?.focus(); }}
+                  className="text-left px-4 py-3 bg-[#0f0f1a] border border-white/8 hover:border-indigo-500/30 hover:bg-indigo-500/5 rounded-xl text-sm text-gray-400 hover:text-gray-200 transition-all"
+                >
+                  {chip}
+                </button>
+              ))}
             </div>
           </div>
         ) : (
-          <div className="space-y-8">
-            {messages.map((msg, i) => (
-              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
-                {msg.role === 'assistant' && (
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center mr-3 mt-1 shadow-md shadow-indigo-200">
-                    <span className="text-white text-xs font-bold">AI</span>
-                  </div>
-                )}
-                
-                <div className={`max-w-[80%] rounded-2xl p-5 shadow-sm ${
-                  msg.role === 'user' 
-                    ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-br-sm shadow-blue-200' 
-                    : 'bg-white border border-gray-100 text-gray-800 rounded-bl-sm'
-                }`}>
-                  <div className={`whitespace-pre-wrap leading-relaxed ${msg.role === 'user' ? 'font-medium' : ''}`}>
-                    {msg.content}
-                  </div>
-                  
-                  {/* Citations & Metadata */}
-                  {msg.role === 'assistant' && msg.citations && msg.citations.length > 0 && (
-                    <div className="mt-5 pt-4 border-t border-gray-100">
-                      <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">Sources</p>
-                      <div className="flex flex-wrap gap-2">
-                        {msg.citations.map((cit, j) => (
-                          <a 
-                            key={j} 
-                            href={cit.source_url} 
-                            target="_blank" 
-                            rel="noreferrer"
-                            className="group relative text-xs bg-gray-50 hover:bg-indigo-50 border border-gray-200 hover:border-indigo-200 text-gray-600 hover:text-indigo-700 px-2.5 py-1.5 rounded-lg transition-all duration-200 flex items-center"
-                          >
-                            <span className="font-semibold mr-1">[{cit.ref_id}]</span> 
-                            <span className="truncate max-w-[150px]">{cit.category || "Document"}</span>
-                            
-                            {/* Custom Tooltip */}
-                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-900 text-white text-[11px] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 shadow-xl">
-                              <p className="font-semibold text-indigo-300 mb-1">Excerpt:</p>
-                              {cit.text_snippet}
-                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
-                            </div>
-                          </a>
-                        ))}
-                      </div>
-                      {msg.ragMode && (
-                        <div className="mt-3 text-[10px] text-gray-400 flex items-center font-medium">
-                          <div className="w-1.5 h-1.5 rounded-full bg-green-400 mr-1.5"></div>
-                          Mode: <span className="uppercase ml-1 tracking-wider text-gray-500">{msg.ragMode}</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-            {isLoading && (
-              <div className="flex justify-start animate-fade-in-up">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center mr-3 mt-1 opacity-50">
-                  <span className="text-white text-xs font-bold">AI</span>
-                </div>
-                <div className="bg-white border border-gray-100 rounded-2xl rounded-bl-sm p-5 shadow-sm flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                </div>
-              </div>
-            )}
-            <div ref={endOfMessagesRef} />
-          </div>
+          <>
+            {messages.map((msg, i) => <MessageBubble key={i} msg={msg} />)}
+            {loading && <TypingIndicator />}
+            <div ref={endRef} />
+          </>
         )}
       </div>
 
-      <form onSubmit={sendMessage} className="z-10 relative group">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
-        <div className="relative flex items-center bg-white border border-gray-200 rounded-2xl shadow-sm p-1.5">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask anything about startup regulations..."
-            className="flex-grow p-4 bg-transparent border-none focus:ring-0 text-gray-700 outline-none"
-            disabled={isLoading}
-          />
-          <button 
-            type="submit" 
-            disabled={isLoading || !input.trim()}
-            className="flex items-center justify-center w-12 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-indigo-200 mr-1"
-          >
-            <svg className="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-          </button>
-        </div>
-      </form>
+      {/* Input Bar */}
+      <div className="flex-shrink-0 px-4 lg:px-8 py-4 border-t border-white/5 bg-[#0f0f1a]/50 backdrop-blur-sm">
+        <form onSubmit={sendMessage} className="relative group">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur opacity-0 group-focus-within:opacity-20 transition-opacity duration-500"></div>
+          <div className="relative flex items-end bg-[#0f0f1a] border border-white/10 rounded-2xl overflow-hidden focus-within:border-indigo-500/50 transition-all">
+            <textarea
+              ref={inputRef}
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage();
+                }
+              }}
+              placeholder="Ask about startup registration, GST, MSME, funding..."
+              rows={1}
+              className="flex-1 bg-transparent px-5 py-4 text-white placeholder-gray-500 focus:outline-none resize-none text-sm leading-relaxed"
+              style={{ minHeight: '56px', maxHeight: '160px' }}
+              disabled={loading}
+            />
+            <div className="px-3 py-3 flex-shrink-0">
+              <button
+                type="submit"
+                disabled={loading || !input.trim()}
+                className="w-10 h-10 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-xl flex items-center justify-center transition-all shadow-lg shadow-indigo-500/20"
+              >
+                <svg className="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </form>
+        <p className="text-center text-xs text-gray-600 mt-2">
+          AI may make mistakes. Always verify critical legal or financial decisions with a professional.
+        </p>
+      </div>
     </div>
   );
 }
