@@ -247,6 +247,28 @@
     background-image: radial-gradient(circle, rgba(245, 158, 11, 0.08) 1px, transparent 1px);
     background-size: 24px 24px;
   }
+  /* Markdown styling */
+  .prose {
+    color: var(--text-primary);
+  }
+  .prose p { margin-bottom: 1em; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong, .prose b { font-weight: 700; color: var(--accent-light); }
+  .prose h1, .prose h2, .prose h3, .prose h4 { margin-top: 1.5em; margin-bottom: 0.5em; font-weight: 700; color: #fff; }
+  .prose h1:first-child, .prose h2:first-child, .prose h3:first-child { margin-top: 0; }
+  .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
+  .prose ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
+  .prose li { margin-bottom: 0.25em; }
+  .prose li::marker { color: var(--accent); }
+  .prose code { background: rgba(255,255,255,0.05); padding: 0.2em 0.4em; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+  .prose pre { background: rgba(0,0,0,0.3); padding: 1em; border-radius: 8px; overflow-x: auto; border: 1px solid var(--border); margin-bottom: 1em; }
+  .prose pre code { background: none; padding: 0; }
+  .prose blockquote { border-left: 3px solid var(--accent); padding-left: 1em; color: var(--text-muted); font-style: italic; margin-bottom: 1em; }
+  
+  .prose table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; font-size: 0.95em; }
+  .prose th { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 10px 12px; text-align: left; font-weight: 600; color: var(--accent-light); }
+  .prose td { border: 1px solid var(--border); padding: 10px 12px; vertical-align: top; }
+  .prose tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
 }
 
 /* ========== ANIMATIONS ========== */

@@ -15,9 +15,13 @@ export function AuthProvider({ children }) {
       if (res.ok) {
         const data = await res.json();
         setUser(data);
+        if (data.startup_profile_id) {
+          localStorage.setItem('startup_profile_id', data.startup_profile_id);
+        }
         return data;
       } else {
         localStorage.removeItem('ss_token');
+        localStorage.removeItem('startup_profile_id');
         setToken(null);
         setUser(null);
       }
@@ -46,6 +50,9 @@ export function AuthProvider({ children }) {
     localStorage.setItem('ss_token', data.access_token);
     setToken(data.access_token);
     setUser(data.user);
+    if (data.user.startup_profile_id) {
+      localStorage.setItem('startup_profile_id', data.user.startup_profile_id);
+    }
     return data.user;
   };
 

@@ -3,6 +3,9 @@ import { useAuth } from '../context/AuthContext';
 import { useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 function MessageBubble({ msg }) {
   if (msg.role === 'user') {
     return (
@@ -19,9 +22,11 @@ function MessageBubble({ msg }) {
       <div className="flex-shrink-0" style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'linear-gradient(135deg, var(--bg-elevated), var(--bg-tertiary))', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '4px' }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round"><path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
       </div>
-      <div style={{ maxWidth: '75%' }}>
-        <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '20px 20px 20px 6px', padding: '16px 20px' }}>
-          <div style={{ fontSize: '14px', lineHeight: 1.75, color: 'var(--text-primary)', whiteSpace: 'pre-wrap' }}>{msg.content}</div>
+      <div style={{ maxWidth: '75%', minWidth: 0 }}>
+        <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '20px 20px 20px 6px', padding: '16px 20px', overflowX: 'auto' }}>
+          <div className="prose" style={{ fontSize: '14px', lineHeight: 1.75, color: 'var(--text-primary)' }}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+          </div>
 
           {msg.citations?.length > 0 && (
             <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid var(--border)' }}>
@@ -169,7 +174,7 @@ export default function ChatPage() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </button>
         </div>
-        <div style={{ flex: 1, overflowY: 'auto', padding: '8px' }}>
+        <div data-lenis-prevent="true" style={{ flex: 1, overflowY: 'auto', padding: '8px' }}>
           {conversations.length === 0 ? (
             <div style={{ color: 'var(--text-muted)', fontSize: '12px', textAlign: 'center', padding: '20px 0' }}>No previous chats</div>
           ) : (
@@ -224,7 +229,7 @@ export default function ChatPage() {
         </div>
 
         {/* Messages Area */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
+        <div data-lenis-prevent="true" style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {loadingHistory ? (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', paddingTop: '100px' }}>
