@@ -10,12 +10,12 @@ const QUICK_ACTIONS = [
 ];
 
 const TOPIC_CARDS = [
-  { title: 'Registration & Incorporation', desc: 'SPICe+, LLP, OPC, Pvt Ltd', color: 'from-blue-500/20 to-indigo-500/20', border: 'border-blue-500/20', icon: '🏛️', count: '15 docs' },
-  { title: 'Taxation & GST', desc: 'GST registration, tax incentives, 80-IAC', color: 'from-green-500/20 to-emerald-500/20', border: 'border-green-500/20', icon: '📋', count: '5 docs' },
-  { title: 'MSME / Udyam', desc: 'Classification, benefits, registration', color: 'from-yellow-500/20 to-amber-500/20', border: 'border-yellow-500/20', icon: '🏭', count: '5 docs' },
-  { title: 'Funding & Investment', desc: 'SISFS, FDI policy, seed funds', color: 'from-purple-500/20 to-violet-500/20', border: 'border-purple-500/20', icon: '💸', count: '9 docs' },
-  { title: 'IP & Contracts', desc: 'Trademarks, patents, SIPP scheme', color: 'from-pink-500/20 to-rose-500/20', border: 'border-pink-500/20', icon: '⚖️', count: '6 docs' },
-  { title: 'Labour & Compliance', desc: 'POSH, EPFO, self-certification', color: 'from-orange-500/20 to-red-500/20', border: 'border-orange-500/20', icon: '👥', count: '5 docs' },
+  { title: 'Registration & Incorporation', desc: 'SPICe+, LLP, OPC, Pvt Ltd', icon: '🏛️', count: '15' },
+  { title: 'Taxation & GST', desc: 'GST registration, tax incentives, 80-IAC', icon: '📋', count: '5' },
+  { title: 'MSME / Udyam', desc: 'Classification, benefits, registration', icon: '🏭', count: '5' },
+  { title: 'Funding & Investment', desc: 'SISFS, FDI policy, seed funds', icon: '💸', count: '9' },
+  { title: 'IP & Contracts', desc: 'Trademarks, patents, SIPP scheme', icon: '⚖️', count: '6' },
+  { title: 'Labour & Compliance', desc: 'POSH, EPFO, self-certification', icon: '👥', count: '5' },
 ];
 
 export default function Dashboard() {
@@ -44,23 +44,23 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
       {/* Welcome Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold text-white">
-          {greeting()}, {user?.full_name?.split(' ')[0] || 'Founder'} 👋
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ fontSize: '28px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '6px' }}>
+          {greeting()}, {user?.full_name?.split(' ')[0] || 'Founder'} <span style={{ display: 'inline-block', animation: 'float 3s ease-in-out infinite' }}>👋</span>
         </h1>
-        <p className="text-gray-400 mt-1">Here's your startup intelligence dashboard.</p>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Here's your startup intelligence dashboard.</p>
       </div>
 
-      {/* Profile Banner (if no profile set) */}
+      {/* Profile Banner */}
       {!loading && !profile && (
-        <div className="mb-6 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6 flex items-center justify-between">
+        <div className="glass-accent" style={{ marginBottom: '24px', padding: '24px 28px', borderRadius: 'var(--radius-xl)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <h3 className="text-white font-semibold mb-1">Set up your Startup Profile</h3>
-            <p className="text-gray-400 text-sm">Enable context-aware advice tailored to your industry, stage, and location.</p>
+            <h3 style={{ fontWeight: 700, fontSize: '15px', marginBottom: '4px' }}>Set up your Startup Profile</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Enable context-aware advice tailored to your industry, stage, and location.</p>
           </div>
-          <Link to="/dashboard/profile" className="flex-shrink-0 ml-4 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-indigo-500/20">
+          <Link to="/dashboard/profile" className="btn-primary" style={{ padding: '10px 24px', fontSize: '13px', flexShrink: 0 }}>
             Complete Profile →
           </Link>
         </div>
@@ -68,56 +68,55 @@ export default function Dashboard() {
 
       {/* Active Profile Card */}
       {profile && (
-        <div className="mb-6 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+        <div className="glass-accent" style={{ marginBottom: '24px', padding: '24px 28px', borderRadius: 'var(--radius-xl)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-md)', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#09090b', fontWeight: 700, fontSize: '18px', flexShrink: 0 }}>
               {profile.name?.[0] || '🚀'}
             </div>
             <div>
-              <div className="flex items-center space-x-2">
-                <h3 className="text-white font-semibold">{profile.name}</h3>
-                <div className="flex items-center space-x-1 bg-green-500/15 border border-green-500/20 rounded-full px-2 py-0.5">
-                  <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-green-400 text-xs font-medium">Context Active</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <h3 style={{ fontWeight: 700, fontSize: '15px' }}>{profile.name}</h3>
+                <div className="badge badge-success" style={{ padding: '3px 10px', fontSize: '10px' }}>
+                  <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent3)', animation: 'pulse-glow 2s infinite' }}></div>
+                  Context Active
                 </div>
               </div>
-              <p className="text-gray-400 text-sm mt-0.5">{profile.industry} · {profile.stage} · {profile.location}</p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '12px', marginTop: '2px' }}>{profile.industry} · {profile.stage} · {profile.location}</p>
             </div>
           </div>
-          <Link to="/dashboard/profile" className="flex-shrink-0 ml-4 text-indigo-400 hover:text-indigo-300 text-sm transition-colors">
-            Edit →
-          </Link>
+          <Link to="/dashboard/profile" style={{ color: 'var(--accent-light)', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}>Edit →</Link>
         </div>
       )}
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: '32px' }}>
         {[
-          { label: 'Knowledge Docs', value: '35+', icon: '📚', color: 'text-blue-400' },
-          { label: 'Topic Areas', value: '8', icon: '🗂️', color: 'text-purple-400' },
-          { label: 'AI Models', value: '2', icon: '🤖', color: 'text-indigo-400' },
-          { label: 'Govt. Sources', value: '50+', icon: '🏛️', color: 'text-green-400' },
+          { label: 'Knowledge Docs', value: '35+', icon: '📚', color: 'var(--accent-light)' },
+          { label: 'Topic Areas', value: '8', icon: '🗂️', color: '#f43f5e' },
+          { label: 'AI Models', value: '2', icon: '🤖', color: '#14b8a6' },
+          { label: 'Govt. Sources', value: '50+', icon: '🏛️', color: '#a78bfa' },
         ].map(stat => (
-          <div key={stat.label} className="bg-[#0f0f1a] border border-white/5 rounded-2xl p-5">
-            <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
-            <div className="text-gray-400 text-sm mt-1">{stat.label}</div>
+          <div key={stat.label} className="card" style={{ padding: '20px', cursor: 'default' }}>
+            <div className="font-mono" style={{ fontSize: '24px', fontWeight: 700, color: stat.color }}>{stat.value}</div>
+            <div style={{ color: 'var(--text-secondary)', fontSize: '12px', marginTop: '6px', fontWeight: 500 }}>{stat.label}</div>
           </div>
         ))}
       </div>
 
       {/* Quick Actions */}
-      <div className="mb-8">
-        <h2 className="text-lg font-semibold text-white mb-4">Quick Questions</h2>
+      <div style={{ marginBottom: '32px' }}>
+        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', letterSpacing: '-0.01em' }}>Quick Questions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {QUICK_ACTIONS.map(q => (
             <Link
               key={q.label}
               to={`/dashboard/chat?q=${encodeURIComponent(q.label)}`}
-              className="flex items-center space-x-3 bg-[#0f0f1a] border border-white/5 hover:border-indigo-500/30 hover:bg-indigo-500/5 rounded-xl p-4 transition-all group"
+              className="card"
+              style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '16px 20px', textDecoration: 'none', cursor: 'pointer' }}
             >
-              <span className="text-xl">{q.icon}</span>
-              <span className="text-gray-300 group-hover:text-white text-sm transition-colors flex-1">{q.label}</span>
-              <svg className="w-4 h-4 text-gray-600 group-hover:text-indigo-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
+              <span style={{ fontSize: '20px' }}>{q.icon}</span>
+              <span style={{ flex: 1, color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 }}>{q.label}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--text-muted)', flexShrink: 0 }}><path d="M9 18l6-6-6-6"/></svg>
             </Link>
           ))}
         </div>
@@ -125,20 +124,21 @@ export default function Dashboard() {
 
       {/* Knowledge Areas */}
       <div>
-        <h2 className="text-lg font-semibold text-white mb-4">Knowledge Areas</h2>
+        <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', letterSpacing: '-0.01em' }}>Knowledge Areas</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {TOPIC_CARDS.map(card => (
             <Link
               key={card.title}
               to="/dashboard/knowledge"
-              className={`bg-gradient-to-br ${card.color} border ${card.border} rounded-2xl p-5 hover:scale-[1.02] transition-all group`}
+              className="card"
+              style={{ padding: '24px', textDecoration: 'none', cursor: 'pointer' }}
             >
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">{card.icon}</span>
-                <span className="text-xs text-gray-500 bg-black/20 px-2 py-1 rounded-full">{card.count}</span>
+              <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', marginBottom: '14px' }}>
+                <span style={{ fontSize: '28px' }}>{card.icon}</span>
+                <span className="font-mono" style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 600, background: 'var(--accent-dim)', padding: '4px 10px', borderRadius: 'var(--radius-full)', border: '1px solid var(--accent-border)' }}>{card.count} docs</span>
               </div>
-              <h3 className="text-white font-semibold text-sm mb-1">{card.title}</h3>
-              <p className="text-gray-400 text-xs">{card.desc}</p>
+              <h3 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '4px' }}>{card.title}</h3>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{card.desc}</p>
             </Link>
           ))}
         </div>

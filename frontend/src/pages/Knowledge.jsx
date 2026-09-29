@@ -1,8 +1,6 @@
 const KNOWLEDGE_BASE = {
   "Registration & Incorporation": {
     icon: '🏛️',
-    color: 'from-blue-500/10 to-indigo-500/10',
-    border: 'border-blue-500/20',
     docs: [
       { name: "Revised Guidelines for Recognition of Startups", source: "Startup India / DPIIT" },
       { name: "FAQs on SPICe+ and Linked Filings", source: "Ministry of Corporate Affairs" },
@@ -14,8 +12,6 @@ const KNOWLEDGE_BASE = {
   },
   "Taxation & GST": {
     icon: '📊',
-    color: 'from-green-500/10 to-emerald-500/10',
-    border: 'border-green-500/20',
     docs: [
       { name: "FAQs on GST", source: "CBIC" },
       { name: "New FAQs on GST (Second Edition)", source: "CBIC" },
@@ -25,8 +21,6 @@ const KNOWLEDGE_BASE = {
   },
   "MSME / Udyam": {
     icon: '🏭',
-    color: 'from-yellow-500/10 to-amber-500/10',
-    border: 'border-yellow-500/20',
     docs: [
       { name: "Udyam Registration - Gazette Notification", source: "Ministry of MSME" },
       { name: "Clarification on EM Part-II / UAM and Udyam", source: "Ministry of MSME" },
@@ -35,8 +29,6 @@ const KNOWLEDGE_BASE = {
   },
   "Funding & Investment": {
     icon: '💰',
-    color: 'from-purple-500/10 to-violet-500/10',
-    border: 'border-purple-500/20',
     docs: [
       { name: "Startup India Seed Fund Scheme Guidelines", source: "DPIIT" },
       { name: "Consolidated FDI Policy Circular, 2020", source: "DPIIT" },
@@ -46,8 +38,6 @@ const KNOWLEDGE_BASE = {
   },
   "IP & Contracts": {
     icon: '⚖️',
-    color: 'from-pink-500/10 to-rose-500/10',
-    border: 'border-pink-500/20',
     docs: [
       { name: "Founder Employment Agreement Template", source: "Startup India" },
       { name: "Non-Disclosure Agreement Template", source: "Startup India" },
@@ -57,8 +47,6 @@ const KNOWLEDGE_BASE = {
   },
   "Labour & HR Compliance": {
     icon: '👥',
-    color: 'from-orange-500/10 to-red-500/10',
-    border: 'border-orange-500/20',
     docs: [
       { name: "Self-Certification for Startups (9 Labour Laws)", source: "V.V. Giri National Labour Institute" },
       { name: "POSH Act Handbook", source: "Ministry of Women & Child Development" },
@@ -66,8 +54,6 @@ const KNOWLEDGE_BASE = {
   },
   "Data Protection": {
     icon: '🔐',
-    color: 'from-cyan-500/10 to-teal-500/10',
-    border: 'border-cyan-500/20',
     docs: [
       { name: "Digital Personal Data Protection Act, 2023", source: "MeitY" },
       { name: "Consumer Protection (E-Commerce) Rules, 2020", source: "Ministry of Consumer Affairs" },
@@ -75,8 +61,6 @@ const KNOWLEDGE_BASE = {
   },
   "Public Procurement (GeM)": {
     icon: '🛒',
-    color: 'from-indigo-500/10 to-sky-500/10',
-    border: 'border-indigo-500/20',
     docs: [
       { name: "Startup Guide to Public Procurement (GeM Runway)", source: "Startup India / DPIIT" },
       { name: "GeM Webinar - Public Procurement Policy for MSEs", source: "GeM SPV" },
@@ -90,25 +74,25 @@ export default function KnowledgePage() {
   const totalCats = Object.keys(KNOWLEDGE_BASE).length;
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Knowledge Base</h1>
-        <p className="text-gray-400 mt-1 text-sm">
-          StartupSage is powered by <span className="text-white font-medium">{totalDocs}+ documents</span> across <span className="text-white font-medium">{totalCats} domains</span> from official government portals.
+    <div style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '6px' }}>Knowledge Base</h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
+          StartupSage is powered by <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{totalDocs}+ documents</span> across <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{totalCats} domains</span> from official government portals.
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4" style={{ marginBottom: '32px' }}>
         {[
-          { label: 'Total Documents', value: `${totalDocs}+` },
-          { label: 'Knowledge Domains', value: totalCats },
-          { label: 'Govt. Ministries', value: '10+' },
-          { label: 'Embedding Model', value: 'all-MiniLM' },
+          { label: 'Total Documents', value: `${totalDocs}+`, color: 'var(--accent-light)' },
+          { label: 'Knowledge Domains', value: totalCats, color: '#f43f5e' },
+          { label: 'Govt. Ministries', value: '10+', color: '#14b8a6' },
+          { label: 'Embedding Model', value: 'MiniLM', color: '#a78bfa' },
         ].map(s => (
-          <div key={s.label} className="bg-[#0f0f1a] border border-white/5 rounded-2xl p-5">
-            <div className="text-2xl font-bold text-white">{s.value}</div>
-            <div className="text-gray-500 text-xs mt-1">{s.label}</div>
+          <div key={s.label} className="card" style={{ padding: '20px', cursor: 'default' }}>
+            <div className="font-mono" style={{ fontSize: '22px', fontWeight: 700, color: s.color }}>{s.value}</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '6px', fontWeight: 500 }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -116,21 +100,21 @@ export default function KnowledgePage() {
       {/* Categories Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {Object.entries(KNOWLEDGE_BASE).map(([category, data]) => (
-          <div key={category} className={`bg-gradient-to-br ${data.color} border ${data.border} rounded-2xl p-6`}>
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="text-2xl">{data.icon}</div>
+          <div key={category} className="card" style={{ padding: '24px', cursor: 'default' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px' }}>
+              <div style={{ fontSize: '24px' }}>{data.icon}</div>
               <div>
-                <h3 className="text-white font-semibold">{category}</h3>
-                <p className="text-gray-500 text-xs">{data.docs.length} documents</p>
+                <h3 style={{ fontWeight: 700, fontSize: '15px', letterSpacing: '-0.01em' }}>{category}</h3>
+                <p className="font-mono" style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 600 }}>{data.docs.length} documents</p>
               </div>
             </div>
-            <ul className="space-y-2.5">
+            <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px', listStyle: 'none', padding: 0 }}>
               {data.docs.map((doc, i) => (
-                <li key={i} className="flex items-start space-x-2.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0 mt-1.5"></div>
+                <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                  <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent)', flexShrink: 0, marginTop: '6px' }}></div>
                   <div>
-                    <p className="text-gray-200 text-xs font-medium leading-snug">{doc.name}</p>
-                    <p className="text-gray-500 text-xs mt-0.5">{doc.source}</p>
+                    <p style={{ fontSize: '12px', fontWeight: 600, lineHeight: 1.4, color: 'var(--text-primary)' }}>{doc.name}</p>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{doc.source}</p>
                   </div>
                 </li>
               ))}
@@ -139,7 +123,7 @@ export default function KnowledgePage() {
         ))}
       </div>
 
-      <div className="mt-8 bg-amber-500/5 border border-amber-500/20 rounded-2xl p-5 text-sm text-amber-400">
+      <div className="glass-accent" style={{ marginTop: '32px', padding: '20px 24px', borderRadius: 'var(--radius-xl)', fontSize: '13px', color: 'var(--accent-light)' }}>
         <strong>Disclaimer:</strong> This knowledge base is for informational purposes only. All sources are from official government portals. Always verify critical legal or financial decisions with a qualified professional.
       </div>
     </div>

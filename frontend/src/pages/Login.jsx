@@ -27,112 +27,105 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex">
-      {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-[#0f0f1a] to-[#0a0a0f] p-12 flex-col justify-between">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl"></div>
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+    <div className="min-h-screen flex" style={{ background: 'var(--bg-primary)' }}>
+      {/* Left Panel */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col justify-between" style={{ background: 'var(--bg-secondary)', padding: '48px' }}>
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="animate-float" style={{ position: 'absolute', top: '20%', left: '25%', width: '350px', height: '350px', background: 'radial-gradient(circle, rgba(245,158,11,0.08), transparent 70%)', borderRadius: '50%' }}></div>
+          <div className="animate-float" style={{ position: 'absolute', bottom: '20%', right: '20%', width: '250px', height: '250px', background: 'radial-gradient(circle, rgba(244,63,94,0.06), transparent 70%)', borderRadius: '50%', animationDelay: '3s' }}></div>
+          <div className="grid-bg absolute inset-0 opacity-30"></div>
         </div>
 
         <div className="relative z-10">
-          <Link to="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25">
-              <span className="text-white font-bold text-xl">S</span>
+          <Link to="/" className="flex items-center gap-2.5 no-underline">
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ color: '#09090b', fontWeight: 800, fontSize: '16px' }}>S</span>
             </div>
-            <span className="text-white font-bold text-xl">StartupSage</span>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '18px' }}>StartupSage</span>
           </Link>
         </div>
 
-        <div className="relative z-10 space-y-6">
-          <div className="inline-flex items-center space-x-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-2">
-            <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
-            <span className="text-indigo-300 text-sm font-medium">Powered by Agentic AI</span>
+        <div className="relative z-10" style={{ maxWidth: '440px' }}>
+          <div className="badge badge-accent" style={{ marginBottom: '20px' }}>
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)' }}></div>
+            Powered by Agentic AI
           </div>
-          <h2 className="text-4xl font-bold text-white leading-tight">
+          <h2 style={{ fontSize: '38px', fontWeight: 800, lineHeight: 1.15, letterSpacing: '-0.03em', marginBottom: '16px' }}>
             Your AI-powered<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">startup advisor</span><br />
+            <span className="text-gradient-gold">startup advisor</span><br />
             for India
           </h2>
-          <p className="text-gray-400 text-lg leading-relaxed max-w-md">
-            Navigate registration, taxation, MSME, and funding with confidence — grounded in official government sources.
+          <p style={{ color: 'var(--text-secondary)', fontSize: '15px', lineHeight: 1.7 }}>
+            Navigate registration, taxation, MSME, and funding — grounded in official government sources.
           </p>
 
-          <div className="grid grid-cols-3 gap-4 pt-4">
-            {[['50+', 'Govt. Sources'], ['3', 'RAG Modes'], ['8', 'Topic Areas']].map(([num, label]) => (
-              <div key={label} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-white">{num}</div>
-                <div className="text-xs text-gray-400 mt-1">{label}</div>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
+            {[['50+', 'Sources'], ['3', 'RAG Modes'], ['8', 'Topics']].map(([num, label]) => (
+              <div key={label} className="card" style={{ padding: '16px 20px', textAlign: 'center', flex: 1, cursor: 'default' }}>
+                <div className="font-mono" style={{ fontSize: '22px', fontWeight: 700, color: 'var(--accent-light)' }}>{num}</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', fontWeight: 500 }}>{label}</div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="relative z-10 flex space-x-4">
+        <div className="relative z-10 flex gap-3">
           {['DPIIT', 'MCA', 'CBIC', 'MeitY'].map(org => (
-            <div key={org} className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs text-gray-400">
-              {org}
-            </div>
+            <div key={org} style={{ padding: '6px 14px', background: 'var(--bg-tertiary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>{org}</div>
           ))}
         </div>
       </div>
 
-      {/* Right Panel - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          <div className="lg:hidden flex items-center space-x-3 mb-10">
-            <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">S</span>
+      {/* Right Panel */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center" style={{ padding: '40px' }}>
+        <div style={{ width: '100%', maxWidth: '420px' }}>
+          <div className="lg:hidden flex items-center gap-2.5" style={{ marginBottom: '40px' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ color: '#09090b', fontWeight: 800, fontSize: '14px' }}>S</span>
             </div>
-            <span className="text-white font-bold text-xl">StartupSage</span>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '18px' }}>StartupSage</span>
           </div>
 
-          <div className="space-y-2 mb-8">
-            <h1 className="text-3xl font-bold text-white">Welcome back</h1>
-            <p className="text-gray-400">Sign in to your account to continue</p>
+          <div style={{ marginBottom: '36px' }}>
+            <h1 style={{ fontSize: '28px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '8px' }}>Welcome back</h1>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Sign in to your account to continue</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Email address</label>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Email address</label>
               <input
                 type="email" required
                 value={form.email}
                 onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
                 placeholder="you@startup.com"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="input-field"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Password</label>
               <input
                 type="password" required
                 value={form.password}
                 onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
                 placeholder="••••••••"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="input-field"
               />
             </div>
 
-            <button
-              type="submit" disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-            >
+            <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', padding: '14px', fontSize: '14px', marginTop: '4px', opacity: loading ? 0.6 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
               {loading ? (
-                <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div><span>Signing in...</span></>
-              ) : <span>Sign in</span>}
+                <><div style={{ width: '18px', height: '18px', border: '2px solid rgba(0,0,0,0.2)', borderTopColor: '#09090b', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }}></div> Signing in...</>
+              ) : 'Sign in'}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-gray-400 text-sm">
+          <p style={{ marginTop: '24px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '13px' }}>
             Don't have an account?{' '}
-            <Link to="/register" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
-              Create one for free
-            </Link>
+            <Link to="/register" style={{ color: 'var(--accent-light)', fontWeight: 600, textDecoration: 'none' }}>Create one for free</Link>
           </p>
 
-          <div className="mt-8 pt-6 border-t border-white/5 text-center text-xs text-gray-600">
+          <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--border)', textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)' }}>
             By signing in, you agree to our Terms of Service and Privacy Policy.
           </div>
         </div>

@@ -44,83 +44,81 @@ export default function ProfilePage() {
     }
   };
 
-  const Field = ({ label, children }) => (
-    <div className="group">
-      <label className="block text-sm font-medium text-gray-400 mb-2 group-focus-within:text-indigo-400 transition-colors">{label}</label>
-      {children}
-    </div>
-  );
-
-  const inputCls = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all text-sm";
-
   return (
-    <div className="p-6 lg:p-8 max-w-2xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Startup Profile</h1>
-        <p className="text-gray-400 mt-1 text-sm">This context powers personalized advice in the AI Advisor.</p>
+    <div style={{ padding: '32px', maxWidth: '680px', margin: '0 auto' }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '6px' }}>Startup Profile</h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>This context powers personalized advice in the AI Advisor.</p>
       </div>
 
-      <div className="bg-[#0f0f1a] border border-white/8 rounded-2xl p-6 lg:p-8">
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <Field label="Startup Name">
-            <input type="text" required value={profile.name} onChange={e => setProfile(p => ({...p, name: e.target.value}))} placeholder="e.g., Acme Technologies" className={inputCls} />
-          </Field>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Field label="Industry / Sector">
-              <input type="text" required value={profile.industry} onChange={e => setProfile(p => ({...p, industry: e.target.value}))} placeholder="e.g., FinTech, SaaS" className={inputCls} />
-            </Field>
-            <Field label="State / City">
-              <input type="text" required value={profile.location} onChange={e => setProfile(p => ({...p, location: e.target.value}))} placeholder="e.g., Bengaluru, Karnataka" className={inputCls} />
-            </Field>
+      <div className="card" style={{ padding: '32px', cursor: 'default' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* Startup Name */}
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Startup Name</label>
+            <input type="text" required value={profile.name} onChange={e => setProfile(p => ({...p, name: e.target.value}))} placeholder="e.g., Acme Technologies" className="input-field" />
           </div>
 
-          <Field label="Current Stage">
+          {/* Industry & Location */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Industry / Sector</label>
+              <input type="text" required value={profile.industry} onChange={e => setProfile(p => ({...p, industry: e.target.value}))} placeholder="e.g., FinTech, SaaS" className="input-field" />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>State / City</label>
+              <input type="text" required value={profile.location} onChange={e => setProfile(p => ({...p, location: e.target.value}))} placeholder="e.g., Bengaluru, Karnataka" className="input-field" />
+            </div>
+          </div>
+
+          {/* Stage */}
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '10px' }}>Current Stage</label>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
               {STAGES.map(s => (
-                <button
-                  key={s} type="button"
-                  onClick={() => setProfile(p => ({...p, stage: s}))}
-                  className={`px-3 py-3 rounded-xl border text-xs font-medium text-left transition-all ${
-                    profile.stage === s
-                      ? 'border-indigo-500/60 bg-indigo-500/15 text-indigo-300'
-                      : 'border-white/10 bg-white/3 text-gray-400 hover:border-white/20 hover:text-gray-200'
-                  }`}
+                <button key={s} type="button" onClick={() => setProfile(p => ({...p, stage: s}))}
+                  style={{
+                    padding: '12px 14px', borderRadius: 'var(--radius-md)', fontSize: '12px', fontWeight: 600, textAlign: 'left', cursor: 'pointer', transition: 'all 0.2s',
+                    ...(profile.stage === s ? {
+                      background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', color: 'var(--accent-light)',
+                    } : {
+                      background: 'var(--bg-tertiary)', border: '1px solid var(--border)', color: 'var(--text-secondary)',
+                    }),
+                  }}
+                  onMouseOver={e => { if (profile.stage !== s) { e.currentTarget.style.borderColor = 'var(--border-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}}
+                  onMouseOut={e => { if (profile.stage !== s) { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}}
                 >
                   {s}
                 </button>
               ))}
             </div>
-          </Field>
+          </div>
 
-          <Field label="Additional Context (optional)">
+          {/* Notes */}
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Additional Context <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(optional)</span></label>
             <textarea
               rows={4} value={profile.notes}
               onChange={e => setProfile(p => ({...p, notes: e.target.value}))}
               placeholder="e.g., 'Bootstrapped SaaS startup looking to register as MSME and apply for SISFS seed funding.'"
-              className={`${inputCls} resize-none`}
+              className="input-field" style={{ resize: 'none' }}
             />
-          </Field>
+          </div>
 
-          <button
-            type="submit" disabled={saving}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-4 rounded-xl transition-all shadow-lg shadow-indigo-500/20 disabled:opacity-50 flex items-center justify-center space-x-2"
-          >
+          {/* Submit */}
+          <button type="submit" disabled={saving} className="btn-primary" style={{ width: '100%', padding: '16px', fontSize: '14px', marginTop: '4px', opacity: saving ? 0.6 : 1, cursor: saving ? 'not-allowed' : 'pointer' }}>
             {saving ? (
-              <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div><span>Saving...</span></>
-            ) : saved ? (
-              <><span>✓</span><span>Profile Saved!</span></>
-            ) : (
-              <span>Save Profile & Activate Context</span>
-            )}
+              <><div style={{ width: '18px', height: '18px', border: '2px solid rgba(0,0,0,0.2)', borderTopColor: '#09090b', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }}></div> Saving...</>
+            ) : saved ? '✓ Profile Saved!' : 'Save Profile & Activate Context'}
           </button>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </form>
       </div>
 
       {localStorage.getItem('startup_profile_id') && (
-        <div className="mt-4 flex items-center space-x-2 text-sm text-green-400 bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-3">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-          <span>Profile is active. AI Advisor will use this context for all responses.</span>
+        <div className="badge badge-success" style={{ marginTop: '16px', padding: '12px 18px', fontSize: '13px', width: '100%', justifyContent: 'flex-start' }}>
+          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent3)', animation: 'pulse-glow 2s infinite' }}></div>
+          Profile is active. AI Advisor will use this context for all responses.
         </div>
       )}
     </div>

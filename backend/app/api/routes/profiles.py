@@ -13,14 +13,23 @@ class StartupProfile(BaseModel):
     location: str
     notes: Optional[str] = ""
 
+from app.api.routes.auth import get_current_user
+from fastapi import Depends
+
 @router.post("/")
-async def save_profile(profile: StartupProfile):
+async def save_profile(profile: StartupProfile, current_user: dict = Depends(get_current_user)):
     profile_id = str(uuid.uuid4())
     doc = profile.model_dump()
     doc["_id"] = profile_id
+    doc["user_id"] = current_user["_id"]
     
     if db.db is not None:
         await db.db.startup_profiles.insert_one(doc)
+        # Update user with their active profile ID
+        await db.db.users.update_one(
+            {"_id": current_user["_id"]}, 
+            {"$set": {"startup_profile_id": profile_id}}
+        )
         return {"profile_id": profile_id, "message": "Profile saved successfully"}
     
     raise HTTPException(status_code=500, detail="Database not connected")

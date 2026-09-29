@@ -1,187 +1,212 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 const FEATURES = [
   {
-    icon: '🎯',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+    ),
+    title: 'Multilingual Intelligence',
+    desc: 'Ask in Hindi, Marathi, or any language — our AI translates, retrieves English docs, and responds in your language.',
+    tag: 'New',
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    ),
     title: 'Context-Aware Advice',
-    desc: 'Create your startup profile and get advice tailored to your industry, stage, and location — not generic answers.',
-    gradient: 'from-blue-500/10 to-indigo-500/10',
-    border: 'border-blue-500/20',
+    desc: 'Your startup profile shapes every answer. Industry, stage, location — the AI tailors advice specifically for you.',
   },
   {
-    icon: '🔍',
-    title: 'Hybrid RAG Retrieval',
-    desc: 'Combines dense semantic search with keyword-based BM25 retrieval for the most relevant document matches.',
-    gradient: 'from-purple-500/10 to-violet-500/10',
-    border: 'border-purple-500/20',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    ),
+    title: 'Hybrid RAG Engine',
+    desc: 'Dense semantic + BM25 sparse search, fused with Reciprocal Rank Fusion and cross-encoder reranking.',
   },
   {
-    icon: '🤖',
-    title: 'Agentic AI Workflow',
-    desc: 'Our LangGraph-powered agent classifies intent, rewrites queries, retrieves, generates, and self-verifies — in one loop.',
-    gradient: 'from-indigo-500/10 to-cyan-500/10',
-    border: 'border-indigo-500/20',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4"/></svg>
+    ),
+    title: 'Agentic Workflow',
+    desc: 'A LangGraph agent that classifies, rewrites, retrieves, generates, and self-verifies — autonomously.',
   },
   {
-    icon: '📄',
-    title: 'Grounded Answers',
-    desc: 'Every answer cites its sources from official DPIIT, MCA, CBIC, MeitY documents. No hallucinations.',
-    gradient: 'from-green-500/10 to-emerald-500/10',
-    border: 'border-green-500/20',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    ),
+    title: 'Grounded & Cited',
+    desc: 'Every answer backed by official DPIIT, MCA, CBIC sources. No hallucinations — just verified facts with citations.',
   },
   {
-    icon: '⚡',
-    title: 'Gemini + Groq',
-    desc: 'Powered by Google Gemini Flash as primary model with Groq as automatic fallback for zero downtime.',
-    gradient: 'from-yellow-500/10 to-amber-500/10',
-    border: 'border-yellow-500/20',
-  },
-  {
-    icon: '🛡️',
-    title: 'Legal Disclaimer System',
-    desc: 'Automatically appends legal disclaimers on high-risk topics like taxation and contracts.',
-    gradient: 'from-rose-500/10 to-pink-500/10',
-    border: 'border-rose-500/20',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    ),
+    title: 'Dual LLM Fallback',
+    desc: 'Lightning-fast Groq as primary, Google Gemini as fallback. Zero-downtime architecture for instant responses.',
   },
 ];
 
 const CATEGORIES = [
-  { title: 'Registration & Incorporation', count: '15 docs', icon: '🏛️' },
-  { title: 'Taxation & GST', count: '5 docs', icon: '📊' },
-  { title: 'MSME / Udyam', count: '5 docs', icon: '🏭' },
-  { title: 'Funding & Investment', count: '9 docs', icon: '💰' },
-  { title: 'IP & Contracts', count: '6 docs', icon: '⚖️' },
-  { title: 'Labour & HR', count: '5 docs', icon: '👥' },
-  { title: 'Data Protection', count: '2 docs', icon: '🔐' },
-  { title: 'Public Procurement', count: '6 docs', icon: '🛒' },
+  { title: 'Registration', count: '15', icon: '🏛️' },
+  { title: 'Taxation & GST', count: '5', icon: '📊' },
+  { title: 'MSME / Udyam', count: '5', icon: '🏭' },
+  { title: 'Funding', count: '9', icon: '💰' },
+  { title: 'IP & Contracts', count: '6', icon: '⚖️' },
+  { title: 'Labour & HR', count: '5', icon: '👥' },
+  { title: 'Data Protection', count: '2', icon: '🔐' },
+  { title: 'Procurement', count: '6', icon: '🛒' },
 ];
+
+const STEPS = [
+  { num: '01', title: 'Create Your Profile', desc: 'Tell us your startup\'s stage, industry, and location to get personalized advice.' },
+  { num: '02', title: 'Ask Anything', desc: 'Type your question in any language — about registration, tax, funding, compliance.' },
+  { num: '03', title: 'AI Retrieves & Verifies', desc: 'Our Agentic RAG pipeline searches 35+ official documents, verifies groundedness, and cites sources.' },
+  { num: '04', title: 'Get Actionable Answers', desc: 'Receive precise, cited, legally-disclaimed answers tailored to your startup\'s context.' },
+];
+
+function AnimatedCounter({ target }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    let start = 0;
+    const end = parseInt(target);
+    if (isNaN(end)) return;
+    const duration = 1500;
+    const step = Math.max(1, Math.floor(end / (duration / 30)));
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= end) { setCount(end); clearInterval(timer); }
+      else setCount(start);
+    }, 30);
+    return () => clearInterval(timer);
+  }, [target]);
+  return <span>{count}{target.includes('+') ? '+' : ''}</span>;
+}
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
-      {/* Header */}
-      <header className="border-b border-white/5 backdrop-blur-lg bg-[#0a0a0f]/80 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-              <span className="text-white font-bold text-lg">S</span>
+    <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
+      {/* ===== HEADER ===== */}
+      <header className="glass fixed top-0 left-0 right-0 z-50" style={{ borderBottom: '1px solid var(--border)' }}>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
+          <Link to="/" className="flex items-center gap-2.5 no-underline">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center animate-pulse-glow" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
+              <span style={{ color: '#09090b', fontWeight: 800, fontSize: '14px' }}>S</span>
             </div>
-            <span className="font-bold text-lg">StartupSage</span>
-          </div>
-          <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-gray-400 hover:text-white text-sm transition-colors">Features</a>
-            <a href="#knowledge" className="text-gray-400 hover:text-white text-sm transition-colors">Knowledge Base</a>
-            <a href="#how-it-works" className="text-gray-400 hover:text-white text-sm transition-colors">How it works</a>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '16px', letterSpacing: '-0.02em' }}>StartupSage</span>
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-8">
+            {['Features', 'How it works', 'Knowledge'].map(item => (
+              <a key={item} href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500, textDecoration: 'none', transition: 'color 0.2s' }}
+                onMouseOver={e => e.target.style.color = 'var(--text-primary)'}
+                onMouseOut={e => e.target.style.color = 'var(--text-secondary)'}
+              >{item}</a>
+            ))}
           </nav>
-          <div className="flex items-center space-x-3">
-            <Link to="/login" className="text-gray-400 hover:text-white text-sm transition-colors px-4 py-2">
-              Sign in
-            </Link>
-            <Link to="/register" className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-500/20">
-              Get started free
-            </Link>
+
+          <div className="flex items-center gap-3">
+            <Link to="/login" className="btn-secondary" style={{ padding: '8px 18px', fontSize: '13px' }}>Sign in</Link>
+            <Link to="/register" className="btn-primary" style={{ padding: '8px 22px', fontSize: '13px' }}>Get started</Link>
           </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden py-24 lg:py-40">
-        {/* Background effects */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-3xl"></div>
-          <div className="absolute top-20 left-1/4 w-72 h-72 bg-purple-600/8 rounded-full blur-3xl"></div>
-          <div className="absolute top-20 right-1/4 w-72 h-72 bg-blue-600/8 rounded-full blur-3xl"></div>
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:60px_60px]"></div>
+      {/* ===== HERO ===== */}
+      <section className="relative overflow-hidden" style={{ paddingTop: '140px', paddingBottom: '100px' }}>
+        {/* Background orbs */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute animate-float" style={{ top: '10%', left: '20%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(245,158,11,0.08), transparent 70%)', borderRadius: '50%' }}></div>
+          <div className="absolute animate-float" style={{ top: '30%', right: '15%', width: '350px', height: '350px', background: 'radial-gradient(circle, rgba(244,63,94,0.06), transparent 70%)', borderRadius: '50%', animationDelay: '2s' }}></div>
+          <div className="absolute animate-float" style={{ bottom: '10%', left: '40%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(20,184,166,0.05), transparent 70%)', borderRadius: '50%', animationDelay: '4s' }}></div>
+          <div className="grid-bg absolute inset-0 opacity-40"></div>
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 text-center">
+        <div className="relative max-w-5xl mx-auto px-5 sm:px-8" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           {/* Badge */}
-          <div className="inline-flex items-center space-x-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-2 mb-8">
-            <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
-            <span className="text-indigo-300 text-sm font-medium">Powered by Agentic RAG + LangGraph</span>
+          <div className="badge badge-accent animate-fade-in-up" style={{ marginBottom: '32px', animationDelay: '0ms' }}>
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)', animation: 'pulse-glow 2s infinite' }}></div>
+            Agentic RAG · LangGraph · Multilingual
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-bold leading-tight tracking-tight mb-6">
-            Your AI advisor for
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-blue-400">
-              building in India
-            </span>
+          <h1 className="animate-fade-in-up" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 800, lineHeight: 1.08, letterSpacing: '-0.04em', marginBottom: '24px', animationDelay: '100ms' }}>
+            Your AI co-pilot for<br />
+            <span className="text-gradient-gold">building in India</span>
           </h1>
 
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Navigate startup registration, taxation, MSME, and funding with confidence.
+          <p className="animate-fade-in-up" style={{ fontSize: '18px', lineHeight: 1.7, color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto 40px', animationDelay: '200ms' }}>
+            Navigate startup registration, taxation, MSME, and funding with confidence. 
             Grounded answers from 50+ official government sources, personalized to your startup.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Link
-              to="/register"
-              className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold px-8 py-4 rounded-2xl transition-all shadow-xl shadow-indigo-500/25 text-lg"
-            >
-              Start for free →
+          <div className="animate-fade-in-up" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '16px', marginBottom: '64px', animationDelay: '300ms' }}>
+            <Link to="/register" className="btn-primary" style={{ padding: '16px 36px', fontSize: '15px', borderRadius: 'var(--radius-xl)' }}>
+              Start for free
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
-            <Link
-              to="/login"
-              className="w-full sm:w-auto bg-white/5 border border-white/10 hover:bg-white/10 text-white font-semibold px-8 py-4 rounded-2xl transition-all text-lg"
-            >
+            <Link to="/login" className="btn-secondary" style={{ padding: '16px 36px', fontSize: '15px', borderRadius: 'var(--radius-xl)' }}>
               Sign in
             </Link>
           </div>
 
-          {/* Social proof */}
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-500">
-            {['DPIIT', 'Ministry of Corporate Affairs', 'CBIC', 'MeitY', 'IP India'].map(org => (
-              <div key={org} className="flex items-center space-x-2">
-                <div className="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
-                <span>{org}</span>
+          {/* Stats */}
+          <div className="animate-fade-in-up" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '48px', animationDelay: '400ms' }}>
+            {[['50', 'Govt. Sources'], ['35', 'Documents Ingested'], ['8', 'Topic Areas'], ['∞', 'Languages']].map(([num, label]) => (
+              <div key={label} className="text-center">
+                <div className="font-mono" style={{ fontSize: '28px', fontWeight: 700, color: 'var(--accent-light)' }}>
+                  {num === '∞' ? '∞' : <AnimatedCounter target={num + '+'} />}
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500, marginTop: '4px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="py-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Built for serious founders</h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">Not another chatbot. A sophisticated AI system that thinks, retrieves, verifies, and cites.</p>
+      {/* ===== FEATURES ===== */}
+      <section id="features" style={{ padding: '80px 0', background: 'var(--bg-secondary)' }}>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8">
+          <div className="text-center" style={{ marginBottom: '60px' }}>
+            <div className="badge badge-accent mb-4">Capabilities</div>
+            <h2 style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '12px' }}>Not another chatbot.</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '16px', maxWidth: '500px', margin: '0 auto' }}>A sophisticated AI system that thinks, retrieves, verifies, and cites.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
             {FEATURES.map(f => (
-              <div key={f.title} className={`bg-gradient-to-br ${f.gradient} border ${f.border} rounded-2xl p-6 hover:scale-[1.02] transition-all`}>
-                <div className="text-3xl mb-4">{f.icon}</div>
-                <h3 className="text-white font-semibold text-lg mb-2">{f.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{f.desc}</p>
+              <div key={f.title} className="card" style={{ padding: '28px' }}>
+                <div className="flex items-start justify-between mb-5">
+                  <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-light)' }}>
+                    {f.icon}
+                  </div>
+                  {f.tag && (
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent)', background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', padding: '3px 10px', borderRadius: 'var(--radius-full)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{f.tag}</span>
+                  )}
+                </div>
+                <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', letterSpacing: '-0.01em' }}>{f.title}</h3>
+                <p style={{ fontSize: '13px', lineHeight: 1.7, color: 'var(--text-secondary)' }}>{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="py-24 px-4 bg-[#0f0f1a]">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">How the Agentic Workflow works</h2>
-            <p className="text-gray-400 text-lg">Your query goes through a 6-step intelligent pipeline</p>
+      {/* ===== HOW IT WORKS ===== */}
+      <section id="how-it-works" style={{ padding: '100px 0' }}>
+        <div className="max-w-4xl mx-auto px-5 sm:px-8">
+          <div className="text-center" style={{ marginBottom: '60px' }}>
+            <div className="badge badge-accent mb-4">Process</div>
+            <h2 style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '12px' }}>Four steps to answers.</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '16px' }}>From question to cited, verified answer in seconds.</p>
           </div>
 
-          <div className="space-y-4">
-            {[
-              { step: '01', title: 'Intent Classification', desc: 'The agent classifies your query into a domain (tax, registration, MSME, etc.) and checks if it\'s in scope.' },
-              { step: '02', title: 'Query Rewriting', desc: 'If needed, the agent rewrites your query with better keywords optimized for vector search.' },
-              { step: '03', title: 'Hybrid Retrieval', desc: 'Runs dense semantic search + BM25 sparse search, then fuses them with Reciprocal Rank Fusion.' },
-              { step: '04', title: 'Answer Generation', desc: 'Gemini Flash generates a grounded answer using only the retrieved chunks, with citation markers.' },
-              { step: '05', title: 'Groundedness Verification', desc: 'The agent self-verifies: is this answer actually supported by the retrieved context? If not, it retries.' },
-              { step: '06', title: 'Legal Disclaimer', desc: 'For legal, tax, or contract topics, the agent automatically appends a professional disclaimer.' },
-            ].map((item, i) => (
-              <div key={item.step} className="flex items-start space-x-5 p-6 bg-white/3 border border-white/5 rounded-2xl">
-                <div className="text-indigo-500 font-mono text-sm font-bold flex-shrink-0 mt-0.5">{item.step}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {STEPS.map((item, i) => (
+              <div key={item.num} className="card" style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', padding: '24px 28px' }}>
+                <div className="font-mono flex-shrink-0" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent)', background: 'var(--accent-dim)', width: '40px', height: '40px', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--accent-border)' }}>{item.num}</div>
                 <div>
-                  <h3 className="text-white font-semibold mb-1">{item.title}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+                  <h3 style={{ fontWeight: 700, marginBottom: '4px', letterSpacing: '-0.01em' }}>{item.title}</h3>
+                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -189,57 +214,59 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Knowledge Base */}
-      <section id="knowledge" className="py-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Built on official sources</h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">35+ PDFs ingested from India's most authoritative government portals</p>
+      {/* ===== KNOWLEDGE BASE ===== */}
+      <section id="knowledge" style={{ padding: '80px 0', background: 'var(--bg-secondary)' }}>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8">
+          <div className="text-center" style={{ marginBottom: '60px' }}>
+            <div className="badge badge-accent mb-4">Knowledge</div>
+            <h2 style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '12px' }}>Built on official sources.</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '16px', maxWidth: '500px', margin: '0 auto' }}>35+ PDFs from India's most authoritative government portals.</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {CATEGORIES.map(cat => (
-              <div key={cat.title} className="bg-[#0f0f1a] border border-white/5 rounded-2xl p-5 text-center hover:border-indigo-500/20 transition-all">
-                <div className="text-3xl mb-3">{cat.icon}</div>
-                <h3 className="text-white font-medium text-sm mb-1">{cat.title}</h3>
-                <p className="text-gray-500 text-xs">{cat.count}</p>
+              <div key={cat.title} className="card text-center" style={{ padding: '24px 16px' }}>
+                <div style={{ fontSize: '32px', marginBottom: '12px' }}>{cat.icon}</div>
+                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px' }}>{cat.title}</h3>
+                <span className="font-mono" style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 600 }}>{cat.count} docs</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-3xl p-12">
-            <h2 className="text-4xl font-bold text-white mb-4">Ready to build smarter?</h2>
-            <p className="text-gray-400 text-lg mb-8">Join founders using StartupSage to navigate India's regulatory landscape with confidence.</p>
-            <Link
-              to="/register"
-              className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold px-10 py-4 rounded-2xl transition-all shadow-xl shadow-indigo-500/25 text-lg"
-            >
-              Create free account →
-            </Link>
+      {/* ===== CTA ===== */}
+      <section style={{ padding: '100px 0' }}>
+        <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center">
+          <div className="glass-accent" style={{ padding: '60px 40px', borderRadius: 'var(--radius-2xl)', position: 'relative', overflow: 'hidden' }}>
+            <div className="dot-pattern absolute inset-0 opacity-50"></div>
+            <div className="relative">
+              <h2 style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '16px' }}>Ready to build smarter?</h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '16px', marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px' }}>
+                Join founders using StartupSage to navigate India's regulatory landscape.
+              </p>
+              <Link to="/register" className="btn-primary" style={{ padding: '16px 40px', fontSize: '15px', borderRadius: 'var(--radius-xl)' }}>
+                Create free account
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-10 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
-          <div className="flex items-center space-x-3 mb-4 md:mb-0">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold">S</span>
+      {/* ===== FOOTER ===== */}
+      <footer style={{ borderTop: '1px solid var(--border)', padding: '40px 0' }}>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ color: '#09090b', fontWeight: 800, fontSize: '12px' }}>S</span>
             </div>
-            <span className="text-gray-400 font-medium">StartupSage</span>
+            <span style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '14px' }}>StartupSage</span>
           </div>
-          <p className="text-gray-600 text-sm text-center">
+          <p style={{ color: 'var(--text-muted)', fontSize: '12px', textAlign: 'center' }}>
             For informational purposes only. Not a substitute for professional legal or financial advice.
           </p>
-          <div className="flex items-center space-x-4 mt-4 md:mt-0 text-gray-600 text-sm">
-            <span>© 2024</span>
-          </div>
+          <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>© 2024 StartupSage</span>
         </div>
       </footer>
     </div>
