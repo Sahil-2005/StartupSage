@@ -34,7 +34,6 @@ export default function Onboarding() {
     if (step < steps.length - 1) {
       setStep(s => s + 1);
     } else {
-      // Final step — save profile
       setSaving(true);
       try {
         const res = await authFetch('/api/v1/profiles', {
@@ -60,38 +59,38 @@ export default function Onboarding() {
   const handleSkip = () => navigate('/dashboard');
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-primary)' }}>
       {/* Progress Bar */}
-      <div className="h-1 bg-white/5 w-full">
-        <div
-          className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500"
-          style={{ width: `${progress}%` }}
-        ></div>
+      <div style={{ height: '3px', background: 'var(--bg-tertiary)', width: '100%' }}>
+        <div style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent), #d97706)', transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)', width: `${progress}%`, borderRadius: '0 3px 3px 0', boxShadow: '0 0 12px rgba(245, 158, 11, 0.3)' }}></div>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center p-8">
-        <div className="w-full max-w-xl">
+      <div className="flex-1 flex flex-col items-center justify-center" style={{ padding: '32px' }}>
+        <div style={{ width: '100%', maxWidth: '560px' }}>
           {/* Header */}
-          <div className="flex items-center justify-between mb-12">
-            <div className="flex items-center space-x-3">
-              <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-lg">S</span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '48px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div className="animate-pulse-glow" style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ color: '#09090b', fontWeight: 800, fontSize: '14px' }}>S</span>
               </div>
-              <span className="text-white font-semibold">StartupSage</span>
+              <span style={{ fontWeight: 700, fontSize: '15px' }}>StartupSage</span>
             </div>
-            <button onClick={handleSkip} className="text-gray-500 hover:text-gray-300 text-sm transition-colors">
+            <button onClick={handleSkip} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500, transition: 'color 0.2s' }}
+              onMouseOver={e => e.currentTarget.style.color = 'var(--text-primary)'}
+              onMouseOut={e => e.currentTarget.style.color = 'var(--text-muted)'}
+            >
               Skip setup →
             </button>
           </div>
 
           {/* Step counter */}
-          <div className="text-sm text-gray-500 mb-4">{step + 1} of {steps.length}</div>
+          <div className="font-mono" style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 600, marginBottom: '12px' }}>{step + 1} / {steps.length}</div>
 
           {/* Question */}
-          <h1 className="text-3xl font-bold text-white mb-8">{currentStep.title}</h1>
+          <h1 style={{ fontSize: '30px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '32px', lineHeight: 1.2 }}>{currentStep.title}</h1>
 
           {/* Input */}
-          <div className="mb-8">
+          <div style={{ marginBottom: '32px' }}>
             {currentStep.type === 'text' && (
               <input
                 autoFocus type="text"
@@ -99,7 +98,7 @@ export default function Onboarding() {
                 onChange={e => setForm(p => ({ ...p, [currentStep.field]: e.target.value }))}
                 onKeyDown={e => e.key === 'Enter' && handleNext()}
                 placeholder={currentStep.placeholder}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-xl text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="input-field" style={{ padding: '20px 24px', fontSize: '18px', borderRadius: 'var(--radius-xl)' }}
               />
             )}
             {currentStep.type === 'textarea' && (
@@ -108,20 +107,23 @@ export default function Onboarding() {
                 value={form[currentStep.field]}
                 onChange={e => setForm(p => ({ ...p, [currentStep.field]: e.target.value }))}
                 placeholder={currentStep.placeholder}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-lg text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none"
+                className="input-field" style={{ padding: '20px 24px', fontSize: '16px', borderRadius: 'var(--radius-xl)', resize: 'none' }}
               />
             )}
             {currentStep.type === 'choice' && (
               <div className="grid grid-cols-2 gap-3">
                 {currentStep.options.map(opt => (
-                  <button
-                    key={opt}
-                    onClick={() => setForm(p => ({ ...p, [currentStep.field]: opt }))}
-                    className={`px-4 py-4 rounded-xl border text-left font-medium text-sm transition-all ${
-                      form[currentStep.field] === opt
-                        ? 'border-indigo-500 bg-indigo-500/20 text-indigo-300'
-                        : 'border-white/10 bg-white/5 text-gray-300 hover:border-white/20 hover:bg-white/10'
-                    }`}
+                  <button key={opt} onClick={() => setForm(p => ({ ...p, [currentStep.field]: opt }))}
+                    style={{
+                      padding: '16px 18px', borderRadius: 'var(--radius-md)', textAlign: 'left', fontSize: '13px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
+                      ...(form[currentStep.field] === opt ? {
+                        background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', color: 'var(--accent-light)',
+                      } : {
+                        background: 'var(--bg-tertiary)', border: '1px solid var(--border)', color: 'var(--text-secondary)',
+                      }),
+                    }}
+                    onMouseOver={e => { if (form[currentStep.field] !== opt) { e.currentTarget.style.borderColor = 'var(--border-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}}
+                    onMouseOut={e => { if (form[currentStep.field] !== opt) { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}}
                   >
                     {opt}
                   </button>
@@ -131,26 +133,19 @@ export default function Onboarding() {
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center space-x-4">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             {step > 0 && (
-              <button
-                onClick={() => setStep(s => s - 1)}
-                className="px-6 py-3.5 bg-white/5 border border-white/10 text-gray-300 rounded-xl hover:bg-white/10 transition-all font-medium"
-              >
-                ← Back
-              </button>
+              <button onClick={() => setStep(s => s - 1)} className="btn-secondary" style={{ padding: '14px 24px' }}>← Back</button>
             )}
-            <button
-              onClick={handleNext} disabled={saving}
-              className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-500/25 disabled:opacity-50 flex items-center justify-center space-x-2"
-            >
+            <button onClick={handleNext} disabled={saving} className="btn-primary" style={{ flex: 1, padding: '14px', opacity: saving ? 0.6 : 1, cursor: saving ? 'not-allowed' : 'pointer' }}>
               {saving ? (
-                <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div><span>Saving...</span></>
+                <><div style={{ width: '18px', height: '18px', border: '2px solid rgba(0,0,0,0.2)', borderTopColor: '#09090b', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }}></div> Saving...</>
               ) : (
                 <span>{step === steps.length - 1 ? 'Launch Dashboard →' : 'Continue →'}</span>
               )}
             </button>
           </div>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       </div>
     </div>

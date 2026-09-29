@@ -6,42 +6,42 @@ import toast from 'react-hot-toast';
 function MessageBubble({ msg }) {
   if (msg.role === 'user') {
     return (
-      <div className="flex justify-end">
-        <div className="max-w-[75%] bg-indigo-600 text-white rounded-2xl rounded-br-sm px-5 py-4 shadow-lg shadow-indigo-500/10">
-          <p className="leading-relaxed">{msg.content}</p>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft: '48px' }}>
+        <div style={{ maxWidth: '75%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#09090b', borderRadius: '20px 20px 6px 20px', padding: '14px 20px', fontWeight: 500, fontSize: '14px', lineHeight: 1.6, boxShadow: '0 4px 15px rgba(245,158,11,0.2)' }}>
+          {msg.content}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-start space-x-3">
-      <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md shadow-indigo-500/20 mt-1">
-        <span className="text-white text-xs font-bold">AI</span>
+    <div style={{ display: 'flex', gap: '12px', paddingRight: '48px' }}>
+      <div className="flex-shrink-0" style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'linear-gradient(135deg, var(--bg-elevated), var(--bg-tertiary))', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '4px' }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round"><path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
       </div>
-      <div className="max-w-[75%]">
-        <div className="bg-[#0f0f1a] border border-white/8 text-gray-200 rounded-2xl rounded-bl-sm px-5 py-4 shadow-sm">
-          <div className="leading-relaxed whitespace-pre-wrap">{msg.content}</div>
+      <div style={{ maxWidth: '75%' }}>
+        <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '20px 20px 20px 6px', padding: '16px 20px' }}>
+          <div style={{ fontSize: '14px', lineHeight: 1.75, color: 'var(--text-primary)', whiteSpace: 'pre-wrap' }}>{msg.content}</div>
 
           {msg.citations?.length > 0 && (
-            <div className="mt-4 pt-4 border-t border-white/8">
-              <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2.5">Sources</p>
-              <div className="flex flex-wrap gap-2">
+            <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid var(--border)' }}>
+              <p style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>Sources</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {msg.citations.map((cit, j) => (
-                  <a
-                    key={j} href={cit.source_url} target="_blank" rel="noreferrer"
-                    className="group relative inline-flex items-center space-x-1 text-xs bg-white/5 hover:bg-indigo-500/15 border border-white/10 hover:border-indigo-500/30 text-gray-400 hover:text-indigo-300 px-2.5 py-1.5 rounded-lg transition-all duration-200"
-                    title={cit.text_snippet}
+                  <a key={j} href={cit.source_url} target="_blank" rel="noreferrer" title={cit.text_snippet}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', color: 'var(--accent-light)', padding: '4px 10px', borderRadius: 'var(--radius-sm)', textDecoration: 'none', fontWeight: 500, transition: 'all 0.2s' }}
+                    onMouseOver={e => { e.currentTarget.style.background = 'rgba(245,158,11,0.2)'; }}
+                    onMouseOut={e => { e.currentTarget.style.background = 'var(--accent-dim)'; }}
                   >
-                    <span className="font-semibold text-indigo-400">[{cit.ref_id}]</span>
-                    <span className="max-w-[120px] truncate">{cit.category || 'Source'}</span>
+                    <span style={{ fontWeight: 700 }}>[{cit.ref_id}]</span>
+                    <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cit.category || 'Source'}</span>
                   </a>
                 ))}
               </div>
               {msg.ragMode && (
-                <div className="mt-3 flex items-center space-x-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
-                  <span className="text-[10px] text-gray-600 uppercase tracking-wider font-medium">{msg.ragMode}</span>
+                <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent3)' }}></div>
+                  <span className="font-mono" style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>{msg.ragMode}</span>
                 </div>
               )}
             </div>
@@ -54,19 +54,16 @@ function MessageBubble({ msg }) {
 
 function TypingIndicator() {
   return (
-    <div className="flex justify-start space-x-3">
-      <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md shadow-indigo-500/20 opacity-60">
-        <span className="text-white text-xs font-bold">AI</span>
+    <div style={{ display: 'flex', gap: '12px' }}>
+      <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.6 }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><circle cx="12" cy="12" r="10"/></svg>
       </div>
-      <div className="bg-[#0f0f1a] border border-white/8 rounded-2xl rounded-bl-sm px-5 py-4 flex items-center space-x-2">
+      <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '20px 20px 20px 6px', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '6px' }}>
         {[0, 150, 300].map(delay => (
-          <div
-            key={delay}
-            className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"
-            style={{ animationDelay: `${delay}ms` }}
-          ></div>
+          <div key={delay} style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'var(--accent)', animation: `bounce 1.4s infinite ease-in-out`, animationDelay: `${delay}ms` }}></div>
         ))}
       </div>
+      <style>{`@keyframes bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }`}</style>
     </div>
   );
 }
@@ -79,88 +76,55 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const [conversationId, setConversationId] = useState(null);
   
-  // Chat History States
   const [conversations, setConversations] = useState([]);
-  const [historyOpen, setHistoryOpen] = useState(true); // Toggle history sidebar
+  const [historyOpen, setHistoryOpen] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(false);
 
   const endRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Fetch all conversations on mount
-  useEffect(() => {
-    fetchConversations();
-  }, []);
+  useEffect(() => { fetchConversations(); }, []);
 
   const fetchConversations = async () => {
     try {
       const res = await authFetch('/api/v1/chat/conversations');
-      if (res.ok) {
-        const data = await res.json();
-        setConversations(data);
-      }
-    } catch (e) {
-      console.error(e);
-    }
+      if (res.ok) setConversations(await res.json());
+    } catch (e) { console.error(e); }
   };
 
   const loadConversation = async (id) => {
     if (loading) return;
     setConversationId(id);
     setLoadingHistory(true);
-    setSearchParams({}); // Clear query params if any
+    setSearchParams({});
     try {
       const res = await authFetch(`/api/v1/chat/conversations/${id}/messages`);
-      if (res.ok) {
-        const data = await res.json();
-        setMessages(data);
-      } else {
-        toast.error("Failed to load conversation");
-        startNewChat();
-      }
-    } catch (e) {
-      console.error(e);
-      toast.error("Network error");
-    } finally {
-      setLoadingHistory(false);
-    }
+      if (res.ok) setMessages(await res.json());
+      else { toast.error("Failed to load conversation"); startNewChat(); }
+    } catch (e) { toast.error("Network error"); }
+    finally { setLoadingHistory(false); }
   };
 
   const deleteConversation = async (e, id) => {
     e.stopPropagation();
     if (!window.confirm("Delete this conversation?")) return;
-    
     try {
       const res = await authFetch(`/api/v1/chat/conversations/${id}`, { method: 'DELETE' });
       if (res.ok) {
-        toast.success("Conversation deleted");
+        toast.success("Deleted");
         setConversations(prev => prev.filter(c => c._id !== id));
-        if (conversationId === id) {
-          startNewChat();
-        }
+        if (conversationId === id) startNewChat();
       }
-    } catch (err) {
-      toast.error("Failed to delete");
-    }
+    } catch (err) { toast.error("Failed to delete"); }
   };
 
-  const startNewChat = () => {
-    setMessages([]);
-    setConversationId(null);
-    setSearchParams({});
-  };
+  const startNewChat = () => { setMessages([]); setConversationId(null); setSearchParams({}); };
 
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, loading]);
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, loading]);
 
-  // Handle pre-filled query from Dashboard quick actions
   useEffect(() => {
     const q = searchParams.get('q');
-    if (q) {
-      setInput(q);
-      inputRef.current?.focus();
-    }
+    if (q) { setInput(q); inputRef.current?.focus(); }
   }, [searchParams]);
 
   const profileId = localStorage.getItem('startup_profile_id');
@@ -169,48 +133,23 @@ export default function ChatPage() {
   const sendMessage = async (e) => {
     e?.preventDefault();
     if (!input.trim() || loading) return;
-
     const userMessage = input.trim();
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setLoading(true);
-
     try {
       const res = await authFetch('/api/v1/chat/', {
         method: 'POST',
-        body: JSON.stringify({
-          message: userMessage,
-          conversation_id: conversationId,
-          profile_id: profileId,
-        }),
+        body: JSON.stringify({ message: userMessage, conversation_id: conversationId, profile_id: profileId }),
       });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail || 'API error');
-      }
-
+      if (!res.ok) throw new Error((await res.json()).detail || 'API error');
       const data = await res.json();
-      if (!conversationId) {
-        setConversationId(data.conversation_id);
-        fetchConversations(); // Refresh list to show new conversation
-      }
-
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: data.answer,
-        citations: data.citations,
-        ragMode: data.rag_mode,
-      }]);
+      if (!conversationId) { setConversationId(data.conversation_id); fetchConversations(); }
+      setMessages(prev => [...prev, { role: 'assistant', content: data.answer, citations: data.citations, ragMode: data.rag_mode }]);
     } catch (err) {
       toast.error(err.message || 'Failed to get response');
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: '⚠️ Something went wrong. Please check your backend server is running.',
-      }]);
-    } finally {
-      setLoading(false);
-    }
+      setMessages(prev => [...prev, { role: 'assistant', content: '⚠️ Something went wrong. Please check your backend server.' }]);
+    } finally { setLoading(false); }
   };
 
   const SUGGESTION_CHIPS = [
@@ -221,140 +160,136 @@ export default function ChatPage() {
   ];
 
   return (
-    <div className="flex h-[calc(100vh-0px)] lg:h-screen w-full relative">
+    <div style={{ display: 'flex', height: '100vh', width: '100%', position: 'relative' }}>
       {/* History Sidebar */}
-      <div className={`${historyOpen ? 'w-64 border-r' : 'w-0 overflow-hidden'} flex-shrink-0 transition-all duration-300 border-white/5 bg-[#0a0a0f] flex flex-col relative z-10`}>
-        <div className="p-4 border-b border-white/5 flex items-center justify-between">
-          <h2 className="text-white font-semibold text-sm">Chat History</h2>
-          <button onClick={startNewChat} className="text-gray-400 hover:text-white p-1">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
+      <div style={{ width: historyOpen ? '260px' : '0', overflow: 'hidden', flexShrink: 0, transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)', borderRight: historyOpen ? '1px solid var(--border)' : 'none', background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 10 }}>
+        <div style={{ padding: '16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <h2 style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '-0.01em' }}>Chat History</h2>
+          <button onClick={startNewChat} style={{ background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', color: 'var(--accent)', width: '28px', height: '28px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+        <div style={{ flex: 1, overflowY: 'auto', padding: '8px' }}>
           {conversations.length === 0 ? (
-            <div className="text-gray-500 text-xs text-center py-4">No previous chats</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '12px', textAlign: 'center', padding: '20px 0' }}>No previous chats</div>
           ) : (
-            conversations.map(c => (
-              <div 
-                key={c._id} 
-                onClick={() => loadConversation(c._id)}
-                className={`group flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all text-sm ${conversationId === c._id ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300 border' : 'hover:bg-white/5 text-gray-400 border border-transparent'}`}
-              >
-                <div className="truncate pr-2">{c.title || 'New Conversation'}</div>
-                <button onClick={(e) => deleteConversation(e, c._id)} className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 p-1 transition-opacity">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                </button>
-              </div>
-            ))
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              {conversations.map(c => (
+                <div key={c._id} onClick={() => loadConversation(c._id)}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontSize: '12px', transition: 'all 0.2s', ...(conversationId === c._id ? { background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', color: 'var(--accent-light)' } : { border: '1px solid transparent', color: 'var(--text-secondary)' }) }}
+                  onMouseOver={e => { if (conversationId !== c._id) e.currentTarget.style.background = 'var(--bg-tertiary)'; }}
+                  onMouseOut={e => { if (conversationId !== c._id) e.currentTarget.style.background = 'transparent'; }}
+                >
+                  <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: '8px', fontWeight: 500 }}>{c.title || 'New Conversation'}</div>
+                  <button onClick={(e) => deleteConversation(e, c._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px', opacity: 0.4, transition: 'all 0.2s', flexShrink: 0 }}
+                    onMouseOver={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = '#f43f5e'; }}
+                    onMouseOut={e => { e.currentTarget.style.opacity = '0.4'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0">
-      {/* Chat Header */}
-      <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#0f0f1a]/50 backdrop-blur-sm">
-        <div className="flex items-center space-x-3">
-          <button onClick={() => setHistoryOpen(!historyOpen)} className="text-gray-400 hover:text-white transition-colors lg:block hidden">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
-          </button>
-          <div>
-            <h1 className="text-white font-semibold">AI Advisor</h1>
-            <p className="text-gray-500 text-xs mt-0.5">Grounded in 35+ official government documents</p>
-          </div>
-        </div>
-        <div className="flex items-center space-x-3">
-          {isProfileActive && (
-            <div className="flex items-center space-x-2 bg-green-500/10 border border-green-500/20 rounded-full px-3 py-1.5">
-              <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-green-400 text-xs font-medium">Context Active</span>
-            </div>
-          )}
-          {messages.length > 0 && (
-            <button
-              onClick={startNewChat}
-              className="text-gray-500 hover:text-gray-300 text-xs border border-white/10 rounded-lg px-3 py-1.5 hover:bg-white/5 transition-all hidden sm:block"
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        {/* Header */}
+        <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 24px', borderBottom: '1px solid var(--border)', background: 'var(--bg-glass)', backdropFilter: 'blur(20px)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button onClick={() => setHistoryOpen(!historyOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', padding: '4px' }}
+              onMouseOver={e => e.currentTarget.style.color = 'var(--text-primary)'}
+              onMouseOut={e => e.currentTarget.style.color = 'var(--text-muted)'}
             >
-              New Chat
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="12" y2="18"/></svg>
             </button>
-          )}
+            <div>
+              <h1 style={{ fontSize: '15px', fontWeight: 700, letterSpacing: '-0.01em' }}>AI Advisor</h1>
+              <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '1px' }}>Grounded in 35+ official government documents</p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {isProfileActive && (
+              <div className="badge badge-success" style={{ padding: '4px 12px', fontSize: '10px' }}>
+                <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent3)' }}></div>
+                Context Active
+              </div>
+            )}
+            {messages.length > 0 && (
+              <button onClick={startNewChat} className="btn-secondary" style={{ padding: '6px 14px', fontSize: '11px', borderRadius: 'var(--radius-sm)' }}>New Chat</button>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-4 lg:px-8 py-6 space-y-6">
-        {loadingHistory ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        {/* Messages Area */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {loadingHistory ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', paddingTop: '100px' }}>
+                <div style={{ width: '32px', height: '32px', border: '2px solid var(--accent)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }}></div>
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+              </div>
+            ) : messages.length === 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', maxWidth: '480px', margin: '0 auto', paddingTop: '80px' }}>
+                <div className="animate-pulse-glow" style={{ width: '64px', height: '64px', borderRadius: 'var(--radius-xl)', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', transform: 'rotate(3deg)' }}>
+                  <span style={{ color: '#09090b', fontWeight: 800, fontSize: '28px', transform: 'rotate(-3deg)' }}>S</span>
+                </div>
+                <h2 style={{ fontSize: '22px', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '8px' }}>StartupSage AI</h2>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '32px', lineHeight: 1.6 }}>
+                  Ask me anything about registering, funding, taxation, or compliance for your Indian startup. I'll cite my sources.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" style={{ width: '100%' }}>
+                  {SUGGESTION_CHIPS.map(chip => (
+                    <button key={chip} onClick={() => { setInput(chip); inputRef.current?.focus(); }}
+                      className="card" style={{ textAlign: 'left', padding: '14px 16px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', border: '1px solid var(--border)', fontWeight: 500 }}
+                    >
+                      {chip}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <>
+                {messages.map((msg, i) => <MessageBubble key={msg._id || i} msg={msg} />)}
+                {loading && <TypingIndicator />}
+                <div ref={endRef} />
+              </>
+            )}
           </div>
-        ) : messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center max-w-lg mx-auto">
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-500/25 mb-6 transform rotate-3">
-              <span className="text-white font-bold text-3xl transform -rotate-3">S</span>
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-2">StartupSage AI</h2>
-            <p className="text-gray-400 mb-8">
-              Ask me anything about registering, funding, taxation, or compliance for your Indian startup. I'll cite my sources.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
-              {SUGGESTION_CHIPS.map(chip => (
-                <button
-                  key={chip}
-                  onClick={() => { setInput(chip); inputRef.current?.focus(); }}
-                  className="text-left px-4 py-3 bg-[#0f0f1a] border border-white/8 hover:border-indigo-500/30 hover:bg-indigo-500/5 rounded-xl text-sm text-gray-400 hover:text-gray-200 transition-all"
+        </div>
+
+        {/* Input Bar */}
+        <div style={{ flexShrink: 0, padding: '16px 24px', borderTop: '1px solid var(--border)', background: 'var(--bg-glass)', backdropFilter: 'blur(20px)' }}>
+          <form onSubmit={sendMessage} style={{ position: 'relative' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', overflow: 'hidden', transition: 'border-color 0.3s' }}
+              onFocus={e => e.currentTarget.style.borderColor = 'var(--accent-border)'}
+              onBlur={e => e.currentTarget.style.borderColor = 'var(--border)'}
+            >
+              <textarea
+                ref={inputRef}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+                placeholder="Ask about startup registration, GST, MSME, funding..."
+                rows={1}
+                style={{ flex: 1, background: 'transparent', padding: '16px 20px', color: 'var(--text-primary)', fontSize: '13px', fontFamily: 'inherit', border: 'none', outline: 'none', resize: 'none', minHeight: '52px', maxHeight: '150px', lineHeight: 1.6 }}
+                disabled={loading}
+              />
+              <div style={{ padding: '10px 12px', flexShrink: 0 }}>
+                <button type="submit" disabled={loading || !input.trim()}
+                  style={{ width: '38px', height: '38px', borderRadius: 'var(--radius-md)', background: (loading || !input.trim()) ? 'var(--bg-tertiary)' : 'linear-gradient(135deg, #f59e0b, #d97706)', border: 'none', cursor: (loading || !input.trim()) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', opacity: (loading || !input.trim()) ? 0.3 : 1 }}
                 >
-                  {chip}
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={(!input.trim() || loading) ? 'var(--text-muted)' : '#09090b'} strokeWidth="2.5" strokeLinecap="round" style={{ transform: 'rotate(90deg)' }}><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                 </button>
-              ))}
+              </div>
             </div>
-          </div>
-        ) : (
-          <>
-            {messages.map((msg, i) => <MessageBubble key={msg._id || i} msg={msg} />)}
-            {loading && <TypingIndicator />}
-            <div ref={endRef} />
-          </>
-        )}
-      </div>
-
-      {/* Input Bar */}
-      <div className="flex-shrink-0 px-4 lg:px-8 py-4 border-t border-white/5 bg-[#0f0f1a]/50 backdrop-blur-sm">
-        <form onSubmit={sendMessage} className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur opacity-0 group-focus-within:opacity-20 transition-opacity duration-500"></div>
-          <div className="relative flex items-end bg-[#0f0f1a] border border-white/10 rounded-2xl overflow-hidden focus-within:border-indigo-500/50 transition-all">
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  sendMessage();
-                }
-              }}
-              placeholder="Ask about startup registration, GST, MSME, funding..."
-              rows={1}
-              className="flex-1 bg-transparent px-5 py-4 text-white placeholder-gray-500 focus:outline-none resize-none text-sm leading-relaxed"
-              style={{ minHeight: '56px', maxHeight: '160px' }}
-              disabled={loading}
-            />
-            <div className="px-3 py-3 flex-shrink-0">
-              <button
-                type="submit"
-                disabled={loading || !input.trim()}
-                className="w-10 h-10 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-xl flex items-center justify-center transition-all shadow-lg shadow-indigo-500/20"
-              >
-                <svg className="w-5 h-5 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </form>
-        <p className="text-center text-xs text-gray-600 mt-2">
-          AI may make mistakes. Always verify critical legal or financial decisions with a professional.
-        </p>
-      </div>
+          </form>
+          <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)', marginTop: '10px' }}>
+            AI may make mistakes. Always verify critical legal or financial decisions with a professional.
+          </p>
+        </div>
       </div>
     </div>
   );
