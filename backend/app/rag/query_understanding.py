@@ -29,3 +29,18 @@ Return ONLY the rewritten query text, nothing else."""
     except Exception as e:
         logger.error(f"Query rewrite failed: {e}")
         return query
+
+async def translate_query_if_needed(query: str) -> dict:
+    prompt = """Analyze the following query.
+1. Identify the language.
+2. If it is NOT in English, translate it to English. If it IS in English, return the original query.
+Return ONLY a raw JSON object with keys: "original_language" (string), "english_query" (string).
+Example 1: {"original_language": "Hindi", "english_query": "How to register a startup?"}
+Example 2: {"original_language": "English", "english_query": "What is GST?"}"""
+    try:
+        response = await generate(prompt, query)
+        cleaned = response.replace("```json", "").replace("```", "").strip()
+        return json.loads(cleaned)
+    except Exception as e:
+        logger.error(f"Translation failed: {e}")
+        return {"original_language": "English", "english_query": query}

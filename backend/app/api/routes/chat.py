@@ -58,15 +58,21 @@ Please tailor your advice specifically to this startup's context.
         msgs = await cursor.to_list(length=10) # Get last 10 messages
         for m in msgs:
             chat_history.append({"role": m["role"], "content": m["content"]})
+            
+    # Translate query for better vector search
+    from app.rag.query_understanding import translate_query_if_needed
+    translation_info = await translate_query_if_needed(user_message)
+    search_query = translation_info.get("english_query", user_message)
+    original_language = translation_info.get("original_language", "English")
     
     if settings.RAG_MODE in ["basic", "hybrid"]:
         if settings.RAG_MODE == "basic":
-            retrieved_chunks = dense.search(query=user_message, top_k=5)
+            retrieved_chunks = dense.search(query=search_query, top_k=5)
         elif settings.RAG_MODE == "hybrid":
-            dense_results = dense.search(query=user_message, top_k=20)
-            sparse_results = sparse.search(query=user_message, top_k=20)
+            dense_results = dense.search(query=search_query, top_k=20)
+            sparse_results = sparse.search(query=search_query, top_k=20)
             fused_results = fusion.reciprocal_rank_fusion(dense_results, sparse_results)
-            retrieved_chunks = reranker.rerank(query=user_message, chunks=fused_results, top_k=5)
+            retrieved_chunks = reranker.rerank(query=search_query, chunks=fused_results, top_k=5)
             
         context_blocks = []
         citations_metadata = []
@@ -85,6 +91,7 @@ Please tailor your advice specifically to this startup's context.
         system_prompt = f"""You are StartupSage, an AI assistant for Indian startups.
 Answer based ONLY on the provided context. Cite sources using [1], [2], etc.
 If you cannot answer from the context, explicitly say "I do not have enough information to answer this based on the available sources."
+IMPORTANT: The user asked in {original_language}. You MUST write your entire response in {original_language}.
 {profile_context}
 Context:
 {context_str}
@@ -99,10 +106,10 @@ Context:
     elif settings.RAG_MODE == "agentic":
         from app.rag.agent.graph import agent_graph
         state = {
-            "query": user_message,
+            "query": search_query,
             "original_query": user_message,
             "profile_id": request.profile_id,
-            "profile_context": profile_context,
+            "profile_context": profile_context + f"\nIMPORTANT: Respond in {original_language}.",
             "chat_history": chat_history,
             "retry_count": 0,
             "retrieved_chunks": [],
