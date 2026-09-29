@@ -18,8 +18,11 @@ def get_qdrant_client():
     if settings.QDRANT_URL:
         return QdrantClient(url=settings.QDRANT_URL, api_key=settings.QDRANT_API_KEY)
     else:
-        # Fallback to in-memory for testing if no URL provided
-        return QdrantClient(":memory:")
+        # Fallback to local persistent storage if no URL provided
+        import os
+        from app.core.config import BASE_DIR
+        local_db_path = os.path.join(BASE_DIR, "local_qdrant")
+        return QdrantClient(path=local_db_path)
 
 async def process_document(
     file_path: str, 
@@ -38,6 +41,28 @@ async def process_document(
     
     # 3. Chunk
     chunks = chunk_text(cleaned_text)
+    
+    # 3.5 Save chunks to disk for visibility
+    import json
+    import os
+    from app.core.config import BASE_DIR
+    chunks_dir = os.path.join(BASE_DIR, "data", "chunks", category)
+    os.makedirs(chunks_dir, exist_ok=True)
+    
+    import re
+    safe_title = re.sub(r'[\\/*?:"<>|]', "", title).replace(" ", "_")
+    chunk_file_path = os.path.join(chunks_dir, f"{safe_title}.json")
+    
+    with open(chunk_file_path, "w", encoding="utf-8") as f:
+        json.dump({
+            "title": title,
+            "source_url": source_url,
+            "category": category,
+            "num_chunks": len(chunks),
+            "chunks": chunks
+        }, f, indent=2)
+        
+    logger.info(f"Saved {len(chunks)} chunks to {chunk_file_path}")
     
     # 4. Embed
     embedder = get_embedder()

@@ -3,12 +3,13 @@ import time
 import logging
 from typing import List, Optional
 from datetime import datetime
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from app.core.config import settings
 from app.db.mongo import db
 from app.rag.retrieval import dense, sparse, fusion, reranker
 from app.rag.llm import generate
+from app.api.routes.auth import get_current_user
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -28,10 +29,11 @@ class ConversationCreate(BaseModel):
     title: str = "New Conversation"
 
 @router.post("/", response_model=ChatResponse)
-async def chat(request: ChatRequest):
+async def chat(request: ChatRequest, current_user: dict = Depends(get_current_user)):
     start_time = time.time()
     user_message = request.message
     conv_id = request.conversation_id or str(uuid.uuid4())
+    user_id = current_user["_id"]
     
     # Check for profile context globally first
     profile_context = ""
@@ -48,6 +50,14 @@ STARTUP PROFILE (Context for your advice):
 
 Please tailor your advice specifically to this startup's context.
 """
+    
+    # Fetch chat history for context
+    chat_history = []
+    if request.conversation_id and db.db is not None:
+        cursor = db.db.messages.find({"conversation_id": conv_id}).sort("created_at", 1)
+        msgs = await cursor.to_list(length=10) # Get last 10 messages
+        for m in msgs:
+            chat_history.append({"role": m["role"], "content": m["content"]})
     
     if settings.RAG_MODE in ["basic", "hybrid"]:
         if settings.RAG_MODE == "basic":
@@ -81,7 +91,7 @@ Context:
 """
         
         try:
-            answer = await generate(system_prompt, user_message)
+            answer = await generate(system_prompt, user_message, chat_history=chat_history)
         except Exception as e:
             logger.error(f"Generation failed: {e}")
             raise HTTPException(status_code=500, detail=str(e))
@@ -93,6 +103,7 @@ Context:
             "original_query": user_message,
             "profile_id": request.profile_id,
             "profile_context": profile_context,
+            "chat_history": chat_history,
             "retry_count": 0,
             "retrieved_chunks": [],
             "citations": []
@@ -116,7 +127,11 @@ Context:
         # Ensure conversation exists
         await db.db.conversations.update_one(
             {"_id": conv_id},
-            {"$setOnInsert": {"created_at": datetime.utcnow(), "title": user_message[:30] + "..."}},
+            {"$setOnInsert": {
+                "created_at": datetime.utcnow(), 
+                "title": user_message[:30] + ("..." if len(user_message) > 30 else ""),
+                "user_id": user_id
+            }},
             upsert=True
         )
         
@@ -148,32 +163,52 @@ Context:
     )
 
 @router.get("/conversations")
-async def list_conversations():
+async def list_conversations(current_user: dict = Depends(get_current_user)):
     if db.db is None:
         return []
-    cursor = db.db.conversations.find().sort("created_at", -1).limit(50)
+    cursor = db.db.conversations.find({"user_id": current_user["_id"]}).sort("created_at", -1).limit(50)
     convs = await cursor.to_list(length=50)
     for c in convs:
         c["_id"] = str(c["_id"])
     return convs
 
 @router.post("/conversations")
-async def create_conversation(req: ConversationCreate):
+async def create_conversation(req: ConversationCreate, current_user: dict = Depends(get_current_user)):
     conv_id = str(uuid.uuid4())
     if db.db is not None:
         await db.db.conversations.insert_one({
             "_id": conv_id,
             "title": req.title,
+            "user_id": current_user["_id"],
             "created_at": datetime.utcnow()
         })
     return {"conversation_id": conv_id}
 
 @router.get("/conversations/{conv_id}/messages")
-async def get_messages(conv_id: str):
+async def get_messages(conv_id: str, current_user: dict = Depends(get_current_user)):
     if db.db is None:
         return []
+    # Verify the conversation belongs to the user
+    conv = await db.db.conversations.find_one({"_id": conv_id, "user_id": current_user["_id"]})
+    if not conv:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+        
     cursor = db.db.messages.find({"conversation_id": conv_id}).sort("created_at", 1)
     msgs = await cursor.to_list(length=100)
     for m in msgs:
         m["_id"] = str(m["_id"])
     return msgs
+
+@router.delete("/conversations/{conv_id}")
+async def delete_conversation(conv_id: str, current_user: dict = Depends(get_current_user)):
+    if db.db is None:
+        raise HTTPException(status_code=503, detail="Database unavailable")
+    
+    # Verify the conversation belongs to the user
+    conv = await db.db.conversations.find_one({"_id": conv_id, "user_id": current_user["_id"]})
+    if not conv:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+        
+    await db.db.conversations.delete_one({"_id": conv_id})
+    await db.db.messages.delete_many({"conversation_id": conv_id})
+    return {"status": "deleted"}

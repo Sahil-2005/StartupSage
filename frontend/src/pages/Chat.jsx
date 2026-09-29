@@ -73,13 +73,82 @@ function TypingIndicator() {
 
 export default function ChatPage() {
   const { authFetch } = useAuth();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [conversationId, setConversationId] = useState(null);
+  
+  // Chat History States
+  const [conversations, setConversations] = useState([]);
+  const [historyOpen, setHistoryOpen] = useState(true); // Toggle history sidebar
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
   const endRef = useRef(null);
   const inputRef = useRef(null);
+
+  // Fetch all conversations on mount
+  useEffect(() => {
+    fetchConversations();
+  }, []);
+
+  const fetchConversations = async () => {
+    try {
+      const res = await authFetch('/api/v1/chat/conversations');
+      if (res.ok) {
+        const data = await res.json();
+        setConversations(data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadConversation = async (id) => {
+    if (loading) return;
+    setConversationId(id);
+    setLoadingHistory(true);
+    setSearchParams({}); // Clear query params if any
+    try {
+      const res = await authFetch(`/api/v1/chat/conversations/${id}/messages`);
+      if (res.ok) {
+        const data = await res.json();
+        setMessages(data);
+      } else {
+        toast.error("Failed to load conversation");
+        startNewChat();
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Network error");
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  const deleteConversation = async (e, id) => {
+    e.stopPropagation();
+    if (!window.confirm("Delete this conversation?")) return;
+    
+    try {
+      const res = await authFetch(`/api/v1/chat/conversations/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        toast.success("Conversation deleted");
+        setConversations(prev => prev.filter(c => c._id !== id));
+        if (conversationId === id) {
+          startNewChat();
+        }
+      }
+    } catch (err) {
+      toast.error("Failed to delete");
+    }
+  };
+
+  const startNewChat = () => {
+    setMessages([]);
+    setConversationId(null);
+    setSearchParams({});
+  };
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -122,7 +191,10 @@ export default function ChatPage() {
       }
 
       const data = await res.json();
-      if (!conversationId) setConversationId(data.conversation_id);
+      if (!conversationId) {
+        setConversationId(data.conversation_id);
+        fetchConversations(); // Refresh list to show new conversation
+      }
 
       setMessages(prev => [...prev, {
         role: 'assistant',
@@ -149,12 +221,47 @@ export default function ChatPage() {
   ];
 
   return (
-    <div className="flex flex-col h-[calc(100vh-0px)] lg:h-screen">
+    <div className="flex h-[calc(100vh-0px)] lg:h-screen w-full relative">
+      {/* History Sidebar */}
+      <div className={`${historyOpen ? 'w-64 border-r' : 'w-0 overflow-hidden'} flex-shrink-0 transition-all duration-300 border-white/5 bg-[#0a0a0f] flex flex-col relative z-10`}>
+        <div className="p-4 border-b border-white/5 flex items-center justify-between">
+          <h2 className="text-white font-semibold text-sm">Chat History</h2>
+          <button onClick={startNewChat} className="text-gray-400 hover:text-white p-1">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+          {conversations.length === 0 ? (
+            <div className="text-gray-500 text-xs text-center py-4">No previous chats</div>
+          ) : (
+            conversations.map(c => (
+              <div 
+                key={c._id} 
+                onClick={() => loadConversation(c._id)}
+                className={`group flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all text-sm ${conversationId === c._id ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300 border' : 'hover:bg-white/5 text-gray-400 border border-transparent'}`}
+              >
+                <div className="truncate pr-2">{c.title || 'New Conversation'}</div>
+                <button onClick={(e) => deleteConversation(e, c._id)} className="opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-400 p-1 transition-opacity">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col min-w-0">
       {/* Chat Header */}
       <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#0f0f1a]/50 backdrop-blur-sm">
-        <div>
-          <h1 className="text-white font-semibold">AI Advisor</h1>
-          <p className="text-gray-500 text-xs mt-0.5">Grounded in 35+ official government documents</p>
+        <div className="flex items-center space-x-3">
+          <button onClick={() => setHistoryOpen(!historyOpen)} className="text-gray-400 hover:text-white transition-colors lg:block hidden">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+          </button>
+          <div>
+            <h1 className="text-white font-semibold">AI Advisor</h1>
+            <p className="text-gray-500 text-xs mt-0.5">Grounded in 35+ official government documents</p>
+          </div>
         </div>
         <div className="flex items-center space-x-3">
           {isProfileActive && (
@@ -165,8 +272,8 @@ export default function ChatPage() {
           )}
           {messages.length > 0 && (
             <button
-              onClick={() => { setMessages([]); setConversationId(null); }}
-              className="text-gray-500 hover:text-gray-300 text-xs border border-white/10 rounded-lg px-3 py-1.5 hover:bg-white/5 transition-all"
+              onClick={startNewChat}
+              className="text-gray-500 hover:text-gray-300 text-xs border border-white/10 rounded-lg px-3 py-1.5 hover:bg-white/5 transition-all hidden sm:block"
             >
               New Chat
             </button>
@@ -176,7 +283,11 @@ export default function ChatPage() {
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto px-4 lg:px-8 py-6 space-y-6">
-        {messages.length === 0 ? (
+        {loadingHistory ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center max-w-lg mx-auto">
             <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-500/25 mb-6 transform rotate-3">
               <span className="text-white font-bold text-3xl transform -rotate-3">S</span>
@@ -199,7 +310,7 @@ export default function ChatPage() {
           </div>
         ) : (
           <>
-            {messages.map((msg, i) => <MessageBubble key={i} msg={msg} />)}
+            {messages.map((msg, i) => <MessageBubble key={msg._id || i} msg={msg} />)}
             {loading && <TypingIndicator />}
             <div ref={endRef} />
           </>
@@ -243,6 +354,7 @@ export default function ChatPage() {
         <p className="text-center text-xs text-gray-600 mt-2">
           AI may make mistakes. Always verify critical legal or financial decisions with a professional.
         </p>
+      </div>
       </div>
     </div>
   );
