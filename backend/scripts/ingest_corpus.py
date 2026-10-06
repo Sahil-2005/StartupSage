@@ -63,6 +63,9 @@ async def main():
 
     knowledge_base = data.get("startup_knowledge_base", {})
     
+    from app.db.mongo import connect_to_mongo
+    await connect_to_mongo()
+    
     if args.category == "all":
         for cat, docs in knowledge_base.items():
             await ingest_category(cat, docs)

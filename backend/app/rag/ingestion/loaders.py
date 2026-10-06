@@ -8,11 +8,14 @@ def load_document(file_path: str) -> str:
     
     if path.suffix.lower() == '.pdf':
         try:
-            from pypdf import PdfReader
-            reader = PdfReader(str(path))
-            return "\n".join(page.extract_text() for page in reader.pages if page.extract_text())
+            import fitz # PyMuPDF
+            doc = fitz.open(str(path))
+            text = ""
+            for page in doc:
+                text += page.get_text("text") + "\n\n"
+            return text
         except ImportError:
-            raise ImportError("Please install pypdf to read PDF files.")
+            raise ImportError("Please install PyMuPDF (fitz) to read PDF files.")
     
     elif path.suffix.lower() in ['.html', '.htm']:
         with open(path, 'r', encoding='utf-8') as f:

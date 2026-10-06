@@ -1,73 +1,205 @@
 {
   "startup_knowledge_base": {
     "registration_and_incorporation": [
-      { "name": "Revised Guidelines for Recognition of Startups", "source": "Startup India / DPIIT", "url": "https://www.startupindia.gov.in/content/dam/invest-india/Templates/public/Revised%20Guidelines%20for%20recognition.pdf" },
-      { "name": "Startup Playbook - Exclusive Benefits for DPIIT Recognised Startups", "source": "Startup India", "url": "https://www.startupindia.gov.in/content/dam/startupindia/corporate-partner/Startup-Playbook-DPIIT-Recognised-Startups-in-India.pdf" },
-      { "name": "FAQs on SPICe+ and Linked Filings (Company Incorporation)", "source": "Ministry of Corporate Affairs (MCA)", "url": "https://www.mca.gov.in/content/dam/mca/pdf/SPICEplus-and-linked-filings-FAQs-V3-20230122.pdf" },
-      { "name": "FAQs on Incorporation and Allied Matters (SPICe+)", "source": "Ministry of Corporate Affairs (MCA)", "url": "https://www.mca.gov.in/Ministry/pdf/SpicePlusFAQS_20112020.pdf" },
-      { "name": "Instruction Kit for eForm INC-7", "source": "Ministry of Corporate Affairs (MCA)", "url": "https://www.mca.gov.in/MCA21/dca/help/instructionkit/NCA/Form_INC-7_help.pdf" },
-      { "name": "Incorporation of Companies - Study Material", "source": "ICSI", "url": "https://www.icsi.edu/media/webmodules/companiesact2013/Incorporation_of_Companies-8-8-2015.pdf" },
-      { "name": "Technical Guide on Easy Incorporation of Companies through SPICe+", "source": "ICAI - Corporate Laws & Governance Committee", "url": "https://lunawat.com/Uploaded_Files/Attachments/F_4807.pdf" },
-      { "name": "Limited Liability Partnership Act, 2008 (Full Text)", "source": "Ministry of Corporate Affairs (MCA)", "url": "http://www.mca.gov.in/MinistryWebsite/dca/actsbills/pdf/LLP_Act_2008_15jan2009.pdf" },
-      { "name": "LLP Act 2008 - Overview Presentation", "source": "ICAI", "url": "https://live.icai.org/bos/vcc/pdf/LLP_ACT_2008.pdf" },
-      { "name": "One Person Company (OPC) - Backgrounder", "source": "ICSI", "url": "https://www.icsi.edu/media/webmodules/companiesact2013/ONE%20PERSON%20COMPANY.pdf" },
-      { "name": "One Person Company - A Referencer", "source": "ICSI", "url": "https://smash.icsi.edu/uploadedFiles/Ecart/d71cc379-d65b-4b9a-8a4c-5f6c8ae1aad4Preface%20(3).pdf" },
-      { "name": "Private Limited Company Incorporation Guide (India Business Guide 2024)", "source": "BTG Advaya / Ally Law", "url": "https://ally-law.com/wp-content/uploads/2024/08/BTG-Advaya-Business-Guide-India-2024.pdf" },
-      { "name": "Step-by-Step Guide to Company Incorporation", "source": "GIFT City / IFSCA", "url": "https://api.giftgujarat.in/public/downloads/ifsc/setting_up_at_GIFT_city/Step_By_Step_Guide_Company_Incorporation_20112019.pdf" },
-      { "name": "Registration of Private Limited Company - Step by Step", "source": "TiE Chennai", "url": "https://chennai.tie.org/english/wp-content/uploads/2021/02/Incorporation-of-Pvt-Ltd-Co.-11.6.2020.pdf" },
-      { "name": "LLP vs Company - Comparison Note", "source": "Patna Women's College (Commerce Dept.)", "url": "https://content.patnawomenscollege.in/commerce/LLP%202008.pdf" }
+      {
+        "name": "Revised Guidelines for Recognition of Startups",
+        "source": "Startup India / DPIIT",
+        "url": "https://www.startupindia.gov.in/content/dam/invest-india/Templates/public/Revised%20Guidelines%20for%20recognition.pdf"
+      },
+      {
+        "name": "Startup Playbook - Exclusive Benefits for DPIIT Recognised Startups",
+        "source": "Startup India",
+        "url": "https://www.startupindia.gov.in/content/dam/startupindia/corporate-partner/Startup-Playbook-DPIIT-Recognised-Startups-in-India.pdf"
+      },
+      {
+        "name": "Technical Guide on Easy Incorporation of Companies through SPICe+",
+        "source": "ICAI - Corporate Laws & Governance Committee",
+        "url": "https://lunawat.com/Uploaded_Files/Attachments/F_4807.pdf"
+      },
+      {
+        "name": "LLP Act 2008 - Overview Presentation",
+        "source": "ICAI",
+        "url": "https://live.icai.org/bos/vcc/pdf/LLP_ACT_2008.pdf"
+      },
+      {
+        "name": "One Person Company - A Referencer",
+        "source": "ICSI",
+        "url": "https://smash.icsi.edu/uploadedFiles/Ecart/d71cc379-d65b-4b9a-8a4c-5f6c8ae1aad4Preface%20(3).pdf"
+      },
+      {
+        "name": "Step-by-Step Guide to Company Incorporation",
+        "source": "GIFT City / IFSCA",
+        "url": "https://api.giftgujarat.in/public/downloads/ifsc/setting_up_at_GIFT_city/Step_By_Step_Guide_Company_Incorporation_20112019.pdf"
+      },
+      {
+        "name": "Registration of Private Limited Company - Step by Step",
+        "source": "TiE Chennai",
+        "url": "https://chennai.tie.org/english/wp-content/uploads/2021/02/Incorporation-of-Pvt-Ltd-Co.-11.6.2020.pdf"
+      },
+      {
+        "name": "LLP vs Company - Comparison Note",
+        "source": "Patna Women's College (Commerce Dept.)",
+        "url": "https://content.patnawomenscollege.in/commerce/LLP%202008.pdf"
+      }
     ],
     "taxation_and_gst": [
-      { "name": "FAQs on GST", "source": "CBIC (GST wing)", "url": "https://cbic-gst.gov.in/aces/Documents/faq-on-gst.pdf" },
-      { "name": "New FAQs on GST (Second Edition)", "source": "CBIC (GST wing)", "url": "https://cbic-gst.gov.in/pdf/new-faq-on-gst-second-edition.pdf" },
-      { "name": "Welcome Kit for New GST Taxpayers", "source": "GSTN (Goods and Services Tax Network)", "url": "https://tutorial.gst.gov.in/downloads/news/welcome_kit_for_new_taxpyers.pdf" },
-      { "name": "FAQs on Composition Levy (Revised)", "source": "CBIC (GST wing)", "url": "https://cbic-gst.gov.in/pdf/faq-manual/faq-composition-levy-revised.pdf" },
-      { "name": "Tax Incentives for Startups (Section 80-IAC, 54GB, Angel Tax)", "source": "ICAI - WIRC", "url": "https://old.wirc-icai.org/images/material/Start-up-LK.pdf" }
+      {
+        "name": "FAQs on GST",
+        "source": "CBIC (GST wing)",
+        "url": "https://cbic-gst.gov.in/aces/Documents/faq-on-gst.pdf"
+      },
+      {
+        "name": "New FAQs on GST (Second Edition)",
+        "source": "CBIC (GST wing)",
+        "url": "https://cbic-gst.gov.in/pdf/new-faq-on-gst-second-edition.pdf"
+      },
+      {
+        "name": "Welcome Kit for New GST Taxpayers",
+        "source": "GSTN (Goods and Services Tax Network)",
+        "url": "https://tutorial.gst.gov.in/downloads/news/welcome_kit_for_new_taxpyers.pdf"
+      },
+      {
+        "name": "FAQs on Composition Levy (Revised)",
+        "source": "CBIC (GST wing)",
+        "url": "https://cbic-gst.gov.in/pdf/faq-manual/faq-composition-levy-revised.pdf"
+      }
     ],
     "msme_udyam": [
-      { "name": "Udyam Registration - Gazette Notification (MSME Classification Criteria)", "source": "Ministry of MSME / Gazette of India (mirrored via RBI)", "url": "https://rbidocs.rbi.org.in/rdocs/content/pdfs/IndianGazzate02072020.pdf" },
-      { "name": "Udyam Classification Notification - AIM Portal Mirror", "source": "Ministry of MSME (mirrored via Odisha Forest Dept.)", "url": "https://forest.odisha.gov.in/sites/default/files/2020-10/AIM-Portal-MSME-Department.PDF" },
-      { "name": "Clarification on Existing EM Part-II / UAM and New Udyam Registration", "source": "Ministry of MSME", "url": "https://Udyamregistration.gov.in/docs/Clarification_on_existing_EM_06082020.pdf" },
-      { "name": "Clarification on Financial Year for Udyam Classification Data", "source": "Ministry of MSME", "url": "https://Udyamregistration.gov.in/docs/Clarificationletterdated28_Sep_2021.pdf" },
-      { "name": "Udyam Registration Application Form", "source": "District Industries Centre, Daman & Diu", "url": "https://swp.dddgov.in/assets/department/dic/UdyamApplication.pdf" }
+      {
+        "name": "Udyam Registration - Gazette Notification (MSME Classification Criteria)",
+        "source": "Ministry of MSME / Gazette of India (mirrored via RBI)",
+        "url": "https://rbidocs.rbi.org.in/rdocs/content/pdfs/IndianGazzate02072020.pdf"
+      },
+      {
+        "name": "Udyam Classification Notification - AIM Portal Mirror",
+        "source": "Ministry of MSME (mirrored via Odisha Forest Dept.)",
+        "url": "https://forest.odisha.gov.in/sites/default/files/2020-10/AIM-Portal-MSME-Department.PDF"
+      },
+      {
+        "name": "Clarification on Existing EM Part-II / UAM and New Udyam Registration",
+        "source": "Ministry of MSME",
+        "url": "https://Udyamregistration.gov.in/docs/Clarification_on_existing_EM_06082020.pdf"
+      },
+      {
+        "name": "Clarification on Financial Year for Udyam Classification Data",
+        "source": "Ministry of MSME",
+        "url": "https://Udyamregistration.gov.in/docs/Clarificationletterdated28_Sep_2021.pdf"
+      },
+      {
+        "name": "Udyam Registration Application Form",
+        "source": "District Industries Centre, Daman & Diu",
+        "url": "https://swp.dddgov.in/assets/department/dic/UdyamApplication.pdf"
+      }
     ],
     "funding_and_investment": [
-      { "name": "Guidelines for Startup India Seed Fund Scheme (SISFS)", "source": "DPIIT, Ministry of Commerce and Industry", "url": "https://www.startupindia.gov.in/content/dam/invest-india/Templates/public/Guidelines%20for%20Startup%20India%20Seed%20Fund%20Scheme.pdf" },
-      { "name": "SISFS Guidelines - Official Annexure (Rajya Sabha Reply)", "source": "DPIIT (via Rajya Sabha Debates)", "url": "https://rsdebate.nic.in/bitstream/123456789/731983/1/PQ_257_05082022_U2306_p272_p286.pdf" },
-      { "name": "Fund of Funds for Startups (FFS) - Parliamentary Update", "source": "DPIIT / SIDBI (via Sansad Library)", "url": "https://eparlib.sansad.in/bitstream/123456789/1931270/1/AU2526.pdf" },
-      { "name": "Consolidated FDI Policy Circular, 2020", "source": "DPIIT, Ministry of Commerce and Industry", "url": "https://dipp.gov.in/sites/default/files/FDI-PolicyCircular-2020-29October2020_0.pdf" },
-      { "name": "FAQs on FDI Policy", "source": "FIFP (Foreign Investment Facilitation Portal), DPIIT", "url": "https://fifp.gov.in/Forms/FAQs_FDIPolicy.pdf" },
-      { "name": "Consolidated FDI Policy 2020 - Analysis", "source": "Deloitte India", "url": "https://www2.deloitte.com/content/dam/Deloitte/in/Documents/tax/Regulatory%20Alert/in-tax-regulatory-alert-consolidated-foreign-direct-investment-fpi-policy-2020-noexp.pdf" },
-      { "name": "India Investment Policy and Regulatory Review 2022", "source": "World Bank", "url": "https://documents1.worldbank.org/curated/en/099250001122317918/pdf/P17393805f173108a0b578068cc073e8012.pdf" },
-      { "name": "Startup India Seed Fund Scheme - Explainer Note (1)", "source": "Drishti IAS", "url": "https://drishtiias.com/pdf/1732112438.pdf" },
-      { "name": "Startup India Seed Fund Scheme - Explainer Note (2)", "source": "Drishti IAS", "url": "https://drishtiias.com/pdf/1720371046.pdf" }
+      {
+        "name": "Guidelines for Startup India Seed Fund Scheme (SISFS)",
+        "source": "DPIIT, Ministry of Commerce and Industry",
+        "url": "https://www.startupindia.gov.in/content/dam/invest-india/Templates/public/Guidelines%20for%20Startup%20India%20Seed%20Fund%20Scheme.pdf"
+      },
+      {
+        "name": "SISFS Guidelines - Official Annexure (Rajya Sabha Reply)",
+        "source": "DPIIT (via Rajya Sabha Debates)",
+        "url": "https://rsdebate.nic.in/bitstream/123456789/731983/1/PQ_257_05082022_U2306_p272_p286.pdf"
+      },
+      {
+        "name": "FAQs on FDI Policy",
+        "source": "FIFP (Foreign Investment Facilitation Portal), DPIIT",
+        "url": "https://fifp.gov.in/Forms/FAQs_FDIPolicy.pdf"
+      },
+      {
+        "name": "India Investment Policy and Regulatory Review 2022",
+        "source": "World Bank",
+        "url": "https://documents1.worldbank.org/curated/en/099250001122317918/pdf/P17393805f173108a0b578068cc073e8012.pdf"
+      },
+      {
+        "name": "Startup India Seed Fund Scheme - Explainer Note (1)",
+        "source": "Drishti IAS",
+        "url": "https://drishtiias.com/pdf/1732112438.pdf"
+      },
+      {
+        "name": "Startup India Seed Fund Scheme - Explainer Note (2)",
+        "source": "Drishti IAS",
+        "url": "https://drishtiias.com/pdf/1720371046.pdf"
+      }
     ],
     "contracts_and_ip_basics": [
-      { "name": "Founder Employment Agreement Template (India)", "source": "Startup India (LetsVenture templates)", "url": "https://goa.startupindia.gov.in/content/dam/invest-india/Templates/public/Tools_templates/internal_templates/Lets_Venture/FOUNDER_AGREEMENT%20(1).pdf" },
-      { "name": "Non-Disclosure Agreement Template (India)", "source": "Startup India (LetsVenture templates)", "url": "https://goa.startupindia.gov.in/content/dam/invest-india/Templates/public/Tools_templates/internal_templates/Lets_Venture/NON_DISCLOSURE_AGREEMENT.pdf" },
-      { "name": "Draft Manual of Trade Marks Practice and Procedure", "source": "Office of CGPDTM, Govt. of India (mirrored via JETRO)", "url": "https://www.jetro.go.jp/ext_images/world/asia/in/ip/pdf/manual_of_trade_marks_201503_en.pdf" },
-      { "name": "Scheme for Facilitating Start-Ups Intellectual Property Protection (SIPP)", "source": "IP India (CGPDTM)", "url": "https://www.ipindia.gov.in/writereaddata/Portal/News/885_1_approved_SIPP_scheme.pdf" },
-      { "name": "Approved SIPP Scheme - Facilitator Fee Structure", "source": "IP India (CGPDTM), mirrored via BananaIP", "url": "https://www.bananaip.com/wp-content/uploads/2022/11/Appoved_SIPP_Scheme_0001.pdf" },
-      { "name": "Copyright 101 Handbook", "source": "CreativeFirst", "url": "https://creativefirst.film/wp-content/uploads/2021/04/YourIPYourFuture-Final-Handbook.pdf" }
+      {
+        "name": "Founder Employment Agreement Template (India)",
+        "source": "Startup India (LetsVenture templates)",
+        "url": "https://goa.startupindia.gov.in/content/dam/invest-india/Templates/public/Tools_templates/internal_templates/Lets_Venture/FOUNDER_AGREEMENT%20(1).pdf"
+      },
+      {
+        "name": "Non-Disclosure Agreement Template (India)",
+        "source": "Startup India (LetsVenture templates)",
+        "url": "https://goa.startupindia.gov.in/content/dam/invest-india/Templates/public/Tools_templates/internal_templates/Lets_Venture/NON_DISCLOSURE_AGREEMENT.pdf"
+      },
+      {
+        "name": "Draft Manual of Trade Marks Practice and Procedure",
+        "source": "Office of CGPDTM, Govt. of India (mirrored via JETRO)",
+        "url": "https://www.jetro.go.jp/ext_images/world/asia/in/ip/pdf/manual_of_trade_marks_201503_en.pdf"
+      },
+      {
+        "name": "Copyright 101 Handbook",
+        "source": "CreativeFirst",
+        "url": "https://creativefirst.film/wp-content/uploads/2021/04/YourIPYourFuture-Final-Handbook.pdf"
+      }
     ],
     "labour_and_hr_compliance": [
-      { "name": "Self-Certification of Compliance for Startups (9 Labour Laws)", "source": "V.V. Giri National Labour Institute", "url": "https://www.vvgnli.gov.in/sites/default/files/0%20Self%20Certification%20for%20Start%20ups_0.pdf" },
-      { "name": "Himachal Pradesh Labour Dept. - Self-Certification Notification for Startups", "source": "Dept. of Labour & Employment, Govt. of Himachal Pradesh", "url": "https://emerginghimachal.hp.gov.in/startup/notifications/labour-department-notification.pdf" },
-      { "name": "Handbook on Sexual Harassment of Women at Workplace (POSH Act, 2013)", "source": "Ministry of Women and Child Development", "url": "https://www.nin.res.in/downloads/Handbook%20on%20Sexual%20Harassment%20of%20Women%20at%20Workplace.pdf" },
-      { "name": "EPFO - Ease of Doing Business Initiatives", "source": "EPFO, Ministry of Labour & Employment", "url": "https://www.epfindia.gov.in/site_docs/PDFs/Updates/EaseOfDoingBusiness_MoLE_Initiatives.pdf" },
-      { "name": "LLP (Amendment) Act, 2021 - Summary of Amendments", "source": "ICAI", "url": "https://boslive.icai.org/pdf/20230120_73_LLP_Amenments_1674107615.pdf" }
+      {
+        "name": "Himachal Pradesh Labour Dept. - Self-Certification Notification for Startups",
+        "source": "Dept. of Labour & Employment, Govt. of Himachal Pradesh",
+        "url": "https://emerginghimachal.hp.gov.in/startup/notifications/labour-department-notification.pdf"
+      },
+      {
+        "name": "Handbook on Sexual Harassment of Women at Workplace (POSH Act, 2013)",
+        "source": "Ministry of Women and Child Development",
+        "url": "https://www.nin.res.in/downloads/Handbook%20on%20Sexual%20Harassment%20of%20Women%20at%20Workplace.pdf"
+      }
     ],
     "data_protection_and_ecommerce": [
-      { "name": "Digital Personal Data Protection Act, 2023", "source": "Ministry of Electronics and IT (MeitY)", "url": "https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf" },
-      { "name": "Consumer Protection (E-Commerce) Rules, 2020 (Gazette Notification)", "source": "Ministry of Consumer Affairs, Food and Public Distribution", "url": "https://PRSINDIA.org/files/bills_acts/bills_parliament/2021/Consumer%20Protection%20(E-Commerce)%20Rules,%202020.pdf" }
+      {
+        "name": "Digital Personal Data Protection Act, 2023",
+        "source": "Ministry of Electronics and IT (MeitY)",
+        "url": "https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf"
+      },
+      {
+        "name": "Consumer Protection (E-Commerce) Rules, 2020 (Gazette Notification)",
+        "source": "Ministry of Consumer Affairs, Food and Public Distribution",
+        "url": "https://PRSINDIA.org/files/bills_acts/bills_parliament/2021/Consumer%20Protection%20(E-Commerce)%20Rules,%202020.pdf"
+      }
     ],
     "public_procurement_gem": [
-      { "name": "GeM - Government e-Marketplace Overview", "source": "SVNIT (Unnat Bharat), source content by GeM SPV", "url": "https://www.svnit.ac.in/Unnat_Bharat/PI/pdf/Livelihood%20&%20Entreprenurship/Schemes%20by%20Government%20of%20India/GeM/GeM-Government%20e-Marketplace.pdf" },
-      { "name": "Startup Guide to Public Procurement (GeM Startup Runway)", "source": "Startup India / DPIIT", "url": "https://www.startupindia.gov.in/content/dam/invest-india/Templates/public/Startup%20Guide%20to%20Public%20Procurement.pdf" },
-      { "name": "GeM Webinar - Public Procurement Policy for MSEs (1)", "source": "GeM SPV / CII Bihar", "url": "https://lms.gem.gov.in/resources/upload/webinar_archive/archived_webinar_rmHS_9uhP.pdf" },
-      { "name": "GeM Webinar - Public Procurement Policy for MSEs (2)", "source": "GeM SPV", "url": "https://lms.gem.gov.in/resources/upload/webinar_archive/archived_webinar_0qUk_xJmN.pdf" },
-      { "name": "PIB Backgrounder - GeM Features (SWAYATT, Startup Runway 2.0)", "source": "Press Information Bureau, Govt. of India", "url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2025/mar/doc202532511101.pdf" },
-      { "name": "Parliamentary Q&A - GeM Measures for Women-led MSEs and Startups", "source": "Ministry of Commerce and Industry (via Rajya Sabha Debates)", "url": "https://rsdebate.nic.in/bitstream/123456789/759482/1/PQ_267_21032025_U2441_p139_p140.pdf" }
+      {
+        "name": "GeM - Government e-Marketplace Overview",
+        "source": "SVNIT (Unnat Bharat), source content by GeM SPV",
+        "url": "https://www.svnit.ac.in/Unnat_Bharat/PI/pdf/Livelihood%20&%20Entreprenurship/Schemes%20by%20Government%20of%20India/GeM/GeM-Government%20e-Marketplace.pdf"
+      },
+      {
+        "name": "Startup Guide to Public Procurement (GeM Startup Runway)",
+        "source": "Startup India / DPIIT",
+        "url": "https://www.startupindia.gov.in/content/dam/invest-india/Templates/public/Startup%20Guide%20to%20Public%20Procurement.pdf"
+      },
+      {
+        "name": "GeM Webinar - Public Procurement Policy for MSEs (1)",
+        "source": "GeM SPV / CII Bihar",
+        "url": "https://lms.gem.gov.in/resources/upload/webinar_archive/archived_webinar_rmHS_9uhP.pdf"
+      },
+      {
+        "name": "GeM Webinar - Public Procurement Policy for MSEs (2)",
+        "source": "GeM SPV",
+        "url": "https://lms.gem.gov.in/resources/upload/webinar_archive/archived_webinar_0qUk_xJmN.pdf"
+      },
+      {
+        "name": "PIB Backgrounder - GeM Features (SWAYATT, Startup Runway 2.0)",
+        "source": "Press Information Bureau, Govt. of India",
+        "url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2025/mar/doc202532511101.pdf"
+      },
+      {
+        "name": "Parliamentary Q&A - GeM Measures for Women-led MSEs and Startups",
+        "source": "Ministry of Commerce and Industry (via Rajya Sabha Debates)",
+        "url": "https://rsdebate.nic.in/bitstream/123456789/759482/1/PQ_267_21032025_U2441_p139_p140.pdf"
+      }
     ]
   }
 }
