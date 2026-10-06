@@ -13,8 +13,11 @@ StartupSage is an advanced, context-aware AI advisor designed specifically for I
   * ⚡ **Basic RAG:** Standard dense vector retrieval using Qdrant (Semantic Search).
   * 🔀 **Hybrid RAG:** Combines Dense (Semantic) and Sparse (BM25) search using Reciprocal Rank Fusion (RRF) for highly precise document retrieval and exact keyword matching.
   * 🤖 **Agentic Workflow:** Powered by LangGraph. The agent autonomously classifies intents, routes queries, actively rewrites bad queries, verifies groundedness to prevent hallucinations, and automatically appends legal disclaimers for high-risk topics.
+* **Enterprise-Grade Ingestion Pipeline:** Uses `PyMuPDF` to perfectly preserve tables, columns, and layouts from complex government documents. Features an intelligent chunking strategy (1500 chars, 300 overlap) to keep long legal clauses intact.
+* **Ultra-Fast Backend Optimizations:** 
+  * ML Models (Embedder & Reranker) are eagerly pre-warmed in background threads during FastAPI lifespan startup to eliminate cold-start freezes.
+  * Uses blazing-fast ASCII heuristics (`_is_likely_english`) to instantly bypass unnecessary LLM language-translation overheads on standard English queries.
 * **Stunning Premium UI:** A beautiful, responsive frontend built with React, Vite, and TailwindCSS v4. It features a custom amber/gold dark theme, glassmorphism, animated states, smooth scrolling (Lenis), and citation hover cards.
-* **Authoritative Knowledge Base:** Built by ingesting and chunking real-world PDF documents from DPIIT, MCA, CBIC, MeitY, and more. All answers are cited back to the source.
 * **Multilingual Intelligence:** Ask questions in Hindi, Marathi, or English. The AI understands, retrieves English documents, and responds flawlessly in your preferred language.
 
 ## 🛠️ Tech Stack
@@ -22,7 +25,8 @@ StartupSage is an advanced, context-aware AI advisor designed specifically for I
 * **Frontend:** React 19, Vite, TailwindCSS v4, Framer Motion, Lenis (Smooth Scroll)
 * **Backend:** FastAPI, Python, Motor (Async MongoDB)
 * **Databases:** MongoDB (Profiles & Chat History), Qdrant (Vector Embeddings)
-* **AI & Machine Learning:** Google Gemini, Groq (Fallback), BAAI/bge-reranker-base (Cross-Encoder), LangGraph (Agentic Workflow)
+* **Ingestion:** PyMuPDF (fitz) for Layout-Aware Extraction, Langchain Text Splitters
+* **AI & Machine Learning:** Google Gemini, Groq (Fallback), BAAI/bge-reranker-base (Cross-Encoder), LangGraph (Agentic Workflow), SentenceTransformers (BAAI/bge-base-en-v1.5)
 
 ## 🚀 Getting Started
 
