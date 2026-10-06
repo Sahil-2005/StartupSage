@@ -21,15 +21,24 @@ def clean_filename(name):
 
 def download_file(url, dest_path):
     try:
-        # Use a user agent to avoid being blocked
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as response:
-            if response.status == 200:
-                with open(dest_path, 'wb') as f:
-                    f.write(response.read())
-                return True
-    except urllib.error.HTTPError as e:
-        logger.error(f"HTTP Error {e.code} for URL {url}")
+        import requests
+        import urllib3
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+        }
+        response = requests.get(url, headers=headers, verify=False, timeout=30)
+        
+        if response.status_code == 200:
+            with open(dest_path, 'wb') as f:
+                f.write(response.content)
+            return True
+        else:
+            logger.error(f"HTTP Error {response.status_code} for URL {url}")
+            return False
+            
     except Exception as e:
         logger.error(f"Failed to download {url}: {e}")
     return False

@@ -24,7 +24,7 @@ export default function ProfilePage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await authFetch('/api/v1/profiles', {
+      const res = await authFetch('/api/v1/profiles/', {
         method: 'POST',
         body: JSON.stringify(profile),
       });
