@@ -65,14 +65,15 @@ Please tailor your advice specifically to this startup's context.
     search_query = translation_info.get("english_query", user_message)
     original_language = translation_info.get("original_language", "English")
     
+    import asyncio
     if settings.RAG_MODE in ["basic", "hybrid"]:
         if settings.RAG_MODE == "basic":
-            retrieved_chunks = dense.search(query=search_query, top_k=5)
+            retrieved_chunks = await asyncio.to_thread(dense.search, query=search_query, top_k=5)
         elif settings.RAG_MODE == "hybrid":
-            dense_results = dense.search(query=search_query, top_k=20)
-            sparse_results = sparse.search(query=search_query, top_k=20)
+            dense_results = await asyncio.to_thread(dense.search, query=search_query, top_k=20)
+            sparse_results = await asyncio.to_thread(sparse.search, query=search_query, top_k=20)
             fused_results = fusion.reciprocal_rank_fusion(dense_results, sparse_results)
-            retrieved_chunks = reranker.rerank(query=search_query, chunks=fused_results, top_k=5)
+            retrieved_chunks = await asyncio.to_thread(reranker.rerank, query=search_query, chunks=fused_results, top_k=5)
             
         context_blocks = []
         citations_metadata = []
@@ -89,8 +90,9 @@ Please tailor your advice specifically to this startup's context.
         context_str = "\n\n".join(context_blocks) if context_blocks else "No relevant context found."
         
         system_prompt = f"""You are StartupSage, an AI assistant for Indian startups.
-Answer based ONLY on the provided context. Cite sources using [1], [2], etc.
-If you cannot answer from the context, explicitly say "I do not have enough information to answer this based on the available sources."
+You can use the Startup Profile and the Chat History to answer conversational questions about the user, their startup, or previous messages.
+For all other questions, answer based ONLY on the provided Context. Cite sources using [1], [2], etc.
+If you cannot answer the question from the Context, Startup Profile, or Chat History, explicitly say "I do not have enough information to answer this based on the available sources."
 IMPORTANT: The user asked in {original_language}. You MUST write your entire response in {original_language}.
 {profile_context}
 Context:

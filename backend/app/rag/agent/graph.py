@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 async def node_classify(state: AgentState):
     logger.info(f"Agent: Classifying intent for '{state['query']}'")
-    classification = await classify_intent(state["query"])
+    classification = await classify_intent(state["query"], chat_history=state.get("chat_history", []))
     return {
         "intent_domain": classification.get("domain", "general"),
         "is_in_scope": classification.get("in_scope", True)
@@ -18,16 +18,17 @@ async def node_classify(state: AgentState):
 
 async def node_retrieve(state: AgentState):
     logger.info(f"Agent: Retrieving for '{state['query']}'")
+    import asyncio
     query = state["query"]
-    dense_results = dense.search(query=query, top_k=20)
-    sparse_results = sparse.search(query=query, top_k=20)
+    dense_results = await asyncio.to_thread(dense.search, query=query, top_k=20)
+    sparse_results = await asyncio.to_thread(sparse.search, query=query, top_k=20)
     fused_results = fusion.reciprocal_rank_fusion(dense_results, sparse_results)
-    chunks = reranker.rerank(query=query, chunks=fused_results, top_k=5)
+    chunks = await asyncio.to_thread(reranker.rerank, query=query, chunks=fused_results, top_k=5)
     return {"retrieved_chunks": chunks}
 
 async def node_rewrite(state: AgentState):
     logger.info("Agent: Rewriting query")
-    new_query = await rewrite_query(state["query"])
+    new_query = await rewrite_query(state["query"], chat_history=state.get("chat_history", []))
     return {
         "query": new_query,
         "retry_count": state.get("retry_count", 0) + 1
@@ -56,23 +57,24 @@ async def node_generate(state: AgentState):
         return {"answer": "I do not have enough information to answer this based on the available sources.", "citations": []}
     
     system_prompt = f"""You are StartupSage, an AI assistant for Indian startups.
-Answer based ONLY on the provided context. Cite sources using [1], [2], etc.
-If you cannot answer from the context, explicitly say "I do not have enough information to answer this based on the available sources."
+You can use the Startup Profile and the Chat History to answer conversational questions about the user, their startup, or previous messages.
+For all other questions, answer based ONLY on the provided Context. Cite sources using [1], [2], etc.
+If you cannot answer the question from the Context, Startup Profile, or Chat History, explicitly say "I do not have enough information to answer this based on the available sources."
 {state.get('profile_context', '')}
 Context:
 {context_str}"""
 
-    answer = await generate(system_prompt, state["original_query"])
+    answer = await generate(system_prompt, state["original_query"], chat_history=state.get("chat_history", []))
     return {"answer": answer, "citations": citations_metadata}
 
 async def node_verify(state: AgentState):
     logger.info("Agent: Verifying groundedness")
     chunks = state.get("retrieved_chunks", [])
-    if not chunks:
-        return {"is_verified": False}
+    # We no longer instantly fail if no chunks are retrieved, because the answer might rely entirely on the profile_context
         
     context_str = "\n".join([c["text"] for c in chunks])
-    is_grounded = await verify_groundedness(state["answer"], context_str)
+    chat_history_str = "\n".join([f"{m['role']}: {m['content']}" for m in state.get("chat_history", [])])
+    is_grounded = await verify_groundedness(state["answer"], context_str, state.get("profile_context", ""), chat_history_str)
     
     # Also check if the LLM explicitly abstained
     if "I do not have enough information" in state["answer"]:

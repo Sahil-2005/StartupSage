@@ -6,10 +6,12 @@ logger = logging.getLogger(__name__)
 
 LEGAL_DISCLAIMER = "\n\n**Disclaimer:** This tool provides preliminary information based on curated sources. It is not a substitute for professional legal or financial advice."
 
-async def verify_groundedness(answer: str, context: str) -> bool:
+async def verify_groundedness(answer: str, context: str, profile_context: str = "", chat_history: str = "") -> bool:
     prompt = f"""You are a strict verification system. 
-Does the following answer rely ONLY on the provided context? Is it fully grounded by the context without hallucinating facts?
-Context: {context}
+Does the following answer rely ONLY on the provided context, the Startup Profile, or the Chat History? Is it fully grounded without hallucinating facts?
+Startup Profile Context: {profile_context}
+Chat History: {chat_history}
+Document Context: {context}
 
 Answer: {answer}
 

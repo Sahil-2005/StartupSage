@@ -48,7 +48,6 @@ async def generate(system_prompt: str, user_message: str, chat_history: list = N
     if settings.GEMINI_API_KEY:
         try:
             logger.info("Attempting generation with Gemini")
-            # Use gemini-3.5-flash as requested
             model = genai.GenerativeModel('gemini-3.5-flash')
             
             history_str = ""
@@ -65,7 +64,7 @@ async def generate(system_prompt: str, user_message: str, chat_history: list = N
             response = await model.generate_content_async(prompt)
             return response.text
         except Exception as e:
-            logger.error(f"Groq generation failed: {e}")
-            raise Exception("Both primary (Gemini) and fallback (Groq) LLMs failed.")
+            logger.error(f"Gemini generation failed: {e}")
+            raise Exception("Both primary (Groq) and fallback (Gemini) LLMs failed.")
             
     raise Exception("No LLM API keys configured.")
