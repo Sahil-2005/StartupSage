@@ -137,7 +137,7 @@ export default function DashboardLayout({ children }) {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto relative z-10 flex flex-col">
+        <main className="flex-1 overflow-y-auto relative z-10 flex flex-col" data-lenis-prevent="true">
           {children}
         </main>
       </div>
