@@ -10,8 +10,16 @@ function MessageBubble({ msg }) {
   if (msg.role === 'user') {
     return (
       <div className="flex justify-end pl-12 mb-6">
-        <div className="max-w-[85%] bg-[#3b82f6] text-black border-[3px] border-black shadow-[4px_4px_0px_#000] p-4 font-bold text-sm leading-relaxed">
-          {msg.content}
+        <div className="max-w-[85%] flex flex-col items-end gap-2">
+          {msg.document_name && (
+            <div className="bg-[#a3e635] text-black border-[2px] border-black px-3 py-1 text-xs font-black uppercase flex items-center gap-2 shadow-[2px_2px_0px_#000]">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span className="truncate max-w-[200px]">{msg.document_name}</span>
+            </div>
+          )}
+          <div className="bg-[#3b82f6] text-white border-[3px] border-black shadow-[4px_4px_0px_#000] p-4 font-bold text-sm leading-relaxed whitespace-pre-wrap">
+            {msg.content}
+          </div>
         </div>
       </div>
     );
@@ -91,6 +99,10 @@ export default function ChatPage() {
   const [conversations, setConversations] = useState([]);
   const [historyOpen, setHistoryOpen] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  
+  const [attachedDocument, setAttachedDocument] = useState(null);
+  const [uploadingDoc, setUploadingDoc] = useState(false);
+  const fileInputRef = useRef(null);
 
   const endRef = useRef(null);
   const inputRef = useRef(null);
@@ -142,17 +154,58 @@ export default function ChatPage() {
   const profileId = localStorage.getItem('startup_profile_id');
   const isProfileActive = !!profileId;
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size must be under 5MB');
+      return;
+    }
+    
+    setUploadingDoc(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+      const res = await authFetch('/api/v1/chat/upload', {
+        method: 'POST',
+        body: formData
+      });
+      if (!res.ok) throw new Error((await res.json()).detail || 'Upload failed');
+      const data = await res.json();
+      setAttachedDocument(data);
+      toast.success('Document attached');
+    } catch (err) {
+      toast.error(err.message || 'Failed to parse document');
+    } finally {
+      setUploadingDoc(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   const sendMessage = async (e) => {
     e?.preventDefault();
     if (!input.trim() || loading) return;
     const userMessage = input.trim();
+    const currentDoc = attachedDocument;
+    
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setAttachedDocument(null);
+    setMessages(prev => [...prev, { role: 'user', content: userMessage, document_name: currentDoc?.filename }]);
     setLoading(true);
     try {
+      const payload = {
+        message: userMessage,
+        conversation_id: conversationId,
+        profile_id: profileId,
+        document_context: currentDoc?.extracted_text,
+        document_name: currentDoc?.filename
+      };
+      
       const res = await authFetch('/api/v1/chat/', {
         method: 'POST',
-        body: JSON.stringify({ message: userMessage, conversation_id: conversationId, profile_id: profileId }),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error((await res.json()).detail || 'API error');
       const data = await res.json();
@@ -277,19 +330,56 @@ export default function ChatPage() {
         {/* Input Bar */}
         <div className="flex-shrink-0 p-4 lg:p-6 border-t-[3px] border-black bg-[#f4f0e6] relative z-20">
           <form onSubmit={sendMessage} className="max-w-4xl mx-auto relative">
+            
+            {/* Attachment Indicator */}
+            {attachedDocument && (
+              <div className="absolute -top-12 left-0 right-0 flex justify-center z-30">
+                <div className="bg-[#a3e635] border-[3px] border-black shadow-[4px_4px_0px_#000] px-4 py-2 flex items-center gap-3">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                  <span className="font-black text-xs uppercase truncate max-w-[200px] text-black">
+                    {attachedDocument.filename} attached
+                  </span>
+                  <button type="button" onClick={() => setAttachedDocument(null)} className="ml-2 bg-white border-2 border-black rounded-full w-5 h-5 flex items-center justify-center hover:bg-black hover:text-white transition-colors">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="flex items-end bg-white border-[3px] border-black shadow-[6px_6px_0px_#000] p-2 focus-within:shadow-[2px_2px_0px_#000] focus-within:translate-y-1 focus-within:translate-x-1 transition-all">
+              
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleFileUpload} 
+                accept=".pdf,.txt" 
+                className="hidden" 
+              />
+              
+              <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingDoc || loading}
+                className={`w-12 h-12 flex-shrink-0 flex items-center justify-center border-[3px] border-black mr-2 transition-all ${(uploadingDoc || loading) ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'bg-white hover:bg-black hover:text-white shadow-[2px_2px_0px_#000] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer'}`}
+                title="Attach Document (PDF, TXT)"
+              >
+                {uploadingDoc ? (
+                  <div className="w-5 h-5 border-[3px] border-black border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                )}
+              </button>
+
               <textarea
                 ref={inputRef}
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
-                placeholder="TYPE YOUR QUERY HERE..."
+                placeholder={uploadingDoc ? "UPLOADING DOCUMENT..." : "TYPE YOUR QUERY HERE..."}
                 rows={1}
                 className="flex-1 bg-transparent p-3 text-black font-bold uppercase text-sm placeholder:text-gray-400 border-none outline-none resize-none min-h-[50px] max-h-[150px]"
-                disabled={loading}
+                disabled={loading || uploadingDoc}
               />
-              <button type="submit" disabled={loading || !input.trim()}
-                className={`w-12 h-12 flex-shrink-0 flex items-center justify-center border-[3px] border-black ml-2 transition-all ${(!input.trim() || loading) ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'bg-[#ff8c00] hover:bg-black hover:text-white shadow-[2px_2px_0px_#000] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer'}`}
+              
+              <button type="submit" disabled={loading || uploadingDoc || (!input.trim() && !attachedDocument)}
+                className={`w-12 h-12 flex-shrink-0 flex items-center justify-center border-[3px] border-black ml-2 transition-all ${((!input.trim() && !attachedDocument) || loading || uploadingDoc) ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'bg-[#ff8c00] hover:bg-black hover:text-white shadow-[2px_2px_0px_#000] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer'}`}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="transform rotate-90"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
               </button>

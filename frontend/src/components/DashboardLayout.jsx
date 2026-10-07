@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [ragMode, setRagMode] = useState('hybrid');
+  const [ragMode, setRagMode] = useState('agentic');
 
   useEffect(() => {
     fetch('/api/v1/config/rag-mode')

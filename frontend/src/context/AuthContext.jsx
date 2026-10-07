@@ -78,13 +78,18 @@ export function AuthProvider({ children }) {
   };
 
   const authFetch = useCallback(async (url, options = {}) => {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      ...(options.headers || {}),
+    };
+    
+    if (!(options.body instanceof FormData) && !headers['Content-Type']) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     return fetch(url, {
       ...options,
-      headers: {
-        ...(options.headers || {}),
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+      headers,
     });
   }, [token]);
 

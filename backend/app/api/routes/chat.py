@@ -18,6 +18,8 @@ class ChatRequest(BaseModel):
     message: str
     conversation_id: Optional[str] = None
     profile_id: Optional[str] = None
+    document_context: Optional[str] = None
+    document_name: Optional[str] = None
 
 class ChatResponse(BaseModel):
     answer: str
@@ -27,6 +29,31 @@ class ChatResponse(BaseModel):
 
 class ConversationCreate(BaseModel):
     title: str = "New Conversation"
+
+from fastapi import UploadFile, File
+import io
+
+@router.post("/upload")
+async def upload_document(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
+    try:
+        content = await file.read()
+        text = ""
+        if file.filename.lower().endswith(".pdf"):
+            from pypdf import PdfReader
+            reader = PdfReader(io.BytesIO(content))
+            for page in reader.pages:
+                extracted = page.extract_text()
+                if extracted:
+                    text += extracted + "\n"
+        else:
+            text = content.decode("utf-8", errors="ignore")
+            
+        # Limit text length to avoid token limits (e.g. ~10000 chars)
+        text = text[:15000]
+        return {"filename": file.filename, "extracted_text": text}
+    except Exception as e:
+        logger.error(f"File upload parsing failed: {e}")
+        raise HTTPException(status_code=400, detail="Failed to parse document. Please upload a valid PDF or text file.")
 
 @router.post("/", response_model=ChatResponse)
 async def chat(request: ChatRequest, current_user: dict = Depends(get_current_user)):
@@ -49,6 +76,15 @@ STARTUP PROFILE (Context for your advice):
 - Additional Notes: {profile.get('notes')}
 
 Please tailor your advice specifically to this startup's context.
+"""
+
+    doc_context_prompt = ""
+    if request.document_context:
+        doc_context_prompt = f"""
+UPLOADED DOCUMENT CONTEXT (File: {request.document_name}):
+{request.document_context}
+
+The user has attached the above document. Pay close attention to it. If the user asks about the document, summarize it, highlight important areas, or warn about risky clauses as requested.
 """
     
     # Fetch chat history for context
@@ -91,10 +127,11 @@ Please tailor your advice specifically to this startup's context.
         
         system_prompt = f"""You are StartupSage, an AI assistant for Indian startups.
 You can use the Startup Profile and the Chat History to answer conversational questions about the user, their startup, or previous messages.
-For all other questions, answer based ONLY on the provided Context. Cite sources using [1], [2], etc.
-If you cannot answer the question from the Context, Startup Profile, or Chat History, explicitly say "I do not have enough information to answer this based on the available sources."
+For all other questions, answer based ONLY on the provided Context or the Uploaded Document. Cite sources using [1], [2], etc.
+If you cannot answer the question from the Context, Uploaded Document, Startup Profile, or Chat History, explicitly say "I do not have enough information to answer this based on the available sources."
 IMPORTANT: The user asked in {original_language}. You MUST write your entire response in {original_language}.
 {profile_context}
+{doc_context_prompt}
 Context:
 {context_str}
 """
@@ -107,11 +144,18 @@ Context:
             
     elif settings.RAG_MODE == "agentic":
         from app.rag.agent.graph import agent_graph
+        
+        full_context = profile_context
+        if doc_context_prompt:
+            full_context += "\n" + doc_context_prompt
+            
+        full_context += f"\nIMPORTANT: Respond in {original_language}."
+        
         state = {
             "query": search_query,
             "original_query": user_message,
             "profile_id": request.profile_id,
-            "profile_context": profile_context + f"\nIMPORTANT: Respond in {original_language}.",
+            "profile_context": full_context,
             "chat_history": chat_history,
             "retry_count": 0,
             "retrieved_chunks": [],
@@ -145,12 +189,16 @@ Context:
         )
         
         # Save user message
-        await db.db.messages.insert_one({
+        user_msg_doc = {
             "conversation_id": conv_id,
             "role": "user",
             "content": user_message,
             "created_at": datetime.utcnow()
-        })
+        }
+        if request.document_name:
+            user_msg_doc["document_name"] = request.document_name
+            
+        await db.db.messages.insert_one(user_msg_doc)
         
         # Save assistant message
         await db.db.messages.insert_one({
