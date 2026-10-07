@@ -33,103 +33,84 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex" style={{ background: 'var(--bg-primary)' }}>
-      {/* Left Branding Panel */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col justify-between" style={{ background: 'var(--bg-secondary)', padding: '48px' }}>
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="animate-float" style={{ position: 'absolute', top: '30%', left: '25%', width: '320px', height: '320px', background: 'radial-gradient(circle, rgba(244,63,94,0.07), transparent 70%)', borderRadius: '50%' }}></div>
-          <div className="animate-float" style={{ position: 'absolute', bottom: '20%', right: '20%', width: '260px', height: '260px', background: 'radial-gradient(circle, rgba(245,158,11,0.07), transparent 70%)', borderRadius: '50%', animationDelay: '3s' }}></div>
-          <div className="grid-bg absolute inset-0 opacity-30"></div>
+    <div className="min-h-screen flex bg-[#f4f0e6] font-sans">
+      {/* Left Panel - Hidden on Mobile */}
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between border-r-[3px] border-black p-12 bg-white relative overflow-hidden">
+        {/* Background Illustration */}
+        <img src="/hero_rocket.png" alt="Rocket Launch" className="absolute inset-0 w-full h-full object-contain object-bottom opacity-90 mix-blend-multiply pointer-events-none z-0 p-8" />
+        
+        {/* Top left sticker */}
+        <div className="absolute top-1/4 left-10 bg-[#ff8c00] text-black font-black uppercase text-xl border-[3px] border-black shadow-[4px_4px_0px_#000] p-4 transform -rotate-6 z-10 w-48 text-center">
+            Dream<br/>Build<br/>Scale
         </div>
 
-        <div className="relative z-10">
-          <Link to="/" className="flex items-center gap-2.5 no-underline">
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ color: '#09090b', fontWeight: 800, fontSize: '16px' }}>S</span>
+        <div className="relative z-20">
+          <Link to="/" className="flex items-center gap-3 no-underline inline-flex bg-white p-2 border-[3px] border-black shadow-[4px_4px_0px_#000]">
+            <div className="w-10 h-10 bg-[#ff8c00] border-[3px] border-black flex items-center justify-center">
+              <span className="text-black font-black text-xl">S</span>
             </div>
-            <span style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '18px' }}>StartupSage</span>
+            <span className="text-black font-black text-xl uppercase tracking-wider pr-2">StartupSage</span>
           </Link>
         </div>
 
-        <div className="relative z-10" style={{ maxWidth: '440px' }}>
-          <h2 style={{ fontSize: '38px', fontWeight: 800, lineHeight: 1.15, letterSpacing: '-0.03em', marginBottom: '16px' }}>
-            Join founders<br />
-            <span className="text-gradient-gold">building smarter</span><br />
-            in India
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '15px', lineHeight: 1.7, marginBottom: '28px' }}>
-            Get personalized, context-aware guidance on registering, funding, and scaling your startup — for free.
+        <div className="relative z-20 max-w-md bg-white border-[3px] border-black p-6 shadow-[6px_6px_0px_#000] mt-auto mb-10 transform -rotate-2">
+          <h1 className="text-6xl font-black uppercase leading-[0.9] text-black mb-4 tracking-tighter">
+            START<br/>YOUR<br/>JOURNEY.
+          </h1>
+          <p className="text-lg font-bold text-black border-l-[4px] border-[#ff8c00] pl-4">
+            AI-powered guidance<br/>for India's founders.
           </p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {[
-              { icon: '🎯', text: 'Personalized advice based on your startup profile' },
-              { icon: '📄', text: 'Sourced from 50+ official government documents' },
-              { icon: '⚡', text: 'Agentic AI that thinks, verifies, and cites' },
-            ].map(({ icon, text }) => (
-              <div key={text} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '32px', height: '32px', background: 'var(--bg-tertiary)', border: '1px solid var(--border)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', flexShrink: 0 }}>{icon}</div>
-                <span style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 }}>{text}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
-        <div className="relative z-10 flex gap-3">
-          {['DPIIT', 'MCA', 'CBIC', 'MeitY'].map(org => (
-            <div key={org} style={{ padding: '6px 14px', background: 'var(--bg-tertiary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>{org}</div>
-          ))}
+        <div className="relative z-20 flex gap-4 text-black font-black uppercase">
+          <div className="border-2 border-black bg-[#a3e635] px-3 py-1 shadow-[2px_2px_0px_#000]">DPIIT</div>
+          <div className="border-2 border-black bg-[#3b82f6] text-white px-3 py-1 shadow-[2px_2px_0px_#000]">MCA</div>
+          <div className="border-2 border-black bg-white px-3 py-1 shadow-[2px_2px_0px_#000]">CBIC</div>
         </div>
       </div>
 
-      {/* Right Form Panel */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center" style={{ padding: '40px' }}>
-        <div style={{ width: '100%', maxWidth: '420px' }}>
-          <div className="lg:hidden flex items-center gap-2.5" style={{ marginBottom: '40px' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ color: '#09090b', fontWeight: 800, fontSize: '14px' }}>S</span>
-            </div>
-            <span style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '18px' }}>StartupSage</span>
+      {/* Right Panel - Register Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative dot-pattern overflow-y-auto">
+        <div className="w-full max-w-md bg-[#f4f0e6] relative z-10 py-8">
+          
+          <div className="mb-8">
+            <Link to="/" className="inline-block text-black font-bold uppercase text-sm mb-12 hover:underline decoration-2">
+              ← Back
+            </Link>
+            <h2 className="text-4xl font-black uppercase text-black mb-2 tracking-tight">Create Account.</h2>
+            <p className="text-black font-bold">Start building.</p>
           </div>
 
-          <div style={{ marginBottom: '36px' }}>
-            <h1 style={{ fontSize: '28px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '8px' }}>Create your account</h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Free forever. No credit card required.</p>
-          </div>
-
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Full Name</label>
+              <label className="block text-black font-black uppercase text-sm mb-2">Full Name</label>
               <input type="text" required value={form.full_name} onChange={e => setForm(p => ({ ...p, full_name: e.target.value }))} placeholder="Rahul Sharma" className="input-field" />
             </div>
+            
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Work Email</label>
+              <label className="block text-black font-black uppercase text-sm mb-2">Work Email</label>
               <input type="email" required value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} placeholder="you@startup.com" className="input-field" />
             </div>
+
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Password</label>
-              <input type="password" required value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))} placeholder="Min. 8 characters" className="input-field" />
+              <label className="block text-black font-black uppercase text-sm mb-2">Password</label>
+              <input type="password" required value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))} placeholder="Min 8 characters" className="input-field" />
             </div>
+
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Confirm Password</label>
+              <label className="block text-black font-black uppercase text-sm mb-2">Confirm Password</label>
               <input type="password" required value={form.confirm} onChange={e => setForm(p => ({ ...p, confirm: e.target.value }))} placeholder="••••••••" className="input-field" />
             </div>
 
-            <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', padding: '14px', fontSize: '14px', marginTop: '4px', opacity: loading ? 0.6 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
-              {loading ? (
-                <><div style={{ width: '18px', height: '18px', border: '2px solid rgba(0,0,0,0.2)', borderTopColor: '#09090b', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }}></div> Creating account...</>
-              ) : 'Create free account'}
+            <button type="submit" disabled={loading} className="btn-primary w-full py-4 text-lg flex items-center justify-center gap-2 mt-4" style={{ opacity: loading ? 0.7 : 1 }}>
+              {loading ? 'CREATING...' : <>SIGN UP <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></>}
             </button>
           </form>
 
-          <p style={{ marginTop: '24px', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '13px' }}>
+          <p className="mt-8 text-center text-black font-bold text-sm">
             Already have an account?{' '}
-            <Link to="/login" style={{ color: 'var(--accent-light)', fontWeight: 600, textDecoration: 'none' }}>Sign in</Link>
+            <Link to="/login" className="text-[#ff8c00] hover:underline decoration-2">Sign in</Link>
           </p>
-
-          <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--border)', textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)' }}>
-            By creating an account, you agree to our Terms of Service and Privacy Policy.
-          </div>
         </div>
       </div>
     </div>

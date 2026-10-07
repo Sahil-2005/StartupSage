@@ -1,68 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
-const FEATURES = [
-  {
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-    ),
-    title: 'Multilingual Intelligence',
-    desc: 'Ask in Hindi, Marathi, or any language — our AI translates, retrieves English docs, and responds in your language.',
-    tag: 'New',
-  },
-  {
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-    ),
-    title: 'Context-Aware Advice',
-    desc: 'Your startup profile shapes every answer. Industry, stage, location — the AI tailors advice specifically for you.',
-  },
-  {
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-    ),
-    title: 'Hybrid RAG Engine',
-    desc: 'Dense semantic + BM25 sparse search, fused with Reciprocal Rank Fusion and cross-encoder reranking.',
-  },
-  {
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4"/></svg>
-    ),
-    title: 'Agentic Workflow',
-    desc: 'A LangGraph agent that classifies, rewrites, retrieves, generates, and self-verifies — autonomously.',
-  },
-  {
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-    ),
-    title: 'Grounded & Cited',
-    desc: 'Every answer backed by official DPIIT, MCA, CBIC sources. No hallucinations — just verified facts with citations.',
-  },
-  {
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-    ),
-    title: 'Dual LLM Fallback',
-    desc: 'Lightning-fast Groq as primary, Google Gemini as fallback. Zero-downtime architecture for instant responses.',
-  },
-];
-
 const CATEGORIES = [
-  { title: 'Registration', count: '15', icon: '🏛️' },
-  { title: 'Taxation & GST', count: '5', icon: '📊' },
-  { title: 'MSME / Udyam', count: '5', icon: '🏭' },
-  { title: 'Funding', count: '9', icon: '💰' },
-  { title: 'IP & Contracts', count: '6', icon: '⚖️' },
-  { title: 'Labour & HR', count: '5', icon: '👥' },
-  { title: 'Data Protection', count: '2', icon: '🔐' },
-  { title: 'Procurement', count: '6', icon: '🛒' },
-];
-
-const STEPS = [
-  { num: '01', title: 'Create Your Profile', desc: 'Tell us your startup\'s stage, industry, and location to get personalized advice.' },
-  { num: '02', title: 'Ask Anything', desc: 'Type your question in any language — about registration, tax, funding, compliance.' },
-  { num: '03', title: 'AI Retrieves & Verifies', desc: 'Our Agentic RAG pipeline searches 35+ official documents, verifies groundedness, and cites sources.' },
-  { num: '04', title: 'Get Actionable Answers', desc: 'Receive precise, cited, legally-disclaimed answers tailored to your startup\'s context.' },
+  { title: 'REGISTRATION', desc: 'DPIIT, MCA, Startup India', color: 'card-orange', icon: '📄' },
+  { title: 'FUNDING', desc: 'Schemes, Investors, Grants', color: 'card-blue', icon: '💰' },
+  { title: 'TAX & COMPLIANCE', desc: 'GST, ITR, Legal', color: 'card-green', icon: '🛡️' },
+  { title: 'MSME', desc: 'Schemes & Benefits', color: 'card-secondary', icon: '🏭' },
+  { title: 'IPR', desc: 'Patents, Trademarks', color: 'card-orange', icon: '💡' },
+  { title: 'BUSINESS OPERATIONS', desc: 'Licenses, Labour, Policies', color: 'card-blue', icon: '⚙️' },
 ];
 
 function AnimatedCounter({ target }) {
@@ -85,188 +30,194 @@ function AnimatedCounter({ target }) {
 
 export default function Landing() {
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
+    <div className="min-h-screen relative dot-pattern">
       {/* ===== HEADER ===== */}
-      <header className="glass fixed top-0 left-0 right-0 z-50" style={{ borderBottom: '1px solid var(--border)' }}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2.5 no-underline">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center animate-pulse-glow" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
-              <span style={{ color: '#09090b', fontWeight: 800, fontSize: '14px' }}>S</span>
+      <header className="sticky top-0 z-50 bg-[#f4f0e6] border-b-[3px] border-black">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-20">
+          <Link to="/" className="flex items-center gap-3 no-underline">
+            <div className="w-10 h-10 bg-[#ff8c00] border-[3px] border-black shadow-[2px_2px_0px_#000] flex items-center justify-center">
+              <span className="text-black font-black text-xl">S</span>
             </div>
-            <span style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '16px', letterSpacing: '-0.02em' }}>StartupSage</span>
+            <span className="text-black font-black text-xl uppercase tracking-wider">StartupSage</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
-            {['Features', 'How it works', 'Knowledge'].map(item => (
-              <a key={item} href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500, textDecoration: 'none', transition: 'color 0.2s' }}
-                onMouseOver={e => e.target.style.color = 'var(--text-primary)'}
-                onMouseOut={e => e.target.style.color = 'var(--text-secondary)'}
-              >{item}</a>
+            {['Product', 'Knowledge', 'How it works'].map(item => (
+              <a key={item} href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} 
+                 className="text-black font-bold uppercase text-sm hover:underline decoration-[2px] underline-offset-4">
+                {item}
+              </a>
             ))}
+            <div className="flex items-center gap-2 text-xs font-bold uppercase border-2 border-black rounded-full px-3 py-1 bg-white shadow-[2px_2px_0px_#000]">
+              <div className="w-2.5 h-2.5 rounded-full bg-[#a3e635] border border-black animate-pulse"></div>
+              AI System Online
+            </div>
           </nav>
 
-          <div className="flex items-center gap-3">
-            <Link to="/login" className="btn-secondary" style={{ padding: '8px 18px', fontSize: '13px' }}>Sign in</Link>
-            <Link to="/register" className="btn-primary" style={{ padding: '8px 22px', fontSize: '13px' }}>Get started</Link>
+          <div className="flex items-center gap-4">
+            <Link to="/login" className="btn-secondary py-2 px-6">Sign in</Link>
+            <Link to="/register" className="btn-primary py-2 px-6 flex items-center gap-2">
+              Get started <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </Link>
           </div>
         </div>
       </header>
 
       {/* ===== HERO ===== */}
-      <section className="relative overflow-hidden" style={{ paddingTop: '140px', paddingBottom: '100px' }}>
-        {/* Background orbs */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute animate-float" style={{ top: '10%', left: '20%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(245,158,11,0.08), transparent 70%)', borderRadius: '50%' }}></div>
-          <div className="absolute animate-float" style={{ top: '30%', right: '15%', width: '350px', height: '350px', background: 'radial-gradient(circle, rgba(244,63,94,0.06), transparent 70%)', borderRadius: '50%', animationDelay: '2s' }}></div>
-          <div className="absolute animate-float" style={{ bottom: '10%', left: '40%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(20,184,166,0.05), transparent 70%)', borderRadius: '50%', animationDelay: '4s' }}></div>
-          <div className="grid-bg absolute inset-0 opacity-40"></div>
-        </div>
-
-        <div className="relative max-w-5xl mx-auto px-5 sm:px-8" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-          {/* Badge */}
-          <div className="badge badge-accent animate-fade-in-up" style={{ marginBottom: '32px', animationDelay: '0ms' }}>
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)', animation: 'pulse-glow 2s infinite' }}></div>
-            Agentic RAG · LangGraph · Multilingual
+      <section className="max-w-7xl mx-auto px-5 sm:px-8 pt-20 pb-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <div className="inline-block transform -rotate-2 mb-6">
+            <div className="bg-[#a3e635] border-[3px] border-black shadow-[4px_4px_0px_#000] px-4 py-2 text-black font-black uppercase text-sm flex items-center gap-2">
+              Made for India <span className="text-xl">🇮🇳</span>
+            </div>
           </div>
-
-          <h1 className="animate-fade-in-up" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 800, lineHeight: 1.08, letterSpacing: '-0.04em', marginBottom: '24px', animationDelay: '100ms' }}>
-            Your AI co-pilot for<br />
-            <span className="text-gradient-gold">building in India</span>
+          
+          <h1 className="text-[clamp(3.5rem,8vw,5.5rem)] font-black leading-[0.9] text-black uppercase tracking-tight mb-8">
+            India's Startup <br/>
+            <span className="text-[#ff8c00]">Knowledge Engine</span>
           </h1>
-
-          <p className="animate-fade-in-up" style={{ fontSize: '18px', lineHeight: 1.7, color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto 40px', animationDelay: '200ms' }}>
-            Navigate startup registration, taxation, MSME, and funding with confidence. 
-            Grounded answers from 50+ official government sources, personalized to your startup.
+          
+          <p className="text-2xl font-bold text-black mb-4">
+            Your AI co-pilot for building in India.
+          </p>
+          <p className="text-lg font-medium text-[#333] mb-10 max-w-lg">
+            Navigate startup registration, taxation, MSME, and funding with confidence. Grounded answers from 50+ official government sources, personalized to your startup.
           </p>
 
-          <div className="animate-fade-in-up" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '16px', marginBottom: '64px', animationDelay: '300ms' }}>
-            <Link to="/register" className="btn-primary" style={{ padding: '16px 36px', fontSize: '15px', borderRadius: 'var(--radius-xl)' }}>
-              Start for free
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <div className="flex flex-wrap items-center gap-6 mb-16">
+            <Link to="/register" className="btn-primary py-4 px-8 text-lg flex items-center gap-2">
+              Ask StartupSage <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
-            <Link to="/login" className="btn-secondary" style={{ padding: '16px 36px', fontSize: '15px', borderRadius: 'var(--radius-xl)' }}>
-              Sign in
-            </Link>
+            <a href="#features" className="btn-secondary py-4 px-8 text-lg">
+              Learn More
+            </a>
           </div>
 
-          {/* Stats */}
-          <div className="animate-fade-in-up" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '48px', animationDelay: '400ms' }}>
-            {[['50', 'Govt. Sources'], ['35', 'Documents Ingested'], ['8', 'Topic Areas'], ['∞', 'Languages']].map(([num, label]) => (
-              <div key={label} className="text-center">
-                <div className="font-mono" style={{ fontSize: '28px', fontWeight: 700, color: 'var(--accent-light)' }}>
-                  {num === '∞' ? '∞' : <AnimatedCounter target={num + '+'} />}
-                </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500, marginTop: '4px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{label}</div>
+          <div className="grid grid-cols-3 gap-6">
+            <div className="card bg-white p-4">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-4xl font-black text-black"><AnimatedCounter target="50+" /></h3>
+                <span className="text-2xl">🏛️</span>
               </div>
-            ))}
+              <p className="text-xs font-bold uppercase text-[#555]">Government Sources</p>
+            </div>
+            <div className="card bg-white p-4">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-4xl font-black text-black"><AnimatedCounter target="35+" /></h3>
+                <span className="text-2xl">📄</span>
+              </div>
+              <p className="text-xs font-bold uppercase text-[#555]">Documents Ingested</p>
+            </div>
+            <div className="card bg-white p-4">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-4xl font-black text-black"><AnimatedCounter target="8+" /></h3>
+                <span className="text-2xl">🗂️</span>
+              </div>
+              <p className="text-xs font-bold uppercase text-[#555]">Topic Areas</p>
+            </div>
+          </div>
+          
+          <div className="mt-8 flex items-center gap-4">
+            <span className="font-bold text-sm uppercase text-black">Multilingual Support</span>
+            <div className="flex gap-2">
+              <span className="badge badge-accent shadow-[2px_2px_0px_#000] border-2 border-black">English</span>
+              <span className="badge bg-[#333] text-white shadow-[2px_2px_0px_#000] border-2 border-black">हिंदी</span>
+              <span className="badge bg-[#333] text-white shadow-[2px_2px_0px_#000] border-2 border-black">मराठी</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Abstract Hero Image Area (Neo-Brutalist Illustration) */}
+        <div className="relative h-[600px] hidden lg:block overflow-visible">
+          {/* Background Illustration */}
+          <img src="/hero_gateway.png" alt="Gateway of India" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[120%] max-w-none h-auto object-contain mix-blend-multiply pointer-events-none z-10" />
+          
+          {/* Post-it Notes */}
+          <div className="absolute top-10 right-0 bg-[#a3e635] border-[3px] border-black shadow-[6px_6px_0px_#000] p-6 w-64 transform rotate-3 z-20">
+            <h4 className="font-black uppercase text-xl mb-4 border-b-2 border-black pb-2">Agentic RAG</h4>
+            <ul className="space-y-3 font-bold">
+              <li className="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg> RAG</li>
+              <li className="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg> LangGraph</li>
+              <li className="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Multilingual</li>
+              <li className="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Verified Sources</li>
+            </ul>
+          </div>
+          
+          <div className="absolute bottom-20 left-10 bg-white border-[3px] border-black shadow-[6px_6px_0px_#000] p-4 transform -rotate-2 z-30">
+            <div className="text-3xl font-black mb-2 text-[#ff8c00]">DREAM</div>
+            <div className="text-3xl font-black mb-2 text-[#3b82f6]">BUILD</div>
+            <div className="text-3xl font-black text-black">SCALE</div>
           </div>
         </div>
       </section>
 
-      {/* ===== FEATURES ===== */}
-      <section id="features" style={{ padding: '80px 0', background: 'var(--bg-secondary)' }}>
+      {/* ===== DIVIDER ===== */}
+      <div className="h-4 bg-black w-full border-y-[3px] border-black"></div>
+
+      {/* ===== KNOWLEDGE BASE PREVIEW ===== */}
+      <section className="bg-white border-b-[3px] border-black py-20" id="features">
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
-          <div className="text-center" style={{ marginBottom: '60px' }}>
-            <div className="badge badge-accent mb-4">Capabilities</div>
-            <h2 style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '12px' }}>Not another chatbot.</h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '16px', maxWidth: '500px', margin: '0 auto' }}>A sophisticated AI system that thinks, retrieves, verifies, and cites.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
-            {FEATURES.map(f => (
-              <div key={f.title} className="card" style={{ padding: '28px' }}>
-                <div className="flex items-start justify-between mb-5">
-                  <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-light)' }}>
-                    {f.icon}
-                  </div>
-                  {f.tag && (
-                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent)', background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', padding: '3px 10px', borderRadius: 'var(--radius-full)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{f.tag}</span>
-                  )}
-                </div>
-                <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', letterSpacing: '-0.01em' }}>{f.title}</h3>
-                <p style={{ fontSize: '13px', lineHeight: 1.7, color: 'var(--text-secondary)' }}>{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== HOW IT WORKS ===== */}
-      <section id="how-it-works" style={{ padding: '100px 0' }}>
-        <div className="max-w-4xl mx-auto px-5 sm:px-8">
-          <div className="text-center" style={{ marginBottom: '60px' }}>
-            <div className="badge badge-accent mb-4">Process</div>
-            <h2 style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '12px' }}>Four steps to answers.</h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '16px' }}>From question to cited, verified answer in seconds.</p>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {STEPS.map((item, i) => (
-              <div key={item.num} className="card" style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', padding: '24px 28px' }}>
-                <div className="font-mono flex-shrink-0" style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent)', background: 'var(--accent-dim)', width: '40px', height: '40px', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--accent-border)' }}>{item.num}</div>
-                <div>
-                  <h3 style={{ fontWeight: 700, marginBottom: '4px', letterSpacing: '-0.01em' }}>{item.title}</h3>
-                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== KNOWLEDGE BASE ===== */}
-      <section id="knowledge" style={{ padding: '80px 0', background: 'var(--bg-secondary)' }}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8">
-          <div className="text-center" style={{ marginBottom: '60px' }}>
-            <div className="badge badge-accent mb-4">Knowledge</div>
-            <h2 style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '12px' }}>Built on official sources.</h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '16px', maxWidth: '500px', margin: '0 auto' }}>35+ PDFs from India's most authoritative government portals.</p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {CATEGORIES.map(cat => (
-              <div key={cat.title} className="card text-center" style={{ padding: '24px 16px' }}>
-                <div style={{ fontSize: '32px', marginBottom: '12px' }}>{cat.icon}</div>
-                <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '4px' }}>{cat.title}</h3>
-                <span className="font-mono" style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 600 }}>{cat.count} docs</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== CTA ===== */}
-      <section style={{ padding: '100px 0' }}>
-        <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center">
-          <div className="glass-accent" style={{ padding: '60px 40px', borderRadius: 'var(--radius-2xl)', position: 'relative', overflow: 'hidden' }}>
-            <div className="dot-pattern absolute inset-0 opacity-50"></div>
-            <div className="relative">
-              <h2 style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '16px' }}>Ready to build smarter?</h2>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '16px', marginBottom: '32px', maxWidth: '400px', margin: '0 auto 32px' }}>
-                Join founders using StartupSage to navigate India's regulatory landscape.
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12">
+            <div className="max-w-xl">
+              <h2 className="text-5xl font-black uppercase tracking-tight text-black mb-4">Your Complete Startup Support</h2>
+              <p className="text-xl font-medium text-[#444]">
+                From idea to scale — get expert guidance on every step of your journey.
               </p>
-              <Link to="/register" className="btn-primary" style={{ padding: '16px 40px', fontSize: '15px', borderRadius: 'var(--radius-xl)' }}>
-                Create free account
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </Link>
+            </div>
+            <div className="mt-8 md:mt-0">
+              <Link to="/register" className="btn-secondary py-3 px-6">Explore Knowledge Base <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></Link>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {CATEGORIES.map((cat, i) => (
+              <div key={i} className={`card ${cat.color === 'card-secondary' ? 'bg-[#f4f0e6]' : cat.color} p-6 h-40 flex flex-col justify-between`}>
+                <div className="flex justify-between items-start">
+                  <div className={`p-2 border-[3px] border-black shadow-[2px_2px_0px_#000] bg-white`}>
+                    <span className="text-2xl">{cat.icon}</span>
+                  </div>
+                  <div className="w-12 h-12 rounded-full border-[3px] border-black flex items-center justify-center bg-white shadow-[2px_2px_0px_#000]">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-black text-xl uppercase text-black">{cat.title}</h3>
+                  <p className="font-bold text-sm text-[#222]">{cat.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 bg-[#111] text-white border-[3px] border-black shadow-[6px_6px_0px_#000] p-6 flex flex-col md:flex-row items-center justify-between">
+            <div className="flex items-center gap-6">
+              <div className="w-16 h-16 bg-[#ff8c00] border-2 border-black flex items-center justify-center text-black shadow-[4px_4px_0px_#fff]">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div>
+                <h4 className="font-black uppercase text-xl text-[#ff8c00]">Powered by Advanced AI</h4>
+                <p className="font-bold text-sm text-gray-300">Agentic RAG • LangGraph • Grounded in Government Sources</p>
+              </div>
+            </div>
+            <div className="mt-6 md:mt-0 px-6 py-3 border-2 border-dashed border-[#ff8c00] text-[#ff8c00] font-black uppercase flex items-center gap-4">
+              Built for the Indian Startup Ecosystem <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </div>
           </div>
         </div>
       </section>
 
       {/* ===== FOOTER ===== */}
-      <footer style={{ borderTop: '1px solid var(--border)', padding: '40px 0' }}>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ color: '#09090b', fontWeight: 800, fontSize: '12px' }}>S</span>
+      <footer className="bg-[#f4f0e6] py-10 border-t-[3px] border-black">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[#ff8c00] border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center">
+              <span className="text-black font-black text-sm">S</span>
             </div>
-            <span style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '14px' }}>StartupSage</span>
+            <span className="text-black font-black uppercase">StartupSage</span>
           </div>
-          <p style={{ color: 'var(--text-muted)', fontSize: '12px', textAlign: 'center' }}>
+          <p className="text-black font-bold text-xs uppercase text-center border-2 border-black bg-white px-4 py-2 shadow-[2px_2px_0px_#000]">
             For informational purposes only. Not a substitute for professional legal or financial advice.
           </p>
-          <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>© 2024 StartupSage</span>
+          <span className="text-black font-black uppercase text-sm">© 2026 StartupSage</span>
         </div>
       </footer>
     </div>

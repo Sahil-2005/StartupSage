@@ -45,48 +45,39 @@ export default function ProfilePage() {
   };
 
   return (
-    <div style={{ padding: '32px', maxWidth: '680px', margin: '0 auto' }}>
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '6px' }}>Startup Profile</h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>This context powers personalized advice in the AI Advisor.</p>
+    <div className="p-8 max-w-3xl mx-auto pb-20">
+      <div className="mb-8 border-b-[3px] border-black pb-4">
+        <h1 className="text-4xl font-black uppercase text-black mb-2">Startup Profile</h1>
+        <p className="font-bold text-black border-l-[4px] border-[#3b82f6] pl-3">This context powers personalized advice in the AI Advisor.</p>
       </div>
 
-      <div className="card" style={{ padding: '32px', cursor: 'default' }}>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div className="bg-white border-[3px] border-black shadow-[6px_6px_0px_#000] p-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
           {/* Startup Name */}
           <div>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Startup Name</label>
-            <input type="text" required value={profile.name} onChange={e => setProfile(p => ({...p, name: e.target.value}))} placeholder="e.g., Acme Technologies" className="input-field" />
+            <label className="block font-black uppercase text-sm mb-2 text-black">Startup Name</label>
+            <input type="text" required value={profile.name} onChange={e => setProfile(p => ({...p, name: e.target.value}))} placeholder="e.g. Acme Technologies" className="input-field w-full text-lg py-3" />
           </div>
 
           {/* Industry & Location */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Industry / Sector</label>
-              <input type="text" required value={profile.industry} onChange={e => setProfile(p => ({...p, industry: e.target.value}))} placeholder="e.g., FinTech, SaaS" className="input-field" />
+              <label className="block font-black uppercase text-sm mb-2 text-black">Industry / Sector</label>
+              <input type="text" required value={profile.industry} onChange={e => setProfile(p => ({...p, industry: e.target.value}))} placeholder="e.g. FinTech, SaaS" className="input-field w-full py-3" />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>State / City</label>
-              <input type="text" required value={profile.location} onChange={e => setProfile(p => ({...p, location: e.target.value}))} placeholder="e.g., Bengaluru, Karnataka" className="input-field" />
+              <label className="block font-black uppercase text-sm mb-2 text-black">State / City</label>
+              <input type="text" required value={profile.location} onChange={e => setProfile(p => ({...p, location: e.target.value}))} placeholder="e.g. Bengaluru, Karnataka" className="input-field w-full py-3" />
             </div>
           </div>
 
           {/* Stage */}
           <div>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '10px' }}>Current Stage</label>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+            <label className="block font-black uppercase text-sm mb-3 text-black">Current Stage</label>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
               {STAGES.map(s => (
                 <button key={s} type="button" onClick={() => setProfile(p => ({...p, stage: s}))}
-                  style={{
-                    padding: '12px 14px', borderRadius: 'var(--radius-md)', fontSize: '12px', fontWeight: 600, textAlign: 'left', cursor: 'pointer', transition: 'all 0.2s',
-                    ...(profile.stage === s ? {
-                      background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', color: 'var(--accent-light)',
-                    } : {
-                      background: 'var(--bg-tertiary)', border: '1px solid var(--border)', color: 'var(--text-secondary)',
-                    }),
-                  }}
-                  onMouseOver={e => { if (profile.stage !== s) { e.currentTarget.style.borderColor = 'var(--border-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}}
-                  onMouseOut={e => { if (profile.stage !== s) { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}}
+                  className={`text-left p-4 border-[3px] border-black font-black uppercase text-xs transition-all ${profile.stage === s ? 'bg-[#ff8c00] text-black shadow-[4px_4px_0px_#000] -translate-y-1' : 'bg-gray-100 text-black hover:bg-white hover:shadow-[4px_4px_0px_#000] hover:-translate-y-1'}`}
                 >
                   {s}
                 </button>
@@ -96,29 +87,26 @@ export default function ProfilePage() {
 
           {/* Notes */}
           <div>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '8px' }}>Additional Context <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(optional)</span></label>
+            <label className="block font-black uppercase text-sm mb-2 text-black">Additional Context <span className="opacity-60 text-xs">(optional)</span></label>
             <textarea
               rows={4} value={profile.notes}
               onChange={e => setProfile(p => ({...p, notes: e.target.value}))}
-              placeholder="e.g., 'Bootstrapped SaaS startup looking to register as MSME and apply for SISFS seed funding.'"
-              className="input-field" style={{ resize: 'none' }}
+              placeholder="e.g. 'Bootstrapped SaaS startup looking to register as MSME and apply for SISFS seed funding.'"
+              className="input-field w-full py-3 resize-none"
             />
           </div>
 
           {/* Submit */}
-          <button type="submit" disabled={saving} className="btn-primary" style={{ width: '100%', padding: '16px', fontSize: '14px', marginTop: '4px', opacity: saving ? 0.6 : 1, cursor: saving ? 'not-allowed' : 'pointer' }}>
-            {saving ? (
-              <><div style={{ width: '18px', height: '18px', border: '2px solid rgba(0,0,0,0.2)', borderTopColor: '#09090b', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }}></div> Saving...</>
-            ) : saved ? '✓ Profile Saved!' : 'Save Profile & Activate Context'}
+          <button type="submit" disabled={saving} className="btn-primary w-full py-4 text-lg mt-4" style={{ opacity: saving ? 0.7 : 1 }}>
+            {saving ? 'SAVING...' : saved ? '✓ PROFILE SAVED' : 'SAVE PROFILE & ACTIVATE CONTEXT'}
           </button>
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </form>
       </div>
 
       {localStorage.getItem('startup_profile_id') && (
-        <div className="badge badge-success" style={{ marginTop: '16px', padding: '12px 18px', fontSize: '13px', width: '100%', justifyContent: 'flex-start' }}>
-          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent3)', animation: 'pulse-glow 2s infinite' }}></div>
-          Profile is active. AI Advisor will use this context for all responses.
+        <div className="mt-8 bg-[#a3e635] border-[3px] border-black shadow-[4px_4px_0px_#000] p-4 flex items-center gap-3">
+          <div className="w-3 h-3 bg-black rounded-full animate-ping"></div>
+          <span className="font-black uppercase text-black text-sm">Profile is active. AI Advisor will use this context for all responses.</span>
         </div>
       )}
     </div>

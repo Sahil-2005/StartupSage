@@ -9,7 +9,7 @@ qdrant-client
 pypdf
 beautifulsoup4
 langchain-text-splitters
-google-generativeai
+google-genai
 openai
 ragas
 datasets
