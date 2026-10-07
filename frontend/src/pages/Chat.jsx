@@ -172,7 +172,7 @@ export default function ChatPage() {
   ];
 
   return (
-    <div className="flex h-full w-full relative bg-[#f4f0e6] font-sans">
+    <div className="absolute inset-0 flex bg-[#f4f0e6] font-sans">
       
       {/* History Sidebar */}
       <div className={`flex flex-col bg-white border-r-[3px] border-black transition-all duration-300 z-10 ${historyOpen ? 'w-[280px]' : 'w-0 border-r-0'}`} style={{ overflow: 'hidden', flexShrink: 0 }}>

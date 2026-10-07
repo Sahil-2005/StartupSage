@@ -51,7 +51,7 @@ export default function DashboardLayout({ children }) {
   const initials = user?.avatar_initials || user?.full_name?.slice(0, 2).toUpperCase() || 'US';
 
   return (
-    <div className="min-h-screen flex bg-[#f4f0e6] font-sans">
+    <div className="h-screen flex bg-[#f4f0e6] font-sans overflow-hidden">
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 flex flex-col ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-auto w-[280px] bg-white border-r-[3px] border-black`}>
         {/* Logo */}
@@ -120,7 +120,7 @@ export default function DashboardLayout({ children }) {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen lg:min-w-0 dot-pattern">
+      <div className="flex-1 flex flex-col h-screen lg:min-w-0 dot-pattern">
         {/* Mobile Header */}
         <header className="lg:hidden flex items-center justify-between p-4 border-b-[3px] border-black bg-white relative z-20">
           <button onClick={() => setSidebarOpen(true)} className="p-2 border-[3px] border-black shadow-[2px_2px_0px_#000]">
@@ -137,7 +137,7 @@ export default function DashboardLayout({ children }) {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto relative z-10">
+        <main className="flex-1 overflow-y-auto relative z-10 flex flex-col">
           {children}
         </main>
       </div>
