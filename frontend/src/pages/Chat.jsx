@@ -9,8 +9,8 @@ import remarkGfm from 'remark-gfm';
 function MessageBubble({ msg }) {
   if (msg.role === 'user') {
     return (
-      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft: '48px' }}>
-        <div style={{ maxWidth: '75%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#09090b', borderRadius: '20px 20px 6px 20px', padding: '14px 20px', fontWeight: 500, fontSize: '14px', lineHeight: 1.6, boxShadow: '0 4px 15px rgba(245,158,11,0.2)' }}>
+      <div className="flex justify-end pl-12 mb-6">
+        <div className="max-w-[85%] bg-[#3b82f6] text-black border-[3px] border-black shadow-[4px_4px_0px_#000] p-4 font-bold text-sm leading-relaxed">
           {msg.content}
         </div>
       </div>
@@ -18,38 +18,42 @@ function MessageBubble({ msg }) {
   }
 
   return (
-    <div style={{ display: 'flex', gap: '12px', paddingRight: '48px' }}>
-      <div className="flex-shrink-0" style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'linear-gradient(135deg, var(--bg-elevated), var(--bg-tertiary))', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '4px' }}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round"><path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+    <div className="flex gap-4 pr-12 mb-8">
+      {/* AI Avatar */}
+      <div className="flex-shrink-0 w-10 h-10 bg-[#ff8c00] border-[3px] border-black shadow-[2px_2px_0px_#000] flex items-center justify-center mt-1">
+        <span className="font-black text-black text-lg">S</span>
       </div>
-      <div style={{ maxWidth: '75%', minWidth: 0 }}>
-        <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '20px 20px 20px 6px', padding: '16px 20px', overflowX: 'auto' }}>
-          <div className="prose" style={{ fontSize: '14px', lineHeight: 1.75, color: 'var(--text-primary)' }}>
+      
+      {/* AI Message Container */}
+      <div className="max-w-[85%] min-w-0">
+        <div className="bg-white border-[3px] border-black shadow-[6px_6px_0px_#000] p-6 overflow-x-auto">
+          <div className="prose text-black text-sm">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
           </div>
 
           {msg.citations?.length > 0 && (
-            <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid var(--border)' }}>
-              <p style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>Sources</p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            <div className="mt-6 pt-4 border-t-[3px] border-black">
+              <p className="text-black font-black uppercase text-xs mb-3 flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                Sources Referred
+              </p>
+              <div className="flex flex-wrap gap-2">
                 {msg.citations.map((cit, j) => {
                   const formatCategory = (cat) => cat ? cat.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Source';
                   return (
                   <a key={j} href={cit.source_url} target="_blank" rel="noreferrer" title={cit.text_snippet}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px', background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', color: 'var(--accent-light)', padding: '6px 12px', borderRadius: 'var(--radius-full)', textDecoration: 'none', fontWeight: 500, transition: 'all 0.2s' }}
-                    onMouseOver={e => { e.currentTarget.style.background = 'rgba(245,158,11,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-                    onMouseOut={e => { e.currentTarget.style.background = 'var(--accent-dim)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                    className="inline-flex items-center gap-2 text-xs bg-[#ff8c00] text-black border-2 border-black font-bold px-3 py-1 shadow-[2px_2px_0px_#000] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#000] transition-all"
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    <span style={{ fontWeight: 700 }}>[{cit.ref_id}]</span>
-                    <span style={{ maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formatCategory(cit.category)}</span>
+                    <span className="font-black">[{cit.ref_id}]</span>
+                    <span className="max-w-[140px] truncate">{formatCategory(cit.category)}</span>
                   </a>
                 )})}
               </div>
+              
               {msg.ragMode && (
-                <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent3)' }}></div>
-                  <span className="font-mono" style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>{msg.ragMode}</span>
+                <div className="mt-4 flex items-center gap-2 bg-[#111] text-white border-2 border-black px-3 py-1 inline-flex shadow-[2px_2px_0px_#000]">
+                  <div className="w-2 h-2 bg-[#a3e635] rounded-full animate-ping"></div>
+                  <span className="font-black text-[10px] uppercase">{msg.ragMode} Pipeline Active</span>
                 </div>
               )}
             </div>
@@ -62,16 +66,16 @@ function MessageBubble({ msg }) {
 
 function TypingIndicator() {
   return (
-    <div style={{ display: 'flex', gap: '12px' }}>
-      <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.6 }}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><circle cx="12" cy="12" r="10"/></svg>
+    <div className="flex gap-4 pr-12 mb-8">
+      <div className="flex-shrink-0 w-10 h-10 bg-gray-200 border-[3px] border-black flex items-center justify-center mt-1">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3"><circle cx="12" cy="12" r="10"/></svg>
       </div>
-      <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '20px 20px 20px 6px', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+      <div className="bg-white border-[3px] border-black shadow-[4px_4px_0px_#000] px-6 py-4 flex items-center gap-2">
         {[0, 150, 300].map(delay => (
-          <div key={delay} style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'var(--accent)', animation: `bounce 1.4s infinite ease-in-out`, animationDelay: `${delay}ms` }}></div>
+          <div key={delay} className="w-2 h-2 bg-black rounded-full" style={{ animation: `bounce 1.4s infinite ease-in-out`, animationDelay: `${delay}ms` }}></div>
         ))}
       </div>
-      <style>{`@keyframes bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }`}</style>
+      <style>{`@keyframes bounce { 0%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }`}</style>
     </div>
   );
 }
@@ -161,39 +165,36 @@ export default function ChatPage() {
   };
 
   const SUGGESTION_CHIPS = [
-    'How to get DPIIT recognition?',
-    'GST registration for startups',
-    'Seed fund eligibility criteria',
-    'LLP vs Private Limited Company',
+    { text: 'How to get DPIIT recognition?', color: 'bg-[#a3e635]' },
+    { text: 'GST registration for startups', color: 'bg-[#ff8c00]' },
+    { text: 'Seed fund eligibility criteria', color: 'bg-[#3b82f6]' },
+    { text: 'LLP vs Private Limited Company', color: 'bg-white' },
   ];
 
   return (
-    <div style={{ display: 'flex', height: '100vh', width: '100%', position: 'relative' }}>
+    <div className="flex h-full w-full relative bg-[#f4f0e6] font-sans">
+      
       {/* History Sidebar */}
-      <div style={{ width: historyOpen ? '260px' : '0', overflow: 'hidden', flexShrink: 0, transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)', borderRight: historyOpen ? '1px solid var(--border)' : 'none', background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 10 }}>
-        <div style={{ padding: '16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <h2 style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '-0.01em' }}>Chat History</h2>
-          <button onClick={startNewChat} style={{ background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', color: 'var(--accent)', width: '28px', height: '28px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <div className={`flex flex-col bg-white border-r-[3px] border-black transition-all duration-300 z-10 ${historyOpen ? 'w-[280px]' : 'w-0 border-r-0'}`} style={{ overflow: 'hidden', flexShrink: 0 }}>
+        <div className="p-4 border-b-[3px] border-black flex items-center justify-between bg-[#ff8c00]">
+          <h2 className="font-black uppercase text-sm text-black">Chat History</h2>
+          <button onClick={startNewChat} className="bg-white border-[2px] border-black p-1 shadow-[2px_2px_0px_#000] hover:bg-black hover:text-white transition-colors" title="New Chat">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </button>
         </div>
-        <div data-lenis-prevent="true" style={{ flex: 1, overflowY: 'auto', padding: '8px' }}>
+        
+        <div className="flex-1 overflow-y-auto p-4 bg-[#f4f0e6]">
           {conversations.length === 0 ? (
-            <div style={{ color: 'var(--text-muted)', fontSize: '12px', textAlign: 'center', padding: '20px 0' }}>No previous chats</div>
+            <div className="text-black font-bold text-xs uppercase text-center py-10 opacity-60">No Previous Chats</div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div className="flex flex-col gap-3">
               {conversations.map(c => (
                 <div key={c._id} onClick={() => loadConversation(c._id)}
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderRadius: 'var(--radius-md)', cursor: 'pointer', fontSize: '12px', transition: 'all 0.2s', ...(conversationId === c._id ? { background: 'var(--accent-dim)', border: '1px solid var(--accent-border)', color: 'var(--accent-light)' } : { border: '1px solid transparent', color: 'var(--text-secondary)' }) }}
-                  onMouseOver={e => { if (conversationId !== c._id) e.currentTarget.style.background = 'var(--bg-tertiary)'; }}
-                  onMouseOut={e => { if (conversationId !== c._id) e.currentTarget.style.background = 'transparent'; }}
+                  className={`group flex items-center justify-between p-3 border-[3px] border-black cursor-pointer transition-all ${conversationId === c._id ? 'bg-[#a3e635] shadow-[4px_4px_0px_#000] -translate-y-1' : 'bg-white hover:shadow-[2px_2px_0px_#000]'}`}
                 >
-                  <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: '8px', fontWeight: 500 }}>{c.title || 'New Conversation'}</div>
-                  <button onClick={(e) => deleteConversation(e, c._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px', opacity: 0.4, transition: 'all 0.2s', flexShrink: 0 }}
-                    onMouseOver={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = '#f43f5e'; }}
-                    onMouseOut={e => { e.currentTarget.style.opacity = '0.4'; e.currentTarget.style.color = 'var(--text-muted)'; }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  <div className="font-bold text-xs uppercase truncate pr-2 text-black">{c.title || 'New Conversation'}</div>
+                  <button onClick={(e) => deleteConversation(e, c._id)} className="text-black opacity-0 group-hover:opacity-100 hover:text-red-600 transition-all flex-shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                   </button>
                 </div>
               ))}
@@ -203,57 +204,62 @@ export default function ChatPage() {
       </div>
 
       {/* Main Chat Area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div className="flex-1 flex flex-col min-w-0 bg-[#f4f0e6] relative dot-pattern">
+        
         {/* Header */}
-        <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 24px', borderBottom: '1px solid var(--border)', background: 'var(--bg-glass)', backdropFilter: 'blur(20px)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button onClick={() => setHistoryOpen(!historyOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', padding: '4px' }}
-              onMouseOver={e => e.currentTarget.style.color = 'var(--text-primary)'}
-              onMouseOut={e => e.currentTarget.style.color = 'var(--text-muted)'}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="12" y2="18"/></svg>
+        <div className="flex-shrink-0 flex items-center justify-between p-4 border-b-[3px] border-black bg-white relative z-20">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setHistoryOpen(!historyOpen)} className="p-2 border-[2px] border-black shadow-[2px_2px_0px_#000] bg-[#a3e635] hover:bg-[#ff8c00] transition-colors">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="12" y2="18"/></svg>
             </button>
             <div>
-              <h1 style={{ fontSize: '15px', fontWeight: 700, letterSpacing: '-0.01em' }}>AI Advisor</h1>
-              <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '1px' }}>Grounded in 35+ official government documents</p>
+              <h1 className="font-black text-lg uppercase tracking-tight text-black flex items-center gap-2">
+                StartupSage AI Advisor
+                <span className="bg-[#111] text-[#a3e635] text-[10px] px-2 py-0.5 border border-black flex items-center gap-1 shadow-[2px_2px_0px_#000]">
+                  <div className="w-1.5 h-1.5 bg-[#a3e635] rounded-full animate-pulse"></div>
+                  ONLINE
+                </span>
+              </h1>
+              <p className="text-xs font-bold uppercase text-[#555]">Grounded in 35+ Official Gov Documents</p>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          
+          <div className="flex items-center gap-3 hidden sm:flex">
             {isProfileActive && (
-              <div className="badge badge-success" style={{ padding: '4px 12px', fontSize: '10px' }}>
-                <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent3)' }}></div>
-                Context Active
+              <div className="bg-[#a3e635] border-[2px] border-black text-black font-black uppercase text-xs px-3 py-1.5 shadow-[2px_2px_0px_#000] flex items-center gap-2">
+                <div className="w-2 h-2 bg-black rounded-full animate-ping"></div>
+                CONTEXT ACTIVE
               </div>
             )}
             {messages.length > 0 && (
-              <button onClick={startNewChat} className="btn-secondary" style={{ padding: '6px 14px', fontSize: '11px', borderRadius: 'var(--radius-sm)' }}>New Chat</button>
+              <button onClick={startNewChat} className="btn-secondary py-1.5 px-4 text-xs bg-white">CLEAR CHAT</button>
             )}
           </div>
         </div>
 
         {/* Messages Area */}
-        <div data-lenis-prevent="true" style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div className="flex-1 overflow-y-auto p-6 lg:p-10 relative z-10" data-lenis-prevent="true">
+          <div className="flex flex-col max-w-4xl mx-auto">
             {loadingHistory ? (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', paddingTop: '100px' }}>
-                <div style={{ width: '32px', height: '32px', border: '2px solid var(--accent)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }}></div>
-                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+              <div className="flex items-center justify-center pt-20">
+                <div className="w-10 h-10 border-[4px] border-black border-t-[#ff8c00] rounded-full animate-spin"></div>
               </div>
             ) : messages.length === 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', maxWidth: '480px', margin: '0 auto', paddingTop: '80px' }}>
-                <div className="animate-pulse-glow" style={{ width: '64px', height: '64px', borderRadius: 'var(--radius-xl)', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', transform: 'rotate(3deg)' }}>
-                  <span style={{ color: '#09090b', fontWeight: 800, fontSize: '28px', transform: 'rotate(-3deg)' }}>S</span>
+              <div className="flex flex-col items-center justify-center text-center max-w-2xl mx-auto pt-16">
+                <div className="w-20 h-20 bg-[#ff8c00] border-[4px] border-black shadow-[6px_6px_0px_#000] flex items-center justify-center mb-8 transform -rotate-3">
+                  <span className="font-black text-black text-4xl transform rotate-3">S</span>
                 </div>
-                <h2 style={{ fontSize: '22px', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '8px' }}>StartupSage AI</h2>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '32px', lineHeight: 1.6 }}>
-                  Ask me anything about registering, funding, taxation, or compliance for your Indian startup. I'll cite my sources.
+                <h2 className="text-4xl font-black uppercase tracking-tighter text-black mb-4">How can I help you build?</h2>
+                <p className="text-lg font-bold text-black border-b-[4px] border-[#3b82f6] pb-2 mb-12">
+                  Ask me anything about registering, funding, taxation, or compliance. I will cite my sources.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" style={{ width: '100%' }}>
-                  {SUGGESTION_CHIPS.map(chip => (
-                    <button key={chip} onClick={() => { setInput(chip); inputRef.current?.focus(); }}
-                      className="card" style={{ textAlign: 'left', padding: '14px 16px', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer', border: '1px solid var(--border)', fontWeight: 500 }}
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                  {SUGGESTION_CHIPS.map((chip, i) => (
+                    <button key={i} onClick={() => { setInput(chip.text); inputRef.current?.focus(); }}
+                      className={`text-left p-4 border-[3px] border-black shadow-[4px_4px_0px_#000] font-black text-sm uppercase hover:-translate-y-1 hover:shadow-[6px_6px_0px_#000] transition-all ${chip.color} ${chip.color === 'bg-[#3b82f6]' ? 'text-white' : 'text-black'}`}
                     >
-                      {chip}
+                      {chip.text}
                     </button>
                   ))}
                 </div>
@@ -269,35 +275,32 @@ export default function ChatPage() {
         </div>
 
         {/* Input Bar */}
-        <div style={{ flexShrink: 0, padding: '16px 24px', borderTop: '1px solid var(--border)', background: 'var(--bg-glass)', backdropFilter: 'blur(20px)' }}>
-          <form onSubmit={sendMessage} style={{ position: 'relative' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-end', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', overflow: 'hidden', transition: 'border-color 0.3s' }}
-              onFocus={e => e.currentTarget.style.borderColor = 'var(--accent-border)'}
-              onBlur={e => e.currentTarget.style.borderColor = 'var(--border)'}
-            >
+        <div className="flex-shrink-0 p-4 lg:p-6 border-t-[3px] border-black bg-[#f4f0e6] relative z-20">
+          <form onSubmit={sendMessage} className="max-w-4xl mx-auto relative">
+            <div className="flex items-end bg-white border-[3px] border-black shadow-[6px_6px_0px_#000] p-2 focus-within:shadow-[2px_2px_0px_#000] focus-within:translate-y-1 focus-within:translate-x-1 transition-all">
               <textarea
                 ref={inputRef}
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
-                placeholder="Ask about startup registration, GST, MSME, funding..."
+                placeholder="TYPE YOUR QUERY HERE..."
                 rows={1}
-                style={{ flex: 1, background: 'transparent', padding: '16px 20px', color: 'var(--text-primary)', fontSize: '13px', fontFamily: 'inherit', border: 'none', outline: 'none', resize: 'none', minHeight: '52px', maxHeight: '150px', lineHeight: 1.6 }}
+                className="flex-1 bg-transparent p-3 text-black font-bold uppercase text-sm placeholder:text-gray-400 border-none outline-none resize-none min-h-[50px] max-h-[150px]"
                 disabled={loading}
               />
-              <div style={{ padding: '10px 12px', flexShrink: 0 }}>
-                <button type="submit" disabled={loading || !input.trim()}
-                  style={{ width: '38px', height: '38px', borderRadius: 'var(--radius-md)', background: (loading || !input.trim()) ? 'var(--bg-tertiary)' : 'linear-gradient(135deg, #f59e0b, #d97706)', border: 'none', cursor: (loading || !input.trim()) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', opacity: (loading || !input.trim()) ? 0.3 : 1 }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={(!input.trim() || loading) ? 'var(--text-muted)' : '#09090b'} strokeWidth="2.5" strokeLinecap="round" style={{ transform: 'rotate(90deg)' }}><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                </button>
-              </div>
+              <button type="submit" disabled={loading || !input.trim()}
+                className={`w-12 h-12 flex-shrink-0 flex items-center justify-center border-[3px] border-black ml-2 transition-all ${(!input.trim() || loading) ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'bg-[#ff8c00] hover:bg-black hover:text-white shadow-[2px_2px_0px_#000] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer'}`}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" className="transform rotate-90"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+              </button>
             </div>
+            
+            <p className="text-center font-bold text-[10px] uppercase text-[#666] mt-4 tracking-widest">
+              AI MAY MAKE MISTAKES. VERIFY CRITICAL DECISIONS WITH A PROFESSIONAL.
+            </p>
           </form>
-          <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)', marginTop: '10px' }}>
-            AI may make mistakes. Always verify critical legal or financial decisions with a professional.
-          </p>
         </div>
+
       </div>
     </div>
   );
