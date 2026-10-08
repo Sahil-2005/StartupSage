@@ -12,12 +12,15 @@ StartupSage is an advanced, context-aware AI advisor designed specifically for I
 * **Three Dynamic RAG Modes:**
   * ⚡ **Basic RAG:** Standard dense vector retrieval using Qdrant (Semantic Search).
   * 🔀 **Hybrid RAG:** Combines Dense (Semantic) and Sparse (BM25) search using Reciprocal Rank Fusion (RRF) for highly precise document retrieval and exact keyword matching.
-  * 🤖 **Agentic Workflow:** Powered by LangGraph. The agent autonomously classifies intents, routes queries, actively rewrites bad queries, verifies groundedness to prevent hallucinations, and automatically appends legal disclaimers for high-risk topics.
+  * 🤖 **Agentic Workflow (Default):** Powered by LangGraph. The agent autonomously classifies intents, routes queries, actively rewrites bad queries, verifies groundedness to prevent hallucinations, and automatically appends legal disclaimers for high-risk topics.
+* **Document Attachment Analysis:** Users can upload PDF or TXT files directly in the chat. The application instantly extracts text and feeds it into the AI's context for highly specific, document-grounded answers.
+* **🎙️ Voice-Based Chatting:** Features native real-time Web Speech API integration. Users can seamlessly dictate their complex queries without touching the keyboard.
+* **🔐 Full Authentication & Dashboard:** Secure JWT-based login/register flow. Users have access to a dedicated dashboard overview displaying their activity metrics and dynamic charts.
+* **Stunning Neo-Brutalist UI:** A massive frontend overhaul built with React, Vite, and TailwindCSS v4. It features a stunning neo-brutalist aesthetic with high-contrast borders, bold typography, hard shadows, vibrant amber/lime color palettes, and glassmorphism.
 * **Enterprise-Grade Ingestion Pipeline:** Uses `PyMuPDF` to perfectly preserve tables, columns, and layouts from complex government documents. Features an intelligent chunking strategy (1500 chars, 300 overlap) to keep long legal clauses intact.
 * **Ultra-Fast Backend Optimizations:** 
   * ML Models (Embedder & Reranker) are eagerly pre-warmed in background threads during FastAPI lifespan startup to eliminate cold-start freezes.
   * Uses blazing-fast ASCII heuristics (`_is_likely_english`) to instantly bypass unnecessary LLM language-translation overheads on standard English queries.
-* **Stunning Premium UI:** A beautiful, responsive frontend built with React, Vite, and TailwindCSS v4. It features a custom amber/gold dark theme, glassmorphism, animated states, smooth scrolling (Lenis), and citation hover cards.
 * **Multilingual Intelligence:** Ask questions in Hindi, Marathi, or English. The AI understands, retrieves English documents, and responds flawlessly in your preferred language.
 
 ## 🛠️ Tech Stack
