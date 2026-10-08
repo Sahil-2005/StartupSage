@@ -103,11 +103,61 @@ export default function ChatPage() {
   const [attachedDocument, setAttachedDocument] = useState(null);
   const [uploadingDoc, setUploadingDoc] = useState(false);
   const fileInputRef = useRef(null);
+  
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef(null);
 
   const endRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => { fetchConversations(); }, []);
+  
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      
+      recognitionRef.current.onresult = (event) => {
+        let finalTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          }
+        }
+        if (finalTranscript) {
+           setInput(prev => prev + (prev && !prev.endsWith(' ') ? ' ' : '') + finalTranscript);
+        }
+      };
+      
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error', event.error);
+        setIsRecording(false);
+        toast.error('Voice recognition stopped');
+      };
+      
+      recognitionRef.current.onend = () => {
+        setIsRecording(false);
+      };
+    }
+  }, []);
+
+  const toggleRecording = () => {
+    if (!recognitionRef.current) {
+      toast.error('Voice recognition is not supported in this browser.');
+      return;
+    }
+    
+    if (isRecording) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+    } else {
+      recognitionRef.current.start();
+      setIsRecording(true);
+      toast.success('Listening...');
+    }
+  };
 
   const fetchConversations = async () => {
     try {
@@ -372,12 +422,23 @@ export default function ChatPage() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
-                placeholder={uploadingDoc ? "UPLOADING DOCUMENT..." : "TYPE YOUR QUERY HERE..."}
+                placeholder={uploadingDoc ? "UPLOADING DOCUMENT..." : isRecording ? "LISTENING..." : "TYPE YOUR QUERY HERE..."}
                 rows={1}
                 className="flex-1 bg-transparent p-3 text-black font-bold uppercase text-sm placeholder:text-gray-400 border-none outline-none resize-none min-h-[50px] max-h-[150px]"
                 disabled={loading || uploadingDoc}
               />
               
+              <button type="button" onClick={toggleRecording} disabled={loading || uploadingDoc}
+                className={`w-12 h-12 flex-shrink-0 flex items-center justify-center border-[3px] border-black ml-2 transition-all ${(loading || uploadingDoc) ? 'bg-gray-200 cursor-not-allowed opacity-50' : isRecording ? 'bg-red-500 hover:bg-red-600 shadow-none translate-y-1 translate-x-1 text-white' : 'bg-white hover:bg-black hover:text-white shadow-[2px_2px_0px_#000] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer'}`}
+                title="Voice Input"
+              >
+                {isRecording ? (
+                  <div className="w-4 h-4 bg-white rounded-full animate-pulse"></div>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line><line x1="8" y1="22" x2="16" y2="22"></line></svg>
+                )}
+              </button>
+
               <button type="submit" disabled={loading || uploadingDoc || (!input.trim() && !attachedDocument)}
                 className={`w-12 h-12 flex-shrink-0 flex items-center justify-center border-[3px] border-black ml-2 transition-all ${((!input.trim() && !attachedDocument) || loading || uploadingDoc) ? 'bg-gray-200 cursor-not-allowed opacity-50' : 'bg-[#ff8c00] hover:bg-black hover:text-white shadow-[2px_2px_0px_#000] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer'}`}
               >
