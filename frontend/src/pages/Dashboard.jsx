@@ -22,6 +22,19 @@ export default function Dashboard() {
   const { user, authFetch } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [knowledgeStats, setKnowledgeStats] = useState({ docs: '...', topics: '...' });
+
+  useEffect(() => {
+    fetch('http://localhost:8000/api/v1/config/knowledge')
+      .then(res => res.json())
+      .then(data => {
+        setKnowledgeStats({
+          docs: data.total_docs || '35+',
+          topics: Object.keys(data.categories || {}).length || '8'
+        });
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const profileId = localStorage.getItem('startup_profile_id');
@@ -112,10 +125,10 @@ export default function Dashboard() {
           {/* Stats Row */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: 'KNOWLEDGE DOCS', value: '35+', color: 'bg-white' },
-              { label: 'TOPIC AREAS', value: '8', color: 'bg-[#a3e635]' },
+              { label: 'KNOWLEDGE DOCS', value: knowledgeStats.docs, color: 'bg-white' },
+              { label: 'TOPIC AREAS', value: knowledgeStats.topics, color: 'bg-[#a3e635]' },
               { label: 'AI MODELS', value: '2', color: 'bg-[#3b82f6]' },
-              { label: 'GOVT SOURCES', value: '50+', color: 'bg-[#ff8c00]' },
+              { label: 'GOVT SOURCES', value: '48+', color: 'bg-[#ff8c00]' },
             ].map((stat, i) => (
               <div key={i} className={`border-[3px] border-black shadow-[4px_4px_0px_#000] p-4 ${stat.color} ${stat.color === 'bg-[#3b82f6]' ? 'text-white' : 'text-black'}`}>
                 <div className="font-black text-3xl mb-1">{stat.value}</div>

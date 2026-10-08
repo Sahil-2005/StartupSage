@@ -3,6 +3,8 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, PublicRoute } from './components/RouteGuards';
 import DashboardLayout from './components/DashboardLayout';
+import { useEffect } from 'react';
+import Lenis from 'lenis';
 
 // Pages
 import Landing from './pages/Landing';
@@ -15,6 +17,23 @@ import ProfilePage from './pages/Profile';
 import KnowledgePage from './pages/Knowledge';
 
 function App() {
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 1,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+    
+    return () => lenis.destroy();
+  }, []);
+
   return (
     <AuthProvider>
       <Toaster

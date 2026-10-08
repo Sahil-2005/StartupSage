@@ -33,6 +33,13 @@ async def process_document(
 ):
     logger.info(f"Processing document: {title} from {file_path}")
     
+    # Fast path: Check if document is already ingested
+    if db.db is not None:
+        existing_doc = await db.db.documents.find_one({"source_url": source_url})
+        if existing_doc:
+            logger.info(f"Document '{title}' already exists in MongoDB (id: {existing_doc['_id']}). Skipping ingestion.")
+            return existing_doc.get("chunk_count", 0)
+            
     # 1. Load
     raw_text = load_document(file_path)
     
@@ -70,19 +77,18 @@ async def process_document(
     
     # 5. Insert into MongoDB `documents`
     doc_id = str(uuid.uuid4())
-    doc_record = {
-        "_id": doc_id,
-        "title": title,
-        "source_url": source_url,
-        "category": category,
-        "reliability_note": reliability_note,
-        "chunk_count": len(chunks)
-    }
-    
     if db.db is not None:
         await db.db.documents.update_one(
             {"source_url": source_url}, 
-            {"$set": doc_record},
+            {
+                "$set": {
+                    "title": title,
+                    "category": category,
+                    "reliability_note": reliability_note,
+                    "chunk_count": len(chunks)
+                },
+                "$setOnInsert": {"_id": doc_id, "source_url": source_url}
+            },
             upsert=True
         )
         # Fetch the actual doc id in case of update
