@@ -36,7 +36,7 @@ async def generate(system_prompt: str, user_message: str, chat_history: list = N
             messages.extend(chat_history)
             messages.append({"role": "user", "content": user_message})
             
-            model_name = "llama-3.1-8b-instant" if fast else "openai/gpt-oss-120b"
+            model_name = "llama3-8b-8192" if fast else "openai/gpt-oss-120b"
             response = await groq_client.chat.completions.create(
                 model=model_name,
                 messages=messages,
@@ -72,6 +72,55 @@ async def generate(system_prompt: str, user_message: str, chat_history: list = N
             return response.text
         except Exception as e:
             logger.error(f"Gemini generation failed: {e}")
+            raise Exception("Both primary (Groq) and fallback (Gemini) LLMs failed.")
+            
+    raise Exception("No LLM API keys configured.")
+
+async def generate_stream(system_prompt: str, user_message: str, chat_history: list = None, fast: bool = False):
+    if chat_history is None:
+        chat_history = []
+        
+    if settings.GROQ_API_KEY and groq_client:
+        try:
+            messages = [{"role": "system", "content": system_prompt}]
+            messages.extend(chat_history)
+            messages.append({"role": "user", "content": user_message})
+            
+            model_name = "llama3-8b-8192" if fast else "openai/gpt-oss-120b"
+            response = await groq_client.chat.completions.create(
+                model=model_name,
+                messages=messages,
+                max_tokens=1024,
+                timeout=20,
+                extra_body={"reasoning_effort": "low"},
+                stream=True
+            )
+            async for chunk in response:
+                if chunk.choices and chunk.choices[0].delta.content:
+                    yield chunk.choices[0].delta.content
+            return
+        except Exception as e:
+            logger.error(f"Groq streaming failed: {e}. Falling back to Gemini.")
+
+    if gemini_client:
+        try:
+            history_str = ""
+            for msg in chat_history:
+                role = "User" if msg["role"] == "user" else "Assistant"
+                history_str += f"{role}: {msg['content']}\n\n"
+            
+            prompt = f"{system_prompt}\n\nPrevious Conversation:\n{history_str}User: {user_message}" if history_str else f"{system_prompt}\n\nUser: {user_message}"
+            
+            response = await gemini_client.aio.models.generate_content_stream(
+                model='gemini-3.5-flash',
+                contents=prompt
+            )
+            async for chunk in response:
+                if chunk.text:
+                    yield chunk.text
+            return
+        except Exception as e:
+            logger.error(f"Gemini streaming failed: {e}")
             raise Exception("Both primary (Groq) and fallback (Gemini) LLMs failed.")
             
     raise Exception("No LLM API keys configured.")

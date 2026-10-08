@@ -55,8 +55,8 @@ StartupSage is an advanced, context-aware AI advisor designed specifically for I
    pip install -r requirements.txt
    ```
 
-2. **Environment Variables**
-   Create a `.env` file in the `backend` folder:
+6. **Setup Environment Variables**
+   Create a `.env` file in the `backend` folder and add your keys:
    ```env
    MONGODB_URI=your_mongodb_uri
    QDRANT_URL=your_qdrant_url
@@ -65,24 +65,30 @@ StartupSage is an advanced, context-aware AI advisor designed specifically for I
    GROQ_API_KEY=your_groq_api_key
    ```
 
-3. **Ingest Knowledge Base**
-   Download required official PDFs into `backend/data/raw/` and run the ingestion pipeline:
+7. **Download Government Documents**
+   Run the scraping script to fetch all the required official PDFs and markdown files:
    ```bash
-   python backend/scripts/ingest_corpus.py all
+   python scripts/download_sources.py
    ```
 
-4. **Run Backend Server**
+8. **Ingest Knowledge Base**
+   Run the embedding pipeline to chunk and vectorize the 48+ documents into Qdrant:
+   ```bash
+   python -m scripts.ingest_corpus all
+   ```
+
+9. **Start the Backend Server**
    ```bash
    uvicorn app.main:app --reload
    ```
 
-5. **Run Frontend Development Server**
-   Open a new terminal:
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
+10. **Start Frontend Development Server**
+    Open a completely new terminal window, navigate to the frontend folder, and start the app:
+    ```bash
+    cd frontend
+    npm install
+    npm run dev
+    ```
 
 ## 📜 License
 This project is licensed under the MIT License.

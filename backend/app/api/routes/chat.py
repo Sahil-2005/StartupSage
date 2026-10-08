@@ -3,13 +3,17 @@ import time
 import logging
 from typing import List, Optional
 from datetime import datetime
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from app.core.config import settings
 from app.db.mongo import db
 from app.rag.retrieval import dense, sparse, fusion, reranker
 from app.rag.llm import generate
+from app.rag.llm import generate_stream
 from app.api.routes.auth import get_current_user
+import json
+import io
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -20,6 +24,7 @@ class ChatRequest(BaseModel):
     profile_id: Optional[str] = None
     document_context: Optional[str] = None
     document_name: Optional[str] = None
+    stream: Optional[bool] = False
 
 class ChatResponse(BaseModel):
     answer: str
@@ -29,9 +34,6 @@ class ChatResponse(BaseModel):
 
 class ConversationCreate(BaseModel):
     title: str = "New Conversation"
-
-from fastapi import UploadFile, File
-import io
 
 @router.post("/upload")
 async def upload_document(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
@@ -48,12 +50,46 @@ async def upload_document(file: UploadFile = File(...), current_user: dict = Dep
         else:
             text = content.decode("utf-8", errors="ignore")
             
-        # Limit text length to avoid token limits (e.g. ~10000 chars)
         text = text[:15000]
         return {"filename": file.filename, "extracted_text": text}
     except Exception as e:
         logger.error(f"File upload parsing failed: {e}")
         raise HTTPException(status_code=400, detail="Failed to parse document. Please upload a valid PDF or text file.")
+
+async def save_chat_to_db(conv_id, user_id, user_message, answer, request, retrieved_chunks, citations_metadata, start_time):
+    latency_ms = int((time.time() - start_time) * 1000)
+    if db.db is not None:
+        await db.db.conversations.update_one(
+            {"_id": conv_id},
+            {"$setOnInsert": {
+                "created_at": datetime.utcnow(), 
+                "title": user_message[:30] + ("..." if len(user_message) > 30 else ""),
+                "user_id": user_id
+            }},
+            upsert=True
+        )
+        
+        user_msg_doc = {
+            "conversation_id": conv_id,
+            "role": "user",
+            "content": user_message,
+            "created_at": datetime.utcnow()
+        }
+        if request.document_name:
+            user_msg_doc["document_name"] = request.document_name
+            
+        await db.db.messages.insert_one(user_msg_doc)
+        
+        await db.db.messages.insert_one({
+            "conversation_id": conv_id,
+            "role": "assistant",
+            "content": answer,
+            "rag_mode": settings.RAG_MODE,
+            "retrieved_chunk_ids": [c.get("id") for c in retrieved_chunks],
+            "citations": citations_metadata,
+            "latency_ms": latency_ms,
+            "created_at": datetime.utcnow()
+        })
 
 @router.post("/", response_model=ChatResponse)
 async def chat(request: ChatRequest, current_user: dict = Depends(get_current_user)):
@@ -62,7 +98,6 @@ async def chat(request: ChatRequest, current_user: dict = Depends(get_current_us
     conv_id = request.conversation_id or str(uuid.uuid4())
     user_id = current_user["_id"]
     
-    # Check for profile context globally first
     profile_context = ""
     if request.profile_id and db.db is not None:
         profile = await db.db.startup_profiles.find_one({"_id": request.profile_id})
@@ -87,22 +122,123 @@ UPLOADED DOCUMENT CONTEXT (File: {request.document_name}):
 The user has attached the above document. Pay close attention to it. If the user asks about the document, summarize it, highlight important areas, or warn about risky clauses as requested.
 """
     
-    # Fetch chat history for context
     chat_history = []
     if request.conversation_id and db.db is not None:
         cursor = db.db.messages.find({"conversation_id": conv_id}).sort("created_at", -1)
-        msgs = await cursor.to_list(length=10) # Get last 10 messages
-        msgs.reverse() # Reverse so oldest is first
+        msgs = await cursor.to_list(length=10)
+        msgs.reverse()
         for m in msgs:
             chat_history.append({"role": m["role"], "content": m["content"]})
             
-    # Translate query for better vector search
     from app.rag.query_understanding import translate_query_if_needed
     translation_info = await translate_query_if_needed(user_message)
     search_query = translation_info.get("english_query", user_message)
     original_language = translation_info.get("original_language", "English")
     
     import asyncio
+    
+    if request.stream:
+        async def event_generator():
+            try:
+                retrieved_chunks = []
+                citations_metadata = []
+                system_prompt = ""
+                
+                if settings.RAG_MODE in ["basic", "hybrid"]:
+                    if settings.RAG_MODE == "basic":
+                        retrieved_chunks = await asyncio.to_thread(dense.search, query=search_query, top_k=5)
+                    elif settings.RAG_MODE == "hybrid":
+                        dense_results = await asyncio.to_thread(dense.search, query=search_query, top_k=20)
+                        sparse_results = await asyncio.to_thread(sparse.search, query=search_query, top_k=20)
+                        fused_results = fusion.reciprocal_rank_fusion(dense_results, sparse_results)
+                        retrieved_chunks = await asyncio.to_thread(reranker.rerank, query=search_query, chunks=fused_results, top_k=5)
+                        
+                    context_blocks = []
+                    for i, chunk in enumerate(retrieved_chunks):
+                        ref_id = i + 1
+                        context_blocks.append(f"[{ref_id}] {chunk['text']} (Source: {chunk['source_url']})")
+                        citations_metadata.append({
+                            "ref_id": ref_id,
+                            "text_snippet": chunk["text"][:100] + "...",
+                            "source_url": chunk["source_url"],
+                            "category": chunk["category"]
+                        })
+                            
+                    context_str = "\n\n".join(context_blocks) if context_blocks else "No relevant context found."
+                    
+                    system_prompt = f"""You are StartupSage, an AI assistant for Indian startups.
+You can use the Startup Profile and the Chat History to answer conversational questions about the user, their startup, or previous messages.
+For all other questions, answer based ONLY on the provided Context or the Uploaded Document. Cite sources using [1], [2], etc.
+If you cannot answer the question from the Context, Uploaded Document, Startup Profile, or Chat History, explicitly say "I do not have enough information to answer this based on the available sources."
+IMPORTANT: The user asked in {original_language}. You MUST write your entire response in {original_language}.
+{profile_context}
+{doc_context_prompt}
+Context:
+{context_str}
+"""
+                elif settings.RAG_MODE == "agentic":
+                    from app.rag.agent.graph import _do_classify, _do_retrieve, LEGAL_DISCLAIMER
+                    full_context = profile_context
+                    if doc_context_prompt:
+                        full_context += "\n" + doc_context_prompt
+                    full_context += f"\nIMPORTANT: Respond in {original_language}."
+                    
+                    classification_task = asyncio.create_task(_do_classify(search_query, chat_history))
+                    retrieve_task = asyncio.create_task(_do_retrieve(search_query))
+                    classification, retrieved_chunks = await asyncio.gather(classification_task, retrieve_task)
+                    
+                    if not classification.get("in_scope", True):
+                        yield f"data: {json.dumps({'chunk': 'I am sorry, but I can only assist with startup-related business, legal, and regulatory questions in India.'})}\n\n"
+                        yield f"data: {json.dumps({'done': True, 'citations': [], 'conversation_id': conv_id, 'rag_mode': settings.RAG_MODE})}\n\n"
+                        return
+                    if not retrieved_chunks:
+                        yield f"data: {json.dumps({'chunk': 'I do not have enough information in my current knowledge base to confidently answer this question.'})}\n\n"
+                        yield f"data: {json.dumps({'done': True, 'citations': [], 'conversation_id': conv_id, 'rag_mode': settings.RAG_MODE})}\n\n"
+                        return
+                        
+                    context_blocks = []
+                    for i, chunk in enumerate(retrieved_chunks):
+                        ref_id = i + 1
+                        context_blocks.append(f"[{ref_id}] {chunk['text']} (Source: {chunk['source_url']})")
+                        citations_metadata.append({
+                            "ref_id": ref_id,
+                            "text_snippet": chunk["text"][:100] + "...",
+                            "source_url": chunk["source_url"],
+                            "category": chunk["category"]
+                        })
+                    context_str = "\n\n".join(context_blocks)
+                    
+                    system_prompt = f"""You are StartupSage, an AI assistant for Indian startups.
+You can use the Startup Profile and the Chat History to answer conversational questions about the user, their startup, or previous messages.
+For all other questions, answer based ONLY on the provided Context. Cite sources using [1], [2], etc.
+If you cannot answer the question from the Context, Startup Profile, or Chat History, explicitly say "I do not have enough information to answer this based on the available sources."
+{full_context}
+Context:
+{context_str}"""
+
+                answer = ""
+                async for chunk in generate_stream(system_prompt, user_message, chat_history=chat_history):
+                    answer += chunk
+                    yield f"data: {json.dumps({'chunk': chunk})}\n\n"
+                
+                if settings.RAG_MODE == "agentic":
+                    domain = locals().get('classification', {}).get("domain", "")
+                    if domain in ["legal", "contracts", "taxation", "registration"]:
+                        from app.rag.verification import LEGAL_DISCLAIMER
+                        answer += LEGAL_DISCLAIMER
+                        yield f"data: {json.dumps({'chunk': LEGAL_DISCLAIMER})}\n\n"
+
+                await save_chat_to_db(conv_id, user_id, user_message, answer, request, retrieved_chunks, citations_metadata, start_time)
+                
+                yield f"data: {json.dumps({'done': True, 'citations': citations_metadata, 'conversation_id': conv_id, 'rag_mode': settings.RAG_MODE})}\n\n"
+            
+            except Exception as e:
+                logger.error(f"Streaming failed: {e}")
+                yield f"data: {json.dumps({'error': str(e)})}\n\n"
+                
+        return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+    # Non-streaming fallback
     if settings.RAG_MODE in ["basic", "hybrid"]:
         if settings.RAG_MODE == "basic":
             retrieved_chunks = await asyncio.to_thread(dense.search, query=search_query, top_k=5)
@@ -174,45 +310,8 @@ Context:
     else:
         raise HTTPException(status_code=501, detail=f"RAG Mode '{settings.RAG_MODE}' not implemented yet.")
         
-    # 4. Save to DB
-    latency_ms = int((time.time() - start_time) * 1000)
+    await save_chat_to_db(conv_id, user_id, user_message, answer, request, retrieved_chunks, citations_metadata, start_time)
     
-    if db.db is not None:
-        # Ensure conversation exists
-        await db.db.conversations.update_one(
-            {"_id": conv_id},
-            {"$setOnInsert": {
-                "created_at": datetime.utcnow(), 
-                "title": user_message[:30] + ("..." if len(user_message) > 30 else ""),
-                "user_id": user_id
-            }},
-            upsert=True
-        )
-        
-        # Save user message
-        user_msg_doc = {
-            "conversation_id": conv_id,
-            "role": "user",
-            "content": user_message,
-            "created_at": datetime.utcnow()
-        }
-        if request.document_name:
-            user_msg_doc["document_name"] = request.document_name
-            
-        await db.db.messages.insert_one(user_msg_doc)
-        
-        # Save assistant message
-        await db.db.messages.insert_one({
-            "conversation_id": conv_id,
-            "role": "assistant",
-            "content": answer,
-            "rag_mode": settings.RAG_MODE,
-            "retrieved_chunk_ids": [c.get("id") for c in retrieved_chunks],
-            "citations": citations_metadata,
-            "latency_ms": latency_ms,
-            "created_at": datetime.utcnow()
-        })
-        
     return ChatResponse(
         answer=answer,
         citations=citations_metadata,
@@ -246,7 +345,6 @@ async def create_conversation(req: ConversationCreate, current_user: dict = Depe
 async def get_messages(conv_id: str, current_user: dict = Depends(get_current_user)):
     if db.db is None:
         return []
-    # Verify the conversation belongs to the user
     conv = await db.db.conversations.find_one({"_id": conv_id, "user_id": current_user["_id"]})
     if not conv:
         raise HTTPException(status_code=404, detail="Conversation not found")
@@ -262,7 +360,6 @@ async def delete_conversation(conv_id: str, current_user: dict = Depends(get_cur
     if db.db is None:
         raise HTTPException(status_code=503, detail="Database unavailable")
     
-    # Verify the conversation belongs to the user
     conv = await db.db.conversations.find_one({"_id": conv_id, "user_id": current_user["_id"]})
     if not conv:
         raise HTTPException(status_code=404, detail="Conversation not found")

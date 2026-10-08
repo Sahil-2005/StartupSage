@@ -250,7 +250,8 @@ export default function ChatPage() {
         conversation_id: conversationId,
         profile_id: profileId,
         document_context: currentDoc?.extracted_text,
-        document_name: currentDoc?.filename
+        document_name: currentDoc?.filename,
+        stream: false
       };
       
       const res = await authFetch('/api/v1/chat/', {
@@ -258,13 +259,53 @@ export default function ChatPage() {
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error((await res.json()).detail || 'API error');
+      
       const data = await res.json();
+      
       if (!conversationId) { setConversationId(data.conversation_id); fetchConversations(); }
-      setMessages(prev => [...prev, { role: 'assistant', content: data.answer, citations: data.citations, ragMode: data.rag_mode }]);
+      
+      // Simulate streaming on the frontend (start with empty citations)
+      setMessages(prev => [...prev, { role: 'assistant', content: '', citations: [], ragMode: '' }]);
+      setLoading(false); // Hide typing indicator
+      
+      const fullText = data.answer || '';
+      let currentLength = 0;
+      const chunkSize = 15; // increased speed
+      
+      const streamInterval = setInterval(() => {
+        currentLength += chunkSize;
+        if (currentLength >= fullText.length) {
+          currentLength = fullText.length;
+          clearInterval(streamInterval);
+          // Show citations and final content at the very end
+          setMessages(prev => {
+            const newMsgs = [...prev];
+            newMsgs[newMsgs.length - 1] = {
+              ...newMsgs[newMsgs.length - 1],
+              content: fullText,
+              citations: data.citations || [],
+              ragMode: data.rag_mode || ''
+            };
+            return newMsgs;
+          });
+          return;
+        }
+        
+        setMessages(prev => {
+          const newMsgs = [...prev];
+          newMsgs[newMsgs.length - 1] = {
+            ...newMsgs[newMsgs.length - 1],
+            content: fullText.substring(0, currentLength)
+          };
+          return newMsgs;
+        });
+      }, 10); // faster frame rate
+      
     } catch (err) {
       toast.error(err.message || 'Failed to get response');
       setMessages(prev => [...prev, { role: 'assistant', content: '⚠️ Something went wrong. Please check your backend server.' }]);
-    } finally { setLoading(false); }
+      setLoading(false);
+    }
   };
 
   const SUGGESTION_CHIPS = [
