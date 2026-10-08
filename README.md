@@ -12,12 +12,15 @@ StartupSage is an advanced, context-aware AI advisor designed specifically for I
 * **Three Dynamic RAG Modes:**
   * ⚡ **Basic RAG:** Standard dense vector retrieval using Qdrant (Semantic Search).
   * 🔀 **Hybrid RAG:** Combines Dense (Semantic) and Sparse (BM25) search using Reciprocal Rank Fusion (RRF) for highly precise document retrieval and exact keyword matching.
-  * 🤖 **Agentic Workflow:** Powered by LangGraph. The agent autonomously classifies intents, routes queries, actively rewrites bad queries, verifies groundedness to prevent hallucinations, and automatically appends legal disclaimers for high-risk topics.
+  * 🤖 **Agentic Workflow (Default):** Powered by LangGraph. The agent autonomously classifies intents, routes queries, actively rewrites bad queries, verifies groundedness to prevent hallucinations, and automatically appends legal disclaimers for high-risk topics.
+* **Document Attachment Analysis:** Users can upload PDF or TXT files directly in the chat. The application instantly extracts text and feeds it into the AI's context for highly specific, document-grounded answers.
+* **🎙️ Voice-Based Chatting:** Features native real-time Web Speech API integration. Users can seamlessly dictate their complex queries without touching the keyboard.
+* **🔐 Full Authentication & Dashboard:** Secure JWT-based login/register flow. Users have access to a dedicated dashboard overview displaying their activity metrics and dynamic charts.
+* **Stunning Neo-Brutalist UI:** A massive frontend overhaul built with React, Vite, and TailwindCSS v4. It features a stunning neo-brutalist aesthetic with high-contrast borders, bold typography, hard shadows, vibrant amber/lime color palettes, and glassmorphism.
 * **Enterprise-Grade Ingestion Pipeline:** Uses `PyMuPDF` to perfectly preserve tables, columns, and layouts from complex government documents. Features an intelligent chunking strategy (1500 chars, 300 overlap) to keep long legal clauses intact.
 * **Ultra-Fast Backend Optimizations:** 
   * ML Models (Embedder & Reranker) are eagerly pre-warmed in background threads during FastAPI lifespan startup to eliminate cold-start freezes.
   * Uses blazing-fast ASCII heuristics (`_is_likely_english`) to instantly bypass unnecessary LLM language-translation overheads on standard English queries.
-* **Stunning Premium UI:** A beautiful, responsive frontend built with React, Vite, and TailwindCSS v4. It features a custom amber/gold dark theme, glassmorphism, animated states, smooth scrolling (Lenis), and citation hover cards.
 * **Multilingual Intelligence:** Ask questions in Hindi, Marathi, or English. The AI understands, retrieves English documents, and responds flawlessly in your preferred language.
 
 ## 🛠️ Tech Stack
@@ -52,8 +55,8 @@ StartupSage is an advanced, context-aware AI advisor designed specifically for I
    pip install -r requirements.txt
    ```
 
-2. **Environment Variables**
-   Create a `.env` file in the `backend` folder:
+6. **Setup Environment Variables**
+   Create a `.env` file in the `backend` folder and add your keys:
    ```env
    MONGODB_URI=your_mongodb_uri
    QDRANT_URL=your_qdrant_url
@@ -62,24 +65,30 @@ StartupSage is an advanced, context-aware AI advisor designed specifically for I
    GROQ_API_KEY=your_groq_api_key
    ```
 
-3. **Ingest Knowledge Base**
-   Download required official PDFs into `backend/data/raw/` and run the ingestion pipeline:
+7. **Download Government Documents**
+   Run the scraping script to fetch all the required official PDFs and markdown files:
    ```bash
-   python backend/scripts/ingest_corpus.py all
+   python scripts/download_sources.py
    ```
 
-4. **Run Backend Server**
+8. **Ingest Knowledge Base**
+   Run the embedding pipeline to chunk and vectorize the 48+ documents into Qdrant:
+   ```bash
+   python -m scripts.ingest_corpus all
+   ```
+
+9. **Start the Backend Server**
    ```bash
    uvicorn app.main:app --reload
    ```
 
-5. **Run Frontend Development Server**
-   Open a new terminal:
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
+10. **Start Frontend Development Server**
+    Open a completely new terminal window, navigate to the frontend folder, and start the app:
+    ```bash
+    cd frontend
+    npm install
+    npm run dev
+    ```
 
 ## 📜 License
 This project is licensed under the MIT License.

@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [ragMode, setRagMode] = useState('hybrid');
+  const [ragMode, setRagMode] = useState('agentic');
 
   useEffect(() => {
     fetch('/api/v1/config/rag-mode')
@@ -137,7 +137,7 @@ export default function DashboardLayout({ children }) {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto relative z-10 flex flex-col">
+        <main className="flex-1 overflow-y-auto relative z-10 flex flex-col" data-lenis-prevent="true">
           {children}
         </main>
       </div>

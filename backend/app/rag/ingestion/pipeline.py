@@ -101,9 +101,12 @@ async def process_document(
         
     points = []
     for i, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
+        # Use deterministic UUID based on source_url and chunk index
+        # This ensures re-ingesting the same document overwrites instead of duplicating
+        chunk_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"{source_url}_{i}"))
         points.append(
             PointStruct(
-                id=str(uuid.uuid4()),
+                id=chunk_id,
                 vector=embedding,
                 payload={
                     "document_id": doc_id,

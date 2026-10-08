@@ -17,6 +17,7 @@ def get_reranker():
     return Reranker._instance.model
 
 def rerank(query: str, chunks: list[dict], top_k: int = 5) -> list[dict]:
+    chunks = chunks[:12]
     if not chunks:
         return []
         

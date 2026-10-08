@@ -18,10 +18,12 @@ async def lifespan(app: FastAPI):
     async def _warm_models():
         from app.rag.embedding import get_embedder
         from app.rag.retrieval.reranker import get_reranker
-        # Load both models in parallel background threads
+        from app.rag.retrieval.sparse import get_sparse_index
+        # Load both models and index in parallel background threads
         await asyncio.gather(
             asyncio.to_thread(get_embedder),
-            asyncio.to_thread(get_reranker)
+            asyncio.to_thread(get_reranker),
+            asyncio.to_thread(get_sparse_index)
         )
         logger.info("✅ All ML models pre-warmed and ready.")
     asyncio.create_task(_warm_models())

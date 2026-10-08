@@ -12,7 +12,7 @@ Return ONLY a raw JSON object with keys: "domain" (string) and "in_scope" (boole
 Example: {"domain": "taxation", "in_scope": true}"""
     
     try:
-        response = await generate(prompt, query, chat_history=chat_history)
+        response = await generate(prompt, query, chat_history=chat_history, fast=True)
         cleaned = response.replace("```json", "").replace("```", "").strip()
         return json.loads(cleaned)
     except Exception as e:
@@ -50,7 +50,7 @@ async def translate_query_if_needed(query: str) -> dict:
 Return ONLY a raw JSON object with keys: "original_language" (string), "english_query" (string).
 Example: {"original_language": "Hindi", "english_query": "How to register a startup?"}"""
     try:
-        response = await generate(prompt, query)
+        response = await generate(prompt, query, fast=True)
         cleaned = response.replace("```json", "").replace("```", "").strip()
         return json.loads(cleaned)
     except Exception as e:
