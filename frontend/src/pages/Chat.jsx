@@ -5,11 +5,12 @@ import toast from 'react-hot-toast';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 
 function MessageBubble({ msg }) {
   if (msg.role === 'user') {
     return (
-      <div className="flex justify-end pl-12 mb-6">
+      <div className="flex justify-end pl-12 mb-6 gap-4">
         <div className="max-w-[85%] flex flex-col items-end gap-2">
           {msg.document_name && (
             <div className="bg-[#a3e635] text-black border-[2px] border-black px-3 py-1 text-xs font-black uppercase flex items-center gap-2 shadow-[2px_2px_0px_#000]">
@@ -21,6 +22,9 @@ function MessageBubble({ msg }) {
             {msg.content}
           </div>
         </div>
+        <div className="flex-shrink-0 w-10 h-10 bg-[#3b82f6] border-[3px] border-black shadow-[2px_2px_0px_#000] flex items-center justify-center mt-1">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
       </div>
     );
   }
@@ -29,14 +33,14 @@ function MessageBubble({ msg }) {
     <div className="flex gap-4 pr-12 mb-8">
       {/* AI Avatar */}
       <div className="flex-shrink-0 w-10 h-10 bg-[#ff8c00] border-[3px] border-black shadow-[2px_2px_0px_#000] flex items-center justify-center mt-1">
-        <span className="font-black text-black text-lg">S</span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/><path d="M12 8V4H8"/></svg>
       </div>
       
       {/* AI Message Container */}
       <div className="max-w-[85%] min-w-0">
         <div className="bg-white border-[3px] border-black shadow-[6px_6px_0px_#000] p-6 overflow-x-auto">
           <div className="prose text-black text-sm">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{msg.content}</ReactMarkdown>
           </div>
 
           {msg.citations?.length > 0 && (
@@ -336,9 +340,12 @@ export default function ChatPage() {
                 <div key={c._id} onClick={() => loadConversation(c._id)}
                   className={`group flex items-center justify-between p-3 border-[3px] border-black cursor-pointer transition-all ${conversationId === c._id ? 'bg-[#a3e635] shadow-[4px_4px_0px_#000] -translate-y-1' : 'bg-white hover:shadow-[2px_2px_0px_#000]'}`}
                 >
-                  <div className="font-bold text-xs uppercase truncate pr-2 text-black">{c.title || 'New Conversation'}</div>
-                  <button onClick={(e) => deleteConversation(e, c._id)} className="text-black opacity-0 group-hover:opacity-100 hover:text-red-600 transition-all flex-shrink-0">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  <div className="font-bold text-[11px] leading-tight uppercase line-clamp-2 pr-2 text-black flex items-start gap-2">
+                    <svg className="flex-shrink-0 mt-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <span>{c.title || 'New Conversation'}</span>
+                  </div>
+                  <button onClick={(e) => deleteConversation(e, c._id)} className="text-black opacity-0 group-hover:opacity-100 hover:text-red-600 transition-all flex-shrink-0 bg-white border-2 border-transparent hover:border-black hover:bg-[#ffb6c1] p-1 shadow-none hover:shadow-[2px_2px_0px_#000]">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                   </button>
                 </div>
               ))}
