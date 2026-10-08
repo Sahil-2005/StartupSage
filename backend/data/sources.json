@@ -40,6 +40,18 @@
         "name": "LLP vs Company - Comparison Note",
         "source": "Patna Women's College (Commerce Dept.)",
         "url": "https://content.patnawomenscollege.in/commerce/LLP%202008.pdf"
+      },
+      {
+        "name": "Shares_and_Debentures_Rules",
+        "url": "Shares_and_Debentures_Rules.pdf"
+      },
+      {
+        "name": "Companies_Act_2013",
+        "url": "Companies_Act_2013.pdf"
+      },
+      {
+        "name": "Companies_Share_Capital_and_Debentures_Rules_2014",
+        "url": "Companies_Share_Capital_and_Debentures_Rules_2014.pdf"
       }
     ],
     "taxation_and_gst": [
@@ -62,6 +74,14 @@
         "name": "FAQs on Composition Levy (Revised)",
         "source": "CBIC (GST wing)",
         "url": "https://cbic-gst.gov.in/pdf/faq-manual/faq-composition-levy-revised.pdf"
+      },
+      {
+        "name": "Income_Tax_Act_2025",
+        "url": "Income_Tax_Act_2025.pdf"
+      },
+      {
+        "name": "Gazette_060226_Startup_Definition",
+        "url": "Gazette_060226_Startup_Definition.pdf"
       }
     ],
     "msme_udyam": [
@@ -121,6 +141,10 @@
         "name": "Startup India Seed Fund Scheme - Explainer Note (2)",
         "source": "Drishti IAS",
         "url": "https://drishtiias.com/pdf/1720371046.pdf"
+      },
+      {
+        "name": "FEMA_Act",
+        "url": "FEMA_Act.pdf"
       }
     ],
     "contracts_and_ip_basics": [
@@ -143,6 +167,18 @@
         "name": "Copyright 101 Handbook",
         "source": "CreativeFirst",
         "url": "https://creativefirst.film/wp-content/uploads/2021/04/YourIPYourFuture-Final-Handbook.pdf"
+      },
+      {
+        "name": "patents_act",
+        "url": "patents_act.pdf"
+      },
+      {
+        "name": "SIPP_extension",
+        "url": "SIPP_extension.pdf"
+      },
+      {
+        "name": "SIPP_Scheme_2017",
+        "url": "SIPP_Scheme_2017.pdf"
       }
     ],
     "labour_and_hr_compliance": [
@@ -155,6 +191,14 @@
         "name": "Handbook on Sexual Harassment of Women at Workplace (POSH Act, 2013)",
         "source": "Ministry of Women and Child Development",
         "url": "https://www.nin.res.in/downloads/Handbook%20on%20Sexual%20Harassment%20of%20Women%20at%20Workplace.pdf"
+      },
+      {
+        "name": "EPF_Act",
+        "url": "EPF_Act.pdf"
+      },
+      {
+        "name": "Payment_Of_Gratuity_Act",
+        "url": "Payment_Of_Gratuity_Act.pdf"
       }
     ],
     "data_protection_and_ecommerce": [

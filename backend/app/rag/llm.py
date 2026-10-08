@@ -20,7 +20,7 @@ if settings.GROQ_API_KEY:
 else:
     groq_client = None
 
-async def generate(system_prompt: str, user_message: str, chat_history: list = None) -> str:
+async def generate(system_prompt: str, user_message: str, chat_history: list = None, fast: bool = False) -> str:
     """
     Generates a response using Gemini first. If Gemini fails or API key is missing,
     falls back to Groq. Incorporates previous chat history if provided.
@@ -36,9 +36,13 @@ async def generate(system_prompt: str, user_message: str, chat_history: list = N
             messages.extend(chat_history)
             messages.append({"role": "user", "content": user_message})
             
+            model_name = "llama-3.1-8b-instant" if fast else "openai/gpt-oss-120b"
             response = await groq_client.chat.completions.create(
-                model="openai/gpt-oss-120b",
-                messages=messages
+                model=model_name,
+                messages=messages,
+                max_tokens=1024,
+                timeout=20,
+                extra_body={"reasoning_effort": "low"}
             )
             return response.choices[0].message.content
         except Exception as e:
@@ -61,7 +65,7 @@ async def generate(system_prompt: str, user_message: str, chat_history: list = N
             else:
                 prompt = f"{system_prompt}\n\nUser: {user_message}"
             
-            response = gemini_client.models.generate_content(
+            response = await gemini_client.aio.models.generate_content(
                 model='gemini-3.5-flash',
                 contents=prompt
             )

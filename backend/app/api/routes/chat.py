@@ -90,8 +90,9 @@ The user has attached the above document. Pay close attention to it. If the user
     # Fetch chat history for context
     chat_history = []
     if request.conversation_id and db.db is not None:
-        cursor = db.db.messages.find({"conversation_id": conv_id}).sort("created_at", 1)
+        cursor = db.db.messages.find({"conversation_id": conv_id}).sort("created_at", -1)
         msgs = await cursor.to_list(length=10) # Get last 10 messages
+        msgs.reverse() # Reverse so oldest is first
         for m in msgs:
             chat_history.append({"role": m["role"], "content": m["content"]})
             
