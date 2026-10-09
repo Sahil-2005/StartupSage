@@ -132,7 +132,8 @@ The user has attached the above document. Pay close attention to it. If the user
             
     from app.rag.query_understanding import translate_query_if_needed
     translation_info = await translate_query_if_needed(user_message)
-    search_query = translation_info.get("english_query", user_message)
+    search_query = translation_info.get("search_query", translation_info.get("english_query", user_message))
+    english_query = translation_info.get("english_query", user_message)
     original_language = translation_info.get("original_language", "English")
     
     import asyncio
@@ -170,11 +171,16 @@ The user has attached the above document. Pay close attention to it. If the user
 You can use the Startup Profile and the Chat History to answer conversational questions about the user, their startup, or previous messages.
 For all other questions, answer based ONLY on the provided Context or the Uploaded Document. Cite sources using [1], [2], etc.
 If you cannot answer the question from the Context, Uploaded Document, Startup Profile, or Chat History, explicitly say "I do not have enough information to answer this based on the available sources."
-IMPORTANT: The user asked in {original_language}. You MUST write your entire response in {original_language}.
 {profile_context}
 {doc_context_prompt}
 Context:
 {context_str}
+CRITICAL INSTRUCTION: You MUST reply in the EXACT same language and script that the user used.
+- If they used Hinglish (Hindi words in English letters), you MUST reply in Hinglish.
+- If they used Devanagari (Hindi script), reply in pure Hindi.
+- If they used Marathi, reply in Marathi.
+- If English, reply in English.
+The detected language is: {original_language}.
 """
                 elif settings.RAG_MODE == "agentic":
                     from app.rag.agent.graph import _do_classify, _do_retrieve, LEGAL_DISCLAIMER
@@ -183,7 +189,7 @@ Context:
                         full_context += "\n" + doc_context_prompt
                     full_context += f"\nIMPORTANT: Respond in {original_language}."
                     
-                    classification_task = asyncio.create_task(_do_classify(search_query, chat_history))
+                    classification_task = asyncio.create_task(_do_classify(english_query, chat_history))
                     retrieve_task = asyncio.create_task(_do_retrieve(search_query))
                     classification, retrieved_chunks = await asyncio.gather(classification_task, retrieve_task)
                     
@@ -214,7 +220,13 @@ For all other questions, answer based ONLY on the provided Context. Cite sources
 If you cannot answer the question from the Context, Startup Profile, or Chat History, explicitly say "I do not have enough information to answer this based on the available sources."
 {full_context}
 Context:
-{context_str}"""
+{context_str}
+CRITICAL INSTRUCTION: You MUST reply in the EXACT same language and script that the user used.
+- If they used Hinglish (Hindi words in English letters), you MUST reply in Hinglish.
+- If they used Devanagari (Hindi script), reply in pure Hindi.
+- If they used Marathi, reply in Marathi.
+- If English, reply in English.
+The detected language is: {original_language}."""
 
                 answer = ""
                 async for chunk in generate_stream(system_prompt, user_message, chat_history=chat_history):
@@ -266,11 +278,16 @@ Context:
 You can use the Startup Profile and the Chat History to answer conversational questions about the user, their startup, or previous messages.
 For all other questions, answer based ONLY on the provided Context or the Uploaded Document. Cite sources using [1], [2], etc.
 If you cannot answer the question from the Context, Uploaded Document, Startup Profile, or Chat History, explicitly say "I do not have enough information to answer this based on the available sources."
-IMPORTANT: The user asked in {original_language}. You MUST write your entire response in {original_language}.
 {profile_context}
 {doc_context_prompt}
 Context:
 {context_str}
+CRITICAL INSTRUCTION: You MUST reply in the EXACT same language and script that the user used.
+- If they used Hinglish (Hindi words in English letters), you MUST reply in Hinglish.
+- If they used Devanagari (Hindi script), reply in pure Hindi.
+- If they used Marathi, reply in Marathi.
+- If English, reply in English.
+The detected language is: {original_language}.
 """
         
         try:

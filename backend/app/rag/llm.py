@@ -36,7 +36,7 @@ async def generate(system_prompt: str, user_message: str, chat_history: list = N
             messages.extend(chat_history)
             messages.append({"role": "user", "content": user_message})
             
-            model_name = "llama3-8b-8192" if fast else "openai/gpt-oss-120b"
+            model_name = "llama-3.1-8b-instant" if fast else "llama-3.1-70b-versatile"
             response = await groq_client.chat.completions.create(
                 model=model_name,
                 messages=messages,
@@ -86,7 +86,7 @@ async def generate_stream(system_prompt: str, user_message: str, chat_history: l
             messages.extend(chat_history)
             messages.append({"role": "user", "content": user_message})
             
-            model_name = "llama3-8b-8192" if fast else "openai/gpt-oss-120b"
+            model_name = "llama-3.1-8b-instant" if fast else "llama-3.1-70b-versatile"
             response = await groq_client.chat.completions.create(
                 model=model_name,
                 messages=messages,

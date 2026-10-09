@@ -30,25 +30,13 @@ Return ONLY the rewritten query text, nothing else."""
         logger.error(f"Query rewrite failed: {e}")
         return query
 
-def _is_likely_english(text: str) -> bool:
-    """Fast heuristic: if >85% of characters are ASCII, the text is almost certainly English.
-    This avoids a costly LLM roundtrip for every standard English query."""
-    if not text:
-        return True
-    ascii_count = sum(1 for c in text if ord(c) < 128)
-    return (ascii_count / len(text)) > 0.85
-
 async def translate_query_if_needed(query: str) -> dict:
-    # Fast path: skip LLM call entirely for English queries
-    if _is_likely_english(query):
-        return {"original_language": "English", "english_query": query}
-    
-    # Slow path: use LLM only for non-English (Devanagari, Arabic, CJK, etc.)
     prompt = """Analyze the following query.
-1. Identify the language.
+1. Identify the exact language (e.g. English, Hindi, Hinglish, Marathi, etc).
 2. Translate it to English.
-Return ONLY a raw JSON object with keys: "original_language" (string), "english_query" (string).
-Example: {"original_language": "Hindi", "english_query": "How to register a startup?"}"""
+3. Extract core keywords and intents to create a highly optimized query for a vector search engine.
+Return ONLY a raw JSON object with keys: "original_language" (string), "english_query" (string), "search_query" (string).
+Example: {"original_language": "Hinglish", "english_query": "Does my company need money?", "search_query": "startup funding seed capital investment"}"""
     try:
         response = await generate(prompt, query, fast=True)
         cleaned = response.replace("```json", "").replace("```", "").strip()
