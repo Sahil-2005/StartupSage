@@ -8,6 +8,80 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 
 function MessageBubble({ msg }) {
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  // Pre-warm voices on mount so they are available immediately
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+  }, []);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(msg.content);
+    toast.success('Copied to clipboard');
+  };
+
+  const handleSpeak = () => {
+    if (!('speechSynthesis' in window)) {
+      toast.error('Text-to-speech not supported');
+      return;
+    }
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+    window.speechSynthesis.cancel();
+    
+    // Strip common markdown characters for cleaner speech
+    const cleanText = msg.content.replace(/[#*`_\[\]]/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    
+    // Detect Devanagari script (Hindi/Marathi)
+    const hasDevanagari = /[\u0900-\u097F]/.test(cleanText);
+    utterance.lang = hasDevanagari ? 'hi-IN' : 'en-IN';
+    
+    // Forcefully find any Hindi or Indian voice
+    const voices = window.speechSynthesis.getVoices();
+    let voice = null;
+    
+    if (hasDevanagari) {
+       voice = voices.find(v => v.lang.includes('hi') || v.name.toLowerCase().includes('hindi') || v.lang.includes('mr') || v.name.toLowerCase().includes('marathi'));
+    } else {
+       voice = voices.find(v => v.lang.includes('en-IN') || v.name.toLowerCase().includes('india'));
+    }
+    
+    if (voice) {
+       utterance.voice = voice;
+    } else {
+       console.warn("No native voice found for", utterance.lang);
+       // If no voice is found, we still let it speak with the default voice,
+       // but we ensure lang is set so the browser tries to match it.
+       utterance.lang = hasDevanagari ? 'hi-IN' : 'en-IN';
+    }
+
+    // Prevent Chrome garbage collection bug by storing utterance globally
+    window.currentUtterance = utterance;
+
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = (e) => {
+        console.error("Speech Synthesis Error:", e);
+        setIsSpeaking(false);
+        // Only show error if it's not a manual cancellation
+        if (e.error !== 'interrupted' && e.error !== 'canceled') {
+           toast.error("Speech failed. Voice may not be installed.");
+        }
+    };
+    
+    setIsSpeaking(true);
+    window.speechSynthesis.speak(utterance);
+  };
+
   if (msg.role === 'user') {
     return (
       <div className="flex justify-end pl-12 mb-6 gap-4">
@@ -21,6 +95,10 @@ function MessageBubble({ msg }) {
           <div className="bg-[#3b82f6] text-white border-[3px] border-black shadow-[4px_4px_0px_#000] p-4 font-bold text-sm leading-relaxed whitespace-pre-wrap">
             {msg.content}
           </div>
+          <button onClick={handleCopy} className="text-[10px] font-black uppercase text-gray-500 hover:text-black flex items-center gap-1 mt-1 transition-colors">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            COPY
+          </button>
         </div>
         <div className="flex-shrink-0 w-10 h-10 bg-[#3b82f6] border-[3px] border-black shadow-[2px_2px_0px_#000] flex items-center justify-center mt-1">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -70,6 +148,27 @@ function MessageBubble({ msg }) {
               )}
             </div>
           )}
+
+          {/* Action Bar */}
+          <div className="mt-6 flex gap-3 border-t-[3px] border-black pt-4">
+            <button onClick={handleCopy} title="Copy Message" className="p-2 border-[2px] border-black bg-white hover:bg-[#a3e635] shadow-[2px_2px_0px_#000] transition-colors flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span className="font-black text-xs uppercase hidden sm:inline">Copy</span>
+            </button>
+            <button onClick={handleSpeak} title={isSpeaking ? "Stop Speaking" : "Read Aloud"} className={`p-2 border-[2px] border-black shadow-[2px_2px_0px_#000] transition-colors flex items-center gap-2 ${isSpeaking ? 'bg-[#ff8c00]' : 'bg-white hover:bg-[#a3e635]'}`}>
+              {isSpeaking ? (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="animate-pulse"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                  <span className="font-black text-xs uppercase hidden sm:inline">Stop</span>
+                </>
+              ) : (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                  <span className="font-black text-xs uppercase hidden sm:inline">Read Aloud</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

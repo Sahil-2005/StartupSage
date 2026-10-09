@@ -1,5 +1,26 @@
 import React, { useEffect, useState } from 'react';
 
+function AnimatedCounter({ target, delay = 0 }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    let start = 0;
+    const end = parseInt(target.toString().replace(/,/g, ''));
+    if (isNaN(end)) return;
+    const duration = 1500;
+    const step = Math.max(1, Math.floor(end / (duration / 30)));
+    
+    setTimeout(() => {
+      const timer = setInterval(() => {
+        start += step;
+        if (start >= end) { setCount(end); clearInterval(timer); }
+        else setCount(start);
+      }, 30);
+      return () => clearInterval(timer);
+    }, delay);
+  }, [target, delay]);
+  return <span>{count.toLocaleString()}{target.toString().includes('+') ? '+' : ''}</span>;
+}
+
 export default function KnowledgePage() {
   const [stats, setStats] = useState({ total_docs: 0, total_chunks: 0, categories: {} });
   const [loading, setLoading] = useState(true);
@@ -57,7 +78,11 @@ export default function KnowledgePage() {
               { label: 'Embedding Model', value: 'BGE-Base', color: 'bg-[#ff8c00]' },
             ].map(s => (
               <div key={s.label} className={`border-[3px] border-black shadow-[4px_4px_0px_#000] p-6 ${s.color} ${s.color === 'bg-[#3b82f6]' ? 'text-white' : 'text-black'}`}>
-                <div className="font-black text-3xl md:text-4xl mb-2 truncate" title={s.value}>{s.value}</div>
+                <div className="font-black text-3xl md:text-4xl mb-2 truncate" title={s.value}>
+                  {typeof s.value === 'number' || !isNaN(parseInt(s.value.toString().replace(/,/g, ''))) 
+                    ? <AnimatedCounter target={s.value} /> 
+                    : s.value}
+                </div>
                 <div className="font-bold text-xs uppercase">{s.label}</div>
               </div>
             ))}

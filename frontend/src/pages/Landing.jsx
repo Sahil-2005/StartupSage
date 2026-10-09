@@ -158,12 +158,52 @@ export default function Landing() {
                </div>
                <h4 className="font-black uppercase text-xl text-white">Full Multilingual Intelligence</h4>
             </div>
+
+            {/* Read Aloud Badge */}
+            <div className="absolute top-1/4 -left-10 bg-white border-[4px] border-black shadow-[8px_8px_0px_#000] p-4 transform -rotate-6 w-56 z-20">
+               <div className="flex justify-between items-center mb-2">
+                 <h4 className="font-black uppercase text-sm text-black">Read Aloud</h4>
+                 <div className="bg-[#a3e635] rounded-full p-2 border-2 border-black animate-pulse">
+                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                 </div>
+               </div>
+               <p className="font-bold text-[10px] uppercase text-gray-600">Listen to responses instantly</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ===== DIVIDER ===== */}
       <div className="h-4 bg-black w-full border-y-[4px] border-black shadow-[0_4px_0px_#ff8c00]"></div>
+
+      {/* ===== FEATURES ===== */}
+      <section className="bg-[#a3e635] border-b-[4px] border-black py-24" id="features">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8">
+          <div className="text-center mb-16">
+             <div className="inline-block bg-white border-[4px] border-black shadow-[6px_6px_0px_#000] px-6 py-2 transform rotate-2 mb-6">
+                <h2 className="text-4xl font-black uppercase text-black">Core Capabilities</h2>
+             </div>
+             <p className="text-xl font-bold text-black max-w-2xl mx-auto">Everything you need to navigate the Indian startup ecosystem, packed into one powerful agent.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+             {[
+               { title: 'Startup Context', desc: 'Personalized answers based on your specific industry, stage, and location.', icon: '🎯', color: 'bg-white' },
+               { title: 'Read Aloud', desc: 'Listen to the AI responses instantly with built-in voice synthesis.', icon: '🗣️', color: 'bg-[#ff8c00]' },
+               { title: 'Source Citations', desc: 'Every claim is backed by a direct link to the official PDF source.', icon: '🔗', color: 'bg-[#3b82f6]' },
+               { title: 'Document Upload', desc: 'Upload your own legal documents to analyze and chat with them securely.', icon: '📄', color: 'bg-white' }
+             ].map((feature, i) => (
+                <div key={i} className={`border-[4px] border-black shadow-[6px_6px_0px_#000] p-6 ${feature.color} transform transition-transform hover:-translate-y-2`}>
+                   <div className="text-4xl mb-4 bg-white border-[3px] border-black inline-block p-2 shadow-[2px_2px_0px_#000]">
+                     {feature.icon}
+                   </div>
+                   <h3 className={`font-black text-xl uppercase mb-2 ${feature.color === 'bg-[#3b82f6]' ? 'text-white' : 'text-black'}`}>{feature.title}</h3>
+                   <p className={`font-bold text-sm ${feature.color === 'bg-[#3b82f6]' ? 'text-blue-100' : 'text-gray-800'}`}>{feature.desc}</p>
+                </div>
+             ))}
+          </div>
+        </div>
+      </section>
 
       {/* ===== HOW IT WORKS ===== */}
       <section className="bg-white border-b-[4px] border-black py-24" id="how-it-works">

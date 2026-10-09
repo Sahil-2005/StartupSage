@@ -2,6 +2,27 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+function AnimatedCounter({ target, delay = 0 }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    let start = 0;
+    const end = parseInt(target.toString().replace(/,/g, ''));
+    if (isNaN(end)) return;
+    const duration = 1500;
+    const step = Math.max(1, Math.floor(end / (duration / 30)));
+    
+    setTimeout(() => {
+      const timer = setInterval(() => {
+        start += step;
+        if (start >= end) { setCount(end); clearInterval(timer); }
+        else setCount(start);
+      }, 30);
+      return () => clearInterval(timer);
+    }, delay);
+  }, [target, delay]);
+  return <span>{count.toLocaleString()}{target.toString().includes('+') ? '+' : ''}</span>;
+}
+
 const QUICK_ACTIONS = [
   { label: 'Register a Private Limited Company', icon: '🏢', color: 'bg-[#ff8c00]' },
   { label: 'GST requirements for startups', icon: '📊', color: 'bg-[#a3e635]' },
@@ -131,7 +152,11 @@ export default function Dashboard() {
               { label: 'GOVT SOURCES', value: '48+', color: 'bg-[#ff8c00]' },
             ].map((stat, i) => (
               <div key={i} className={`border-[3px] border-black shadow-[4px_4px_0px_#000] p-4 ${stat.color} ${stat.color === 'bg-[#3b82f6]' ? 'text-white' : 'text-black'}`}>
-                <div className="font-black text-3xl mb-1">{stat.value}</div>
+                <div className="font-black text-3xl mb-1">
+                  {typeof stat.value === 'number' || !isNaN(parseInt(stat.value.toString().replace(/,/g, ''))) 
+                    ? <AnimatedCounter target={stat.value} /> 
+                    : stat.value}
+                </div>
                 <div className="font-bold text-xs uppercase opacity-90">{stat.label}</div>
               </div>
             ))}
