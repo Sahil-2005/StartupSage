@@ -22,8 +22,8 @@ else:
 
 async def generate(system_prompt: str, user_message: str, chat_history: list = None, fast: bool = False) -> str:
     """
-    Generates a response using Gemini first. If Gemini fails or API key is missing,
-    falls back to Groq. Incorporates previous chat history if provided.
+    Generates a response using Groq first. If Groq fails or API key is missing,
+    falls back to Gemini. Incorporates previous chat history if provided.
     """
     if chat_history is None:
         chat_history = []
@@ -36,13 +36,13 @@ async def generate(system_prompt: str, user_message: str, chat_history: list = N
             messages.extend(chat_history)
             messages.append({"role": "user", "content": user_message})
             
-            model_name = "llama-3.1-8b-instant" if fast else "llama-3.1-70b-versatile"
+            # Use active models on Groq
+            model_name = "qwen/qwen3.8-27b"
             response = await groq_client.chat.completions.create(
                 model=model_name,
                 messages=messages,
                 max_tokens=1024,
-                timeout=20,
-                extra_body={"reasoning_effort": "low"}
+                timeout=20
             )
             return response.choices[0].message.content
         except Exception as e:
@@ -52,27 +52,27 @@ async def generate(system_prompt: str, user_message: str, chat_history: list = N
 
     # 2. Fallback to Gemini
     if gemini_client:
-        try:
-            logger.info("Attempting generation with Gemini")
-            history_str = ""
-            for msg in chat_history:
-                role = "User" if msg["role"] == "user" else "Assistant"
-                history_str += f"{role}: {msg['content']}\n\n"
-            
-            # Gemini prompt combining system, history, and user
-            if history_str:
-                prompt = f"{system_prompt}\n\nPrevious Conversation:\n{history_str}User: {user_message}"
-            else:
-                prompt = f"{system_prompt}\n\nUser: {user_message}"
-            
-            response = await gemini_client.aio.models.generate_content(
-                model='gemini-3.5-flash',
-                contents=prompt
-            )
-            return response.text
-        except Exception as e:
-            logger.error(f"Gemini generation failed: {e}")
-            raise Exception("Both primary (Groq) and fallback (Gemini) LLMs failed.")
+        history_str = ""
+        for msg in chat_history:
+            role = "User" if msg["role"] == "user" else "Assistant"
+            history_str += f"{role}: {msg['content']}\n\n"
+        
+        prompt = f"{system_prompt}\n\nPrevious Conversation:\n{history_str}User: {user_message}" if history_str else f"{system_prompt}\n\nUser: {user_message}"
+        
+        # Try primary model then backup model in case of transient 503 high-demand spike
+        for g_model in ["gemini-3.5-flash", "gemini-flash-latest", "gemini-3.5-flash-lite"]:
+            try:
+                logger.info(f"Attempting generation with Gemini ({g_model})")
+                response = await gemini_client.aio.models.generate_content(
+                    model=g_model,
+                    contents=prompt
+                )
+                return response.text
+            except Exception as e:
+                logger.warning(f"Gemini ({g_model}) failed: {e}")
+                continue
+                
+        raise Exception("Both primary (Groq) and fallback (Gemini) LLMs failed.")
             
     raise Exception("No LLM API keys configured.")
 
@@ -86,13 +86,12 @@ async def generate_stream(system_prompt: str, user_message: str, chat_history: l
             messages.extend(chat_history)
             messages.append({"role": "user", "content": user_message})
             
-            model_name = "llama-3.1-8b-instant" if fast else "llama-3.1-70b-versatile"
+            model_name = "qwen/qwen3.8-27b"
             response = await groq_client.chat.completions.create(
                 model=model_name,
                 messages=messages,
                 max_tokens=1024,
                 timeout=20,
-                extra_body={"reasoning_effort": "low"},
                 stream=True
             )
             async for chunk in response:
@@ -103,24 +102,27 @@ async def generate_stream(system_prompt: str, user_message: str, chat_history: l
             logger.error(f"Groq streaming failed: {e}. Falling back to Gemini.")
 
     if gemini_client:
-        try:
-            history_str = ""
-            for msg in chat_history:
-                role = "User" if msg["role"] == "user" else "Assistant"
-                history_str += f"{role}: {msg['content']}\n\n"
-            
-            prompt = f"{system_prompt}\n\nPrevious Conversation:\n{history_str}User: {user_message}" if history_str else f"{system_prompt}\n\nUser: {user_message}"
-            
-            response = await gemini_client.aio.models.generate_content_stream(
-                model='gemini-3.5-flash',
-                contents=prompt
-            )
-            async for chunk in response:
-                if chunk.text:
-                    yield chunk.text
-            return
-        except Exception as e:
-            logger.error(f"Gemini streaming failed: {e}")
-            raise Exception("Both primary (Groq) and fallback (Gemini) LLMs failed.")
+        history_str = ""
+        for msg in chat_history:
+            role = "User" if msg["role"] == "user" else "Assistant"
+            history_str += f"{role}: {msg['content']}\n\n"
+        
+        prompt = f"{system_prompt}\n\nPrevious Conversation:\n{history_str}User: {user_message}" if history_str else f"{system_prompt}\n\nUser: {user_message}"
+        
+        for g_model in ["gemini-3.5-flash", "gemini-flash-latest", "gemini-3.5-flash-lite"]:
+            try:
+                response = await gemini_client.aio.models.generate_content_stream(
+                    model=g_model,
+                    contents=prompt
+                )
+                async for chunk in response:
+                    if chunk.text:
+                        yield chunk.text
+                return
+            except Exception as e:
+                logger.warning(f"Gemini streaming ({g_model}) failed: {e}")
+                continue
+                
+        raise Exception("Both primary (Groq) and fallback (Gemini) LLMs failed.")
             
     raise Exception("No LLM API keys configured.")
