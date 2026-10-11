@@ -15,27 +15,20 @@ async def lifespan(app: FastAPI):
 
     # 2. Warm ML models safely in background after uvicorn binds to port
     async def _warm_models():
-        await asyncio.sleep(6)  # Ensure port binding succeeds first
-        logger.info("Gradually warming ML models in background...")
+        await asyncio.sleep(2)
         try:
             from app.rag.embedding import get_embedder
             await asyncio.to_thread(get_embedder)
+            logger.info("✅ ONNX Embedder ready.")
         except Exception as e:
             logger.warning(f"Embedding model pre-warm deferred: {e}")
             
         try:
             from app.rag.retrieval.sparse import get_sparse_index
             await asyncio.to_thread(get_sparse_index)
+            logger.info("✅ BM25 sparse index ready.")
         except Exception as e:
             logger.warning(f"Sparse index pre-warm deferred: {e}")
-            
-        try:
-            from app.rag.retrieval.reranker import get_reranker
-            await asyncio.to_thread(get_reranker)
-        except Exception as e:
-            logger.warning(f"Reranker pre-warm deferred: {e}")
-            
-        logger.info("✅ ML model warmup sequence finished.")
 
     asyncio.create_task(_warm_models())
 

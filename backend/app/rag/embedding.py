@@ -1,23 +1,21 @@
-from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 import logging
 
 logger = logging.getLogger(__name__)
 
 class Embedder:
     def __init__(self, model_name: str = "BAAI/bge-base-en-v1.5"):
-        logger.info(f"Loading embedding model: {model_name}")
-        self.model = SentenceTransformer(model_name)
+        logger.info(f"Loading lightweight ONNX embedding model: {model_name}")
+        self.model = TextEmbedding(model_name=model_name)
         
     def embed_texts(self, texts: list[str]) -> list[list[float]]:
-        # sentence-transformers returns a numpy array, convert to list of floats for qdrant
-        embeddings = self.model.encode(texts, normalize_embeddings=True)
-        return embeddings.tolist()
+        embeddings = list(self.model.embed(texts))
+        return [e.tolist() for e in embeddings]
 
     def embed_query(self, query: str) -> list[float]:
-        # For BGE models, standard query embedding
         query_text = f"Represent this sentence for searching relevant passages: {query}"
-        embedding = self.model.encode(query_text, normalize_embeddings=True)
-        return embedding.tolist()
+        embeddings = list(self.model.embed([query_text]))
+        return embeddings[0].tolist()
 
 # Singleton instance to avoid reloading the model
 embedder = None

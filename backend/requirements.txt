@@ -4,15 +4,13 @@ motor
 pymongo
 python-dotenv
 pydantic-settings
-sentence-transformers
+fastembed
 qdrant-client
 pypdf
 beautifulsoup4
 langchain-text-splitters
 google-genai
 openai
-ragas
-datasets
 rank-bm25
 langgraph
 python-multipart
