@@ -10,30 +10,11 @@ logger = logging.getLogger(__name__)
 
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI):
-    # 1. Connect to MongoDB
+    # Connect to MongoDB
     await connect_to_mongo()
-
-    # 2. Warm ML models safely in background after uvicorn binds to port
-    async def _warm_models():
-        await asyncio.sleep(2)
-        try:
-            from app.rag.embedding import get_embedder
-            await asyncio.to_thread(get_embedder)
-            logger.info("✅ ONNX Embedder ready.")
-        except Exception as e:
-            logger.warning(f"Embedding model pre-warm deferred: {e}")
-            
-        try:
-            from app.rag.retrieval.sparse import get_sparse_index
-            await asyncio.to_thread(get_sparse_index)
-            logger.info("✅ BM25 sparse index ready.")
-        except Exception as e:
-            logger.warning(f"Sparse index pre-warm deferred: {e}")
-
-    asyncio.create_task(_warm_models())
-
     yield
     await close_mongo_connection()
+
 
 app = FastAPI(title="StartupSage AI API", lifespan=lifespan)
 
@@ -59,3 +40,9 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])
 app.include_router(profiles.router, prefix="/api/v1/profiles", tags=["profiles"])
 app.include_router(config_router.router, prefix="/api/v1/config", tags=["config"])
+
+@app.get("/")
+@app.head("/")
+async def root():
+    return {"status": "ok", "message": "StartupSage API is running"}
+
