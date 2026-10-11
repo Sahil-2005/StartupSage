@@ -85,9 +85,9 @@ def update_qdrant():
     print(f"\nQdrant scan complete! Scanned {total_scanned} points, updated {total_updated} points.")
 
 async def update_mongo():
-    from app.db.mongo import db, connect_db, close_db
+    from app.db.mongo import db, connect_to_mongo, close_mongo_connection
     print("\nConnecting to MongoDB...")
-    await connect_db()
+    await connect_to_mongo()
     if db.db is not None:
         for old_source, new_source in URL_MAP.items():
             result = await db.db.documents.update_many(
@@ -117,7 +117,7 @@ async def update_mongo():
                 )
                 updated_msgs += 1
         print(f"MongoDB: Updated citations in {updated_msgs} historical messages.")
-    await close_db()
+    await close_mongo_connection()
     print("MongoDB update complete.")
 
 if __name__ == "__main__":
