@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../api/config';
 
 function AnimatedCounter({ target, delay = 0 }) {
   const [count, setCount] = useState(0);
@@ -46,7 +47,7 @@ export default function Dashboard() {
   const [knowledgeStats, setKnowledgeStats] = useState({ docs: '...', topics: '...' });
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/v1/config/knowledge')
+    fetch(`${API_BASE_URL}/api/v1/config/knowledge`)
       .then(res => res.json())
       .then(data => {
         setKnowledgeStats({

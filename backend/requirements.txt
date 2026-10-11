@@ -16,3 +16,6 @@ datasets
 rank-bm25
 langgraph
 python-multipart
+python-jose[cryptography]
+bcrypt
+passlib

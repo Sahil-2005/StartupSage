@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { API_BASE_URL } from '../api/config';
 
 const AuthContext = createContext(null);
 
@@ -9,7 +10,7 @@ export function AuthProvider({ children }) {
 
   const fetchMe = useCallback(async (t) => {
     try {
-      const res = await fetch('/api/v1/auth/me', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
         headers: { Authorization: `Bearer ${t}` }
       });
       if (res.ok) {
@@ -40,7 +41,7 @@ export function AuthProvider({ children }) {
   }, [token, fetchMe]);
 
   const login = async (email, password) => {
-    const res = await fetch('/api/v1/auth/login', {
+    const res = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -57,7 +58,7 @@ export function AuthProvider({ children }) {
   };
 
   const register = async (full_name, email, password) => {
-    const res = await fetch('/api/v1/auth/register', {
+    const res = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ full_name, email, password }),
@@ -87,7 +88,8 @@ export function AuthProvider({ children }) {
       headers['Content-Type'] = 'application/json';
     }
 
-    return fetch(url, {
+    const targetUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+    return fetch(targetUrl, {
       ...options,
       headers,
     });

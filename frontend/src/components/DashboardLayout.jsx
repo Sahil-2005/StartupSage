@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../api/config';
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'DASHBOARD', icon: (
@@ -25,7 +26,7 @@ export default function DashboardLayout({ children }) {
   const [ragMode, setRagMode] = useState('agentic');
 
   useEffect(() => {
-    fetch('/api/v1/config/rag-mode')
+    fetch(`${API_BASE_URL}/api/v1/config/rag-mode`)
       .then(r => r.json())
       .then(d => d.mode && setRagMode(d.mode))
       .catch(() => {});
@@ -34,7 +35,7 @@ export default function DashboardLayout({ children }) {
   const handleModeChange = async (e) => {
     const mode = e.target.value;
     setRagMode(mode);
-    await fetch('/api/v1/config/rag-mode', {
+    await fetch(`${API_BASE_URL}/api/v1/config/rag-mode`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mode }),

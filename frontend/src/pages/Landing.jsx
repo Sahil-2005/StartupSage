@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../api/config';
 
 const CATEGORIES = [
   { title: 'REGISTRATION', desc: 'DPIIT, MCA, Startup India', color: 'bg-[#ff8c00]', icon: '📄' },
@@ -35,7 +36,7 @@ export default function Landing() {
   const [stats, setStats] = useState({ docs: 48, chunks: 3400, topics: 8 });
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/v1/config/knowledge')
+    fetch(`${API_BASE_URL}/api/v1/config/knowledge`)
       .then(res => res.json())
       .then(data => {
         setStats({
