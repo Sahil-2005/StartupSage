@@ -41,6 +41,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.staticfiles import StaticFiles
+import os
+
+# Serve the raw PDF documents so citations can link directly to them
+docs_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "raw")
+if os.path.exists(docs_path):
+    app.mount("/api/v1/documents", StaticFiles(directory=docs_path), name="documents")
+
 app.include_router(health.router, prefix="/api/v1/health", tags=["health"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])

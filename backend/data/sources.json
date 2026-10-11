@@ -43,15 +43,18 @@
       },
       {
         "name": "Shares_and_Debentures_Rules",
-        "url": "Shares_and_Debentures_Rules.pdf"
+        "source": "Ministry of Corporate Affairs",
+        "url": "https://www.mca.gov.in/Ministry/pdf/NCARules_Chapter4.pdf"
       },
       {
         "name": "Companies_Act_2013",
-        "url": "Companies_Act_2013.pdf"
+        "source": "Ministry of Corporate Affairs",
+        "url": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf"
       },
       {
         "name": "Companies_Share_Capital_and_Debentures_Rules_2014",
-        "url": "Companies_Share_Capital_and_Debentures_Rules_2014.pdf"
+        "source": "Ministry of Corporate Affairs",
+        "url": "https://www.mca.gov.in/Ministry/pdf/NCARules_Chapter4.pdf"
       }
     ],
     "taxation_and_gst": [
@@ -77,11 +80,13 @@
       },
       {
         "name": "Income_Tax_Act_2025",
-        "url": "Income_Tax_Act_2025.pdf"
+        "source": "Income Tax Department",
+        "url": "https://incometaxindia.gov.in/pages/acts/income-tax-act.aspx"
       },
       {
         "name": "Gazette_060226_Startup_Definition",
-        "url": "Gazette_060226_Startup_Definition.pdf"
+        "source": "DPIIT, Ministry of Commerce and Industry",
+        "url": "https://www.startupindia.gov.in/content/dam/invest-india/Templates/public/Revised%20Guidelines%20for%20recognition.pdf"
       }
     ],
     "msme_udyam": [
@@ -144,7 +149,8 @@
       },
       {
         "name": "FEMA_Act",
-        "url": "FEMA_Act.pdf"
+        "source": "Reserve Bank of India",
+        "url": "https://www.rbi.org.in/Scripts/BS_FemaNotifications.aspx"
       }
     ],
     "contracts_and_ip_basics": [
@@ -170,15 +176,18 @@
       },
       {
         "name": "patents_act",
-        "url": "patents_act.pdf"
+        "source": "Office of CGPDTM, Govt. of India",
+        "url": "https://ipindia.gov.in/writereaddata/Portal/IPOAct/1_31_1_patent-act-1970-11march2015.pdf"
       },
       {
         "name": "SIPP_extension",
-        "url": "SIPP_extension.pdf"
+        "source": "Startup India / DPIIT",
+        "url": "https://www.startupindia.gov.in/content/dam/invest-india/Templates/public/SIPP_Scheme.pdf"
       },
       {
         "name": "SIPP_Scheme_2017",
-        "url": "SIPP_Scheme_2017.pdf"
+        "source": "Startup India / DPIIT",
+        "url": "https://www.startupindia.gov.in/content/dam/invest-india/Templates/public/SIPP_Scheme.pdf"
       }
     ],
     "labour_and_hr_compliance": [
@@ -194,11 +203,13 @@
       },
       {
         "name": "EPF_Act",
-        "url": "EPF_Act.pdf"
+        "source": "EPFO, Ministry of Labour and Employment",
+        "url": "https://www.epfindia.gov.in/site_docs/PDFs/Downloads_PDFs/EPFAct1952.pdf"
       },
       {
         "name": "Payment_Of_Gratuity_Act",
-        "url": "Payment_Of_Gratuity_Act.pdf"
+        "source": "Ministry of Labour and Employment",
+        "url": "https://labour.gov.in/sites/default/files/PaymentofGratuityAct1972.pdf"
       }
     ],
     "data_protection_and_ecommerce": [

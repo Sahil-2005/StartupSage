@@ -9,6 +9,7 @@ sys.path.append(str(backend_dir))
 
 from app.rag.ingestion.pipeline import process_document
 from app.db.mongo import connect_to_mongo, close_mongo_connection
+from app.rag.sources import resolve_source_url
 
 async def main():
     if len(sys.argv) < 2:
@@ -43,7 +44,7 @@ async def main():
             if file_path.is_file() and file_path.suffix in ['.pdf', '.txt', '.md', '.html']:
                 # Basic metadata fallback
                 title = file_path.stem.replace('_', ' ').title()
-                source_url = f"local://{file_path.name}"
+                source_url = resolve_source_url(file_path.name)
                 
                 chunks = await process_document(
                     file_path=str(file_path),

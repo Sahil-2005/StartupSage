@@ -29,9 +29,14 @@ async def ingest_category(category: str, docs: list):
         if not url:
             continue
             
-        ext = ".pdf" if ".pdf" in url.lower() else ".md"
-        safe_name = name.replace("/", "").replace("\\", "").replace(":", "").replace("*", "").replace("?", "").replace('"', "").replace("<", "").replace(">", "").replace("|", "").replace(" ", "_") + ext
-        file_path = category_dir / safe_name
+        safe_base = name.replace("/", "").replace("\\", "").replace(":", "").replace("*", "").replace("?", "").replace('"', "").replace("<", "").replace(">", "").replace("|", "").replace(" ", "_")
+        if (category_dir / f"{safe_base}.pdf").exists():
+            file_path = category_dir / f"{safe_base}.pdf"
+        elif (category_dir / f"{safe_base}.md").exists():
+            file_path = category_dir / f"{safe_base}.md"
+        else:
+            ext = ".pdf" if ".pdf" in url.lower() else ".md"
+            file_path = category_dir / f"{safe_base}{ext}"
         
         if not file_path.exists():
             logger.warning(f"File not found: {file_path}. Skipping.")

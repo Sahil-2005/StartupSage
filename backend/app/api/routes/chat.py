@@ -11,6 +11,7 @@ from app.db.mongo import db
 from app.rag.retrieval import dense, sparse, fusion, reranker
 from app.rag.llm import generate
 from app.rag.llm import generate_stream
+from app.rag.sources import resolve_source_url
 from app.api.routes.auth import get_current_user
 import json
 import io
@@ -161,7 +162,7 @@ The user has attached the above document. Pay close attention to it. If the user
                         citations_metadata.append({
                             "ref_id": ref_id,
                             "text_snippet": chunk["text"][:100] + "...",
-                            "source_url": chunk["source_url"],
+                            "source_url": resolve_source_url(chunk.get("source_url", "")),
                             "category": chunk["category"]
                         })
                             
@@ -209,7 +210,7 @@ The detected language is: {original_language}.
                         citations_metadata.append({
                             "ref_id": ref_id,
                             "text_snippet": chunk["text"][:100] + "...",
-                            "source_url": chunk["source_url"],
+                            "source_url": resolve_source_url(chunk.get("source_url", "")),
                             "category": chunk["category"]
                         })
                     context_str = "\n\n".join(context_blocks)
@@ -268,7 +269,7 @@ The detected language is: {original_language}."""
             citations_metadata.append({
                 "ref_id": ref_id,
                 "text_snippet": chunk["text"][:100] + "...",
-                "source_url": chunk["source_url"],
+                "source_url": resolve_source_url(chunk.get("source_url", "")),
                 "category": chunk["category"]
             })
                 
@@ -370,6 +371,10 @@ async def get_messages(conv_id: str, current_user: dict = Depends(get_current_us
     msgs = await cursor.to_list(length=100)
     for m in msgs:
         m["_id"] = str(m["_id"])
+        if "citations" in m and isinstance(m["citations"], list):
+            for cit in m["citations"]:
+                if isinstance(cit, dict) and "source_url" in cit:
+                    cit["source_url"] = resolve_source_url(cit["source_url"])
     return msgs
 
 @router.delete("/conversations/{conv_id}")

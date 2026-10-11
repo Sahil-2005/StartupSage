@@ -130,8 +130,11 @@ function MessageBubble({ msg }) {
               <div className="flex flex-wrap gap-2">
                 {msg.citations.map((cit, j) => {
                   const formatCategory = (cat) => cat ? cat.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Source';
+                  const sourceLink = (cit.source_url && cit.source_url.startsWith('http')) 
+                    ? cit.source_url 
+                    : 'https://www.startupindia.gov.in';
                   return (
-                  <a key={j} href={cit.source_url} target="_blank" rel="noreferrer" title={cit.text_snippet}
+                  <a key={j} href={sourceLink} target="_blank" rel="noopener noreferrer" title={cit.text_snippet || cit.source_url}
                     className="inline-flex items-center gap-2 text-xs bg-[#ff8c00] text-black border-2 border-black font-bold px-3 py-1 shadow-[2px_2px_0px_#000] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#000] transition-all"
                   >
                     <span className="font-black">[{cit.ref_id}]</span>

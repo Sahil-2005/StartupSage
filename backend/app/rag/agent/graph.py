@@ -7,6 +7,7 @@ from app.rag.query_understanding import classify_intent
 from app.rag.retrieval import dense, sparse, fusion, reranker
 from app.rag.verification import LEGAL_DISCLAIMER
 from app.rag.llm import generate
+from app.rag.sources import resolve_source_url
 
 logger = logging.getLogger(__name__)
 
@@ -61,11 +62,11 @@ async def node_generate(state: AgentState):
     citations_metadata = []
     for i, chunk in enumerate(chunks):
         ref_id = i + 1
-        context_blocks.append(f"[{ref_id}] {chunk['text']} (Source: {chunk['source_url']})")
+        context_blocks.append(f"[{ref_id}] {chunk['text']} (Source: {resolve_source_url(chunk.get('source_url', ''))})")
         citations_metadata.append({
             "ref_id": ref_id,
             "text_snippet": chunk["text"][:100] + "...",
-            "source_url": chunk["source_url"],
+            "source_url": resolve_source_url(chunk.get("source_url", "")),
             "category": chunk["category"]
         })
         
