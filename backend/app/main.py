@@ -13,19 +13,30 @@ async def lifespan(app: FastAPI):
     # 1. Connect to MongoDB
     await connect_to_mongo()
 
-    # 2. Pre-warm ML models in background threads so the first user query is instant
-    logger.info("Pre-warming ML models in background...")
+    # 2. Warm ML models safely in background after uvicorn binds to port
     async def _warm_models():
-        from app.rag.embedding import get_embedder
-        from app.rag.retrieval.reranker import get_reranker
-        from app.rag.retrieval.sparse import get_sparse_index
-        # Load both models and index in parallel background threads
-        await asyncio.gather(
-            asyncio.to_thread(get_embedder),
-            asyncio.to_thread(get_reranker),
-            asyncio.to_thread(get_sparse_index)
-        )
-        logger.info("✅ All ML models pre-warmed and ready.")
+        await asyncio.sleep(6)  # Ensure port binding succeeds first
+        logger.info("Gradually warming ML models in background...")
+        try:
+            from app.rag.embedding import get_embedder
+            await asyncio.to_thread(get_embedder)
+        except Exception as e:
+            logger.warning(f"Embedding model pre-warm deferred: {e}")
+            
+        try:
+            from app.rag.retrieval.sparse import get_sparse_index
+            await asyncio.to_thread(get_sparse_index)
+        except Exception as e:
+            logger.warning(f"Sparse index pre-warm deferred: {e}")
+            
+        try:
+            from app.rag.retrieval.reranker import get_reranker
+            await asyncio.to_thread(get_reranker)
+        except Exception as e:
+            logger.warning(f"Reranker pre-warm deferred: {e}")
+            
+        logger.info("✅ ML model warmup sequence finished.")
+
     asyncio.create_task(_warm_models())
 
     yield
