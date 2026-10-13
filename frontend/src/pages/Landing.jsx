@@ -50,6 +50,27 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen relative dot-pattern">
+      {/* ===== FREE-TIER NOTICE & DEMO BANNER ===== */}
+      <div className="bg-[#ff8c00] border-b-[3px] border-black text-black px-4 py-2.5 font-black text-xs sm:text-sm tracking-wide shadow-[0_2px_0px_#000] relative z-50">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-base">⚠️</span>
+            <span>
+              <strong>Notice:</strong> Cloud Vector DB / services may idle or expire on free tier. In case of downtime, you can watch the complete walkthrough!
+            </span>
+          </div>
+          <a
+            href="https://drive.google.com/file/d/1PApq3JYmYP1fLOmYdG3dsAt1a6VXBPTj/view?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 bg-black text-white px-3 py-1 border-[2px] border-black text-xs uppercase font-black shadow-[2px_2px_0px_#fff] hover:bg-white hover:text-black hover:shadow-[3px_3px_0px_#000] transition-all whitespace-nowrap"
+          >
+            <span>▶ Watch Video Demo</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+          </a>
+        </div>
+      </div>
+
       {/* ===== HEADER ===== */}
       <header className="sticky top-0 z-50 bg-[#f4f0e6] border-b-[3px] border-black shadow-[0_4px_0px_#000]">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-20">
@@ -67,6 +88,14 @@ export default function Landing() {
                 {item}
               </a>
             ))}
+            <a
+              href="https://drive.google.com/file/d/1PApq3JYmYP1fLOmYdG3dsAt1a6VXBPTj/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-black font-black uppercase text-xs flex items-center gap-1.5 border-[2px] border-black px-2.5 py-1 bg-[#ff8c00] shadow-[2px_2px_0px_#000] hover:-translate-y-0.5 transition-transform"
+            >
+              <span>🎥 Video Demo</span>
+            </a>
             <div className="flex items-center gap-2 text-[10px] font-black uppercase border-[3px] border-black px-3 py-1 bg-white shadow-[2px_2px_0px_#000]">
               <div className="w-2 h-2 bg-[#a3e635] border border-black animate-ping"></div>
               AI System Online
@@ -99,14 +128,33 @@ export default function Landing() {
           <p className="text-2xl font-black text-black mb-6 bg-white inline-block border-[3px] border-black px-4 py-2 shadow-[4px_4px_0px_#000]">
             Your AI co-pilot for building in India.
           </p>
-          <p className="text-lg font-bold text-[#333] mb-12 max-w-lg leading-relaxed">
+          <p className="text-lg font-bold text-[#333] mb-8 max-w-lg leading-relaxed">
             Navigate startup registration, taxation, MSME guidelines, and funding with absolute confidence. Grounded answers retrieved directly from live official government sources, perfectly personalized to your startup's profile.
           </p>
 
-          <div className="flex flex-wrap items-center gap-6 mb-16">
+          {/* Free-tier Demo Note Box */}
+          <div className="mb-8 border-[3px] border-black bg-white p-4 shadow-[4px_4px_0px_#000] max-w-lg">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">💡</span>
+              <div className="text-xs font-bold text-black">
+                <span className="font-black uppercase text-black">Live Hosted Note:</span> Free-tier vector DBs (Qdrant Cloud / Render) may pause after inactivity. If you encounter timeout or shutdown, watch our full product walkthrough video recorded live.
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 mb-16">
             <Link to="/register" className="bg-black text-white border-[3px] border-black px-8 py-4 font-black uppercase text-lg shadow-[6px_6px_0px_#ff8c00] hover:shadow-[8px_8px_0px_#ff8c00] hover:-translate-y-1 transition-all flex items-center gap-3">
               Ask StartupSage <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
+            <a
+              href="https://drive.google.com/file/d/1PApq3JYmYP1fLOmYdG3dsAt1a6VXBPTj/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#f4f0e6] text-black border-[3px] border-black px-6 py-4 font-black uppercase text-base shadow-[6px_6px_0px_#000] hover:bg-white hover:shadow-[8px_8px_0px_#000] hover:-translate-y-1 transition-all flex items-center gap-2"
+            >
+              <span>🎥 Watch Live Demo</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+            </a>
           </div>
 
           {/* Dynamic Stats Grid */}
