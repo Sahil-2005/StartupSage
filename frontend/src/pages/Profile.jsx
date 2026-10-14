@@ -45,14 +45,14 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="p-8 max-w-3xl mx-auto pb-20">
-      <div className="mb-8 border-b-[3px] border-black pb-4">
-        <h1 className="text-4xl font-black uppercase text-black mb-2">Startup Profile</h1>
-        <p className="font-bold text-black border-l-[4px] border-[#3b82f6] pl-3">This context powers personalized advice in the AI Advisor.</p>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto pb-16 sm:pb-20">
+      <div className="mb-6 sm:mb-8 border-b-[3px] border-black pb-3 sm:pb-4">
+        <h1 className="text-3xl sm:text-4xl font-black uppercase text-black mb-2">Startup Profile</h1>
+        <p className="font-bold text-sm sm:text-base text-black border-l-[4px] border-[#3b82f6] pl-3">This context powers personalized advice in the AI Advisor.</p>
       </div>
 
-      <div className="bg-white border-[3px] border-black shadow-[6px_6px_0px_#000] p-8">
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="bg-white border-[3px] border-black shadow-[4px_4px_0px_#000] sm:shadow-[6px_6px_0px_#000] p-5 sm:p-8">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
           {/* Startup Name */}
           <div>
             <label className="block font-black uppercase text-sm mb-2 text-black">Startup Name</label>
@@ -74,10 +74,10 @@ export default function ProfilePage() {
           {/* Stage */}
           <div>
             <label className="block font-black uppercase text-sm mb-3 text-black">Current Stage</label>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
               {STAGES.map(s => (
                 <button key={s} type="button" onClick={() => setProfile(p => ({...p, stage: s}))}
-                  className={`text-left p-4 border-[3px] border-black font-black uppercase text-xs transition-all ${profile.stage === s ? 'bg-[#ff8c00] text-black shadow-[4px_4px_0px_#000] -translate-y-1' : 'bg-gray-100 text-black hover:bg-white hover:shadow-[4px_4px_0px_#000] hover:-translate-y-1'}`}
+                  className={`text-left p-3 sm:p-4 border-[2px] sm:border-[3px] border-black font-black uppercase text-xs transition-all ${profile.stage === s ? 'bg-[#ff8c00] text-black shadow-[3px_3px_0px_#000] sm:shadow-[4px_4px_0px_#000] -translate-y-0.5' : 'bg-gray-100 text-black hover:bg-white hover:shadow-[3px_3px_0px_#000] hover:-translate-y-0.5'}`}
                 >
                   {s}
                 </button>

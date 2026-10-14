@@ -64,11 +64,11 @@ export default function Login() {
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative dot-pattern">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-5 sm:p-8 relative dot-pattern">
         <div className="w-full max-w-md bg-[#f4f0e6] relative z-10">
           
-          <div className="mb-8">
-            <Link to="/" className="inline-block text-black font-bold uppercase text-sm mb-12 hover:underline decoration-2">
+          <div className="mb-6 sm:mb-8">
+            <Link to="/" className="inline-block text-black font-bold uppercase text-sm mb-6 sm:mb-12 hover:underline decoration-2">
               ← Back
             </Link>
             <h2 className="text-4xl font-black uppercase text-black mb-2 tracking-tight">Welcome Back.</h2>

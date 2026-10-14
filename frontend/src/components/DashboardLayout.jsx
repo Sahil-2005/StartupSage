@@ -55,15 +55,24 @@ export default function DashboardLayout({ children }) {
     <div className="h-screen flex bg-[#f4f0e6] font-sans overflow-hidden">
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 flex flex-col ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-auto w-[280px] bg-white border-r-[3px] border-black`}>
-        {/* Logo */}
-        <div className="flex items-center gap-3 p-6 border-b-[3px] border-black">
-          <div className="w-10 h-10 bg-[#ff8c00] border-[3px] border-black shadow-[2px_2px_0px_#000] flex items-center justify-center">
-            <span className="text-black font-black text-xl">S</span>
+        {/* Logo & Mobile Close */}
+        <div className="flex items-center justify-between p-6 border-b-[3px] border-black">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#ff8c00] border-[3px] border-black shadow-[2px_2px_0px_#000] flex items-center justify-center">
+              <span className="text-black font-black text-xl">S</span>
+            </div>
+            <div>
+              <div className="font-black text-lg uppercase tracking-wider">StartupSage</div>
+              <div className="text-xs font-bold uppercase text-[#ff8c00] tracking-widest">AI Advisor</div>
+            </div>
           </div>
-          <div>
-            <div className="font-black text-lg uppercase tracking-wider">StartupSage</div>
-            <div className="text-xs font-bold uppercase text-[#ff8c00] tracking-widest">AI Advisor</div>
-          </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-2 border-[2px] border-black shadow-[2px_2px_0px_#000] hover:bg-black hover:text-white transition-colors"
+            aria-label="Close sidebar"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
 
         {/* Nav */}

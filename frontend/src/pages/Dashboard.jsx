@@ -79,25 +79,25 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-20">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto pb-16 sm:pb-20">
       
       {/* Welcome Header & Hero Image */}
-      <div className="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12">
+      <div className="flex flex-col lg:flex-row justify-between items-start gap-6 lg:gap-8 mb-8 sm:mb-12">
         <div className="flex-1">
-          <div className="inline-block bg-[#a3e635] border-[3px] border-black shadow-[4px_4px_0px_#000] px-4 py-2 font-black uppercase text-xs mb-6 transform -rotate-2">
+          <div className="inline-block bg-[#a3e635] border-[3px] border-black shadow-[3px_3px_0px_#000] sm:shadow-[4px_4px_0px_#000] px-3 sm:px-4 py-1.5 sm:py-2 font-black uppercase text-[10px] sm:text-xs mb-4 sm:mb-6 transform -rotate-2">
             Made for India 🇮🇳
           </div>
-          <h1 className="text-5xl lg:text-6xl font-black uppercase tracking-tighter text-black mb-4">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-black mb-3 sm:mb-4 leading-tight">
             {greeting()},<br/>
-            <span className="text-[#3b82f6] underline decoration-8 underline-offset-8 decoration-black">{user?.full_name?.split(' ')[0] || 'FOUNDER'}</span>
+            <span className="text-[#3b82f6] underline decoration-4 sm:decoration-8 underline-offset-4 sm:underline-offset-8 decoration-black">{user?.full_name?.split(' ')[0] || 'FOUNDER'}</span>
           </h1>
-          <p className="text-xl font-bold text-black border-l-[4px] border-[#ff8c00] pl-4 mt-8">
+          <p className="text-base sm:text-xl font-bold text-black border-l-[4px] border-[#ff8c00] pl-3 sm:pl-4 mt-4 sm:mt-8">
             Here's your startup intelligence dashboard. <span className="animate-pulse inline-block">👏</span>
           </p>
         </div>
         
         {/* Right side illustration block */}
-        <div className="hidden lg:block w-72 h-48 bg-white border-[3px] border-black shadow-[8px_8px_0px_#000] relative overflow-hidden transform rotate-2">
+        <div className="hidden lg:block w-72 h-48 bg-white border-[3px] border-black shadow-[8px_8px_0px_#000] relative overflow-hidden transform rotate-2 flex-shrink-0">
            <img src="/hero_gateway.png" className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-80" alt="Gateway" />
            <div className="absolute top-2 left-2 bg-[#ff8c00] border-2 border-black font-black text-xs px-2 py-1">AI ONLINE</div>
         </div>
@@ -105,12 +105,12 @@ export default function Dashboard() {
 
       {/* Profile Banner */}
       {!loading && !profile && (
-        <div className="bg-[#ff8c00] border-[3px] border-black shadow-[6px_6px_0px_#000] p-6 mb-12 flex flex-col sm:flex-row items-center justify-between gap-6 transform -rotate-1">
+        <div className="bg-[#ff8c00] border-[3px] border-black shadow-[4px_4px_0px_#000] sm:shadow-[6px_6px_0px_#000] p-4 sm:p-6 mb-8 sm:mb-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 transform -rotate-1">
           <div>
-            <h3 className="font-black text-2xl uppercase text-black mb-2">Setup Your Startup Profile</h3>
-            <p className="font-bold text-black text-lg">Enable context-aware advice tailored to your industry, stage, and location.</p>
+            <h3 className="font-black text-xl sm:text-2xl uppercase text-black mb-1 sm:mb-2">Setup Your Startup Profile</h3>
+            <p className="font-bold text-black text-sm sm:text-lg">Enable context-aware advice tailored to your industry, stage, and location.</p>
           </div>
-          <Link to="/dashboard/profile" className="btn-secondary whitespace-nowrap px-8 py-3 text-lg bg-white">
+          <Link to="/dashboard/profile" className="btn-secondary w-full sm:w-auto text-center justify-center whitespace-nowrap px-6 sm:px-8 py-2.5 sm:py-3 text-base sm:text-lg bg-white">
             COMPLETE PROFILE →
           </Link>
         </div>
@@ -118,23 +118,23 @@ export default function Dashboard() {
 
       {/* Active Profile Card */}
       {profile && (
-        <div className="bg-[#ff8c00] border-[3px] border-black shadow-[6px_6px_0px_#000] p-6 mb-12 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-6">
-            <div className="w-16 h-16 bg-white border-[3px] border-black shadow-[4px_4px_0px_#000] flex items-center justify-center text-3xl font-black text-black">
+        <div className="bg-[#ff8c00] border-[3px] border-black shadow-[4px_4px_0px_#000] sm:shadow-[6px_6px_0px_#000] p-4 sm:p-6 mb-8 sm:mb-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white border-[3px] border-black shadow-[3px_3px_0px_#000] sm:shadow-[4px_4px_0px_#000] flex items-center justify-center text-2xl sm:text-3xl font-black text-black flex-shrink-0">
               {profile.name?.[0] || '🚀'}
             </div>
             <div>
-              <div className="flex items-center gap-4 mb-1">
-                <h3 className="font-black text-2xl uppercase text-black">{profile.name}</h3>
-                <div className="bg-[#a3e635] border-2 border-black text-black font-black uppercase text-xs px-2 py-1 shadow-[2px_2px_0px_#000] flex items-center gap-2">
-                  <div className="w-2 h-2 bg-black rounded-full animate-ping"></div>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-1">
+                <h3 className="font-black text-xl sm:text-2xl uppercase text-black">{profile.name}</h3>
+                <div className="bg-[#a3e635] border-2 border-black text-black font-black uppercase text-[10px] sm:text-xs px-2 py-0.5 sm:py-1 shadow-[2px_2px_0px_#000] flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 bg-black rounded-full animate-ping"></div>
                   CONTEXT ACTIVE
                 </div>
               </div>
-              <p className="font-bold text-black uppercase text-sm">{profile.industry} • {profile.stage} • {profile.location}</p>
+              <p className="font-bold text-black uppercase text-xs sm:text-sm">{profile.industry} • {profile.stage} • {profile.location}</p>
             </div>
           </div>
-          <Link to="/dashboard/profile" className="btn-secondary bg-white font-black px-6 py-2">
+          <Link to="/dashboard/profile" className="btn-secondary w-full sm:w-auto text-center justify-center bg-white font-black px-5 sm:px-6 py-2 text-xs sm:text-sm">
             EDIT PROFILE
           </Link>
         </div>

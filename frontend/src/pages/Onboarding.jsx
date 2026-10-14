@@ -66,33 +66,33 @@ export default function Onboarding() {
         <div className="h-full bg-[#3b82f6] border-r-[3px] border-black transition-all duration-500 ease-out" style={{ width: `${progress}%` }}></div>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
-        <div className="w-full max-w-2xl bg-white border-[3px] border-black shadow-[8px_8px_0px_#000] p-10 transform -rotate-1 relative">
+      <div className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 relative z-10 w-full">
+        <div className="w-full max-w-2xl bg-white border-[3px] border-black shadow-[4px_4px_0px_#000] sm:shadow-[8px_8px_0px_#000] p-5 sm:p-10 transform sm:-rotate-1 relative">
           
           {/* Header */}
-          <div className="flex items-center justify-between mb-12 border-b-[3px] border-black pb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#ff8c00] border-[3px] border-black shadow-[2px_2px_0px_#000] flex items-center justify-center">
-                <span className="text-black font-black text-xl">S</span>
+          <div className="flex items-center justify-between mb-8 sm:mb-12 border-b-[3px] border-black pb-3 sm:pb-4">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#ff8c00] border-[3px] border-black shadow-[2px_2px_0px_#000] flex items-center justify-center">
+                <span className="text-black font-black text-lg sm:text-xl">S</span>
               </div>
-              <span className="font-black text-xl uppercase tracking-widest">StartupSage</span>
+              <span className="font-black text-base sm:text-xl uppercase tracking-wider sm:tracking-widest">StartupSage</span>
             </div>
-            <button onClick={handleSkip} className="font-bold text-xs uppercase underline decoration-2 hover:text-[#ff8c00]">
+            <button onClick={handleSkip} className="font-bold text-[10px] sm:text-xs uppercase underline decoration-2 hover:text-[#ff8c00]">
               SKIP SETUP →
             </button>
           </div>
 
-          <div className="absolute top-8 right-8 bg-[#a3e635] border-2 border-black font-black px-3 py-1 text-sm shadow-[2px_2px_0px_#000] transform rotate-3">
+          <div className="mb-4 sm:mb-0 sm:absolute sm:top-8 sm:right-8 bg-[#a3e635] border-2 border-black font-black px-2.5 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm shadow-[2px_2px_0px_#000] inline-block sm:transform sm:rotate-3">
             STEP {step + 1} OF {steps.length}
           </div>
 
           {/* Question */}
-          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-black mb-10 leading-[0.9]">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-tighter text-black mb-6 sm:mb-10 leading-tight">
             {currentStep.title}
           </h1>
 
           {/* Input */}
-          <div className="mb-12 min-h-[160px]">
+          <div className="mb-8 sm:mb-12 min-h-[120px] sm:min-h-[160px]">
             {currentStep.type === 'text' && (
               <input
                 autoFocus type="text"
@@ -100,23 +100,23 @@ export default function Onboarding() {
                 onChange={e => setForm(p => ({ ...p, [currentStep.field]: e.target.value }))}
                 onKeyDown={e => e.key === 'Enter' && handleNext()}
                 placeholder={currentStep.placeholder}
-                className="w-full bg-gray-100 border-[3px] border-black shadow-[4px_4px_0px_#000] p-6 text-2xl font-black uppercase placeholder:text-gray-400 focus:bg-white focus:translate-y-1 focus:translate-x-1 focus:shadow-[2px_2px_0px_#000] transition-all outline-none"
+                className="w-full bg-gray-100 border-[3px] border-black shadow-[3px_3px_0px_#000] sm:shadow-[4px_4px_0px_#000] p-4 sm:p-6 text-lg sm:text-2xl font-black uppercase placeholder:text-gray-400 focus:bg-white focus:translate-y-0.5 focus:translate-x-0.5 focus:shadow-[2px_2px_0px_#000] transition-all outline-none"
               />
             )}
             {currentStep.type === 'textarea' && (
               <textarea
-                autoFocus rows={4}
+                autoFocus rows={3}
                 value={form[currentStep.field]}
                 onChange={e => setForm(p => ({ ...p, [currentStep.field]: e.target.value }))}
                 placeholder={currentStep.placeholder}
-                className="w-full bg-gray-100 border-[3px] border-black shadow-[4px_4px_0px_#000] p-6 text-lg font-bold placeholder:text-gray-400 focus:bg-white focus:translate-y-1 focus:translate-x-1 focus:shadow-[2px_2px_0px_#000] transition-all outline-none resize-none"
+                className="w-full bg-gray-100 border-[3px] border-black shadow-[3px_3px_0px_#000] sm:shadow-[4px_4px_0px_#000] p-4 sm:p-6 text-sm sm:text-lg font-bold placeholder:text-gray-400 focus:bg-white focus:translate-y-0.5 focus:translate-x-0.5 focus:shadow-[2px_2px_0px_#000] transition-all outline-none resize-none"
               />
             )}
             {currentStep.type === 'choice' && (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 max-h-[280px] overflow-y-auto pr-1">
                 {currentStep.options.map(opt => (
                   <button key={opt} onClick={() => setForm(p => ({ ...p, [currentStep.field]: opt }))}
-                    className={`text-left p-4 border-[3px] border-black font-black uppercase text-sm transition-all ${form[currentStep.field] === opt ? 'bg-[#ff8c00] text-black shadow-[4px_4px_0px_#000] -translate-y-1' : 'bg-gray-100 text-black hover:bg-white hover:shadow-[4px_4px_0px_#000] hover:-translate-y-1'}`}
+                    className={`text-left p-3 sm:p-4 border-[2px] sm:border-[3px] border-black font-black uppercase text-xs sm:text-sm transition-all ${form[currentStep.field] === opt ? 'bg-[#ff8c00] text-black shadow-[3px_3px_0px_#000] sm:shadow-[4px_4px_0px_#000] -translate-y-0.5' : 'bg-gray-100 text-black hover:bg-white hover:shadow-[3px_3px_0px_#000] hover:-translate-y-0.5'}`}
                   >
                     {opt}
                   </button>
@@ -126,11 +126,11 @@ export default function Onboarding() {
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             {step > 0 && (
-              <button onClick={() => setStep(s => s - 1)} className="btn-secondary py-4 px-8 text-lg">← BACK</button>
+              <button onClick={() => setStep(s => s - 1)} className="btn-secondary py-3 sm:py-4 px-4 sm:px-8 text-sm sm:text-lg">← BACK</button>
             )}
-            <button onClick={handleNext} disabled={saving} className="btn-primary flex-1 py-4 text-lg" style={{ opacity: saving ? 0.7 : 1 }}>
+            <button onClick={handleNext} disabled={saving} className="btn-primary flex-1 py-3 sm:py-4 text-sm sm:text-lg" style={{ opacity: saving ? 0.7 : 1 }}>
               {saving ? 'SAVING...' : (
                 <span>{step === steps.length - 1 ? 'LAUNCH DASHBOARD →' : 'CONTINUE →'}</span>
               )}
